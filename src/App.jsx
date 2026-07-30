@@ -5,13 +5,30 @@ import { lowercaseQuestions } from "./data/lowercaseQuestions";
 import { matchingQuestions } from "./data/matchingQuestions";
 import { phonicsQuestions } from "./data/phonicsQuestions";
 import { generateOptions } from "./utils/generateOptions";
+import mercuryImage from "./assets/mercury.png";
+import venusImage from "./assets/venus.png";
+import earthImage from "./assets/earth.png";
+import marsImage from "./assets/mars.png";
+import correctSound from "./sounds/correct.mp3";
+import wrongSound from "./sounds/wrong.mp3";
+import victorySound from "./sounds/victory.mp3";
+import blastoffSound from "./sounds/blastoff.mp3";
 
 const planets = [
-  { id: 1, name: "Mercury", emoji: "☿", color: "#ffbd59", description: "Learn capital letters", questions },
-  { id: 2, name: "Venus", emoji: "♀", color: "#ff8d70", description: "Explore lowercase letters", questions: lowercaseQuestions },
-  { id: 3, name: "Earth", emoji: "🌍", color: "#55c6ff", description: "Match upper and lowercase", questions: matchingQuestions },
-  { id: 4, name: "Mars", emoji: "🔴", color: "#ef5b5b", description: "Listen for letter sounds", questions: phonicsQuestions },
+  { id: 1, name: "Mercury", image: mercuryImage, color: "#ffbd59", description: "Learn capital letters", questions },
+  { id: 2, name: "Venus", image: venusImage, color: "#ff8d70", description: "Explore lowercase letters", questions: lowercaseQuestions },
+  { id: 3, name: "Earth", image: earthImage, color: "#55c6ff", description: "Match upper and lowercase", questions: matchingQuestions },
+  { id: 4, name: "Mars", image: marsImage, color: "#ef5b5b", description: "Listen for letter sounds", questions: phonicsQuestions },
 ];
+
+function shuffleArray(items) {
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+  }
+  return shuffled;
+}
 
 const savedGame = () => {
   try {
@@ -32,6 +49,12 @@ function AppNav({ onHome, onMap, onSettings }) {
   </header>;
 }
 
+function PlanetVisual({ planet, className = "" }) {
+  return planet.image
+    ? <img className={className} src={planet.image} alt={planet.name} />
+    : <span className={className} role="img" aria-label={planet.name}>{planet.emoji}</span>;
+}
+
 function App() {
   const [progress, setProgress] = useState(savedGame);
   const [screen, setScreen] = useState("home");
@@ -39,14 +62,24 @@ function App() {
   const [feedback, setFeedback] = useState("");
 
   const planet = planets.find((item) => item.id === progress.activePlanet) || planets[0];
-  const question = planet.questions[progress.question] || planet.questions[0];
+  const nextPlanet = planets[planet.id] || { name: "Mission complete", emoji: "🏁" };
+  const missionQuestions = useMemo(() => shuffleArray(planet.questions), [planet.questions]);
+  const question = missionQuestions[progress.question] || missionQuestions[0];
   const options = useMemo(() => generateOptions(question.answer), [question.answer]);
 
   useEffect(() => {
     localStorage.setItem("atli-space-progress", JSON.stringify(progress));
   }, [progress]);
 
+  const playSound = (sound) => {
+    if (!soundOn) return;
+    const effect = new Audio(sound);
+    effect.volume = 0.55;
+    effect.play().catch(() => {});
+  };
+
   const goToPlanet = (id) => {
+    playSound(blastoffSound);
     setProgress((current) => ({ ...current, activePlanet: id, question: 0 }));
     setFeedback("");
     setScreen("planet");
@@ -69,14 +102,17 @@ function App() {
 
   const answer = (letter) => {
     if (letter !== question.answer) {
+      playSound(wrongSound);
       setFeedback("Almost! Try another star.");
       return;
     }
     setFeedback("");
-    if (progress.question < planet.questions.length - 1) {
+    if (progress.question < missionQuestions.length - 1) {
+      playSound(correctSound);
       setProgress((current) => ({ ...current, question: current.question + 1 }));
       return;
     }
+    playSound(victorySound);
     setScreen("celebration");
   };
 
@@ -86,6 +122,7 @@ function App() {
       setScreen("map");
       return;
     }
+    playSound(blastoffSound);
     setProgress((current) => ({ ...current, unlocked: Math.max(current.unlocked, nextPlanet), activePlanet: nextPlanet, question: 0 }));
     setScreen("unlock");
   };
@@ -105,8 +142,8 @@ function App() {
       <h1>Ready for a stellar adventure?</h1>
       <p>Learn letters, sounds, and matching while visiting every planet in our solar system.</p>
       <div className="button-row">
-        {action("Launch game", () => setScreen("launch"))}
-        {action(`Resume ${planet.name}`, () => setScreen("mission"), "secondary-button")}
+        {action("Start", () => { playSound(blastoffSound); setScreen("launch"); })}
+        {action("Keep Playing", () => setScreen("mission"), "secondary-button")}
       </div>
     </main>;
   } else if (screen === "launch") {
@@ -121,14 +158,15 @@ function App() {
       <div className="planet-map">{planets.map((item) => {
         const locked = item.id > progress.unlocked;
         return <button key={item.id} className={`planet-card ${locked ? "locked" : ""}`} style={{ "--planet": item.color }} disabled={locked} onClick={() => goToPlanet(item.id)}>
-          <span>{locked ? "🔒" : item.emoji}</span><strong>{item.name}</strong><small>{locked ? "Complete the previous planet" : item.description}</small>
+          {locked ? <span>🔒</span> : <PlanetVisual planet={item} className="planet-art" />}<strong>{item.name}</strong><small>{locked ? "Complete the previous planet" : item.description}</small>
         </button>;
       })}</div>
     </main>;
   } else if (screen === "planet") {
-    content = <main className="planet-overview"><span className="planet-icon" style={{ color: planet.color }}>{planet.emoji}</span><p className="eyebrow">PLANET {planet.id}</p><h1>Welcome to {planet.name}</h1><p>{planet.description}. You have {planet.questions.length} stars to collect.</p>{action("Start mission", () => setScreen("mission"))}</main>;
+    content = <main className="planet-overview"><PlanetVisual planet={planet} className="planet-icon planet-art" /><p className="eyebrow">PLANET {planet.id}</p><h1>Welcome to {planet.name}</h1><p>{planet.description}. You have {missionQuestions.length} stars to collect.</p>{action("Start mission", () => { playSound(blastoffSound); setScreen("mission"); })}</main>;
   } else if (screen === "mission") {
-    content = <main className="mission-panel"><div className="mission-status"><button className="text-button" onClick={() => setScreen("planet")}>← Planet</button><span>{planet.name} · Star {progress.question + 1} of {planet.questions.length}</span></div><div className="progress"><i style={{ width: `${((progress.question + 1) / planet.questions.length) * 100}%` }} /></div>
+    const journeyPercent = (progress.question / missionQuestions.length) * 100;
+    content = <main className="mission-panel"><div className="mission-status"><button className="text-button" onClick={() => setScreen("planet")}>← Planet</button><span>{planet.name} · Star {progress.question + 1} of {missionQuestions.length}</span></div><div className="journey-track" aria-label={`Traveling from ${planet.name} to ${nextPlanet.name}. ${progress.question} letters completed.`}><PlanetVisual planet={planet} className="journey-planet planet-art" /><div className="journey-line"><b className="journey-rocket" style={{ left: `${journeyPercent}%` }}>🚀</b></div><PlanetVisual planet={nextPlanet} className="journey-planet planet-art" /></div>
       <p className="eyebrow">{question.sound ? "LISTEN AND CHOOSE" : "FIND THE LETTER"}</p>{question.sound ? <button className="sound-target" onClick={speak}>🔊 Hear the sound</button> : <div className="target-letter">{question.target}</div>}
       <div className="answer-grid">{options.map((letter) => <button key={letter} className="letter-button" onClick={() => answer(letter)}>{letter}</button>)}</div>
       <p className="feedback" aria-live="polite">{feedback}</p>
@@ -136,8 +174,7 @@ function App() {
   } else if (screen === "celebration") {
     content = <main className="celebration-panel"><span>🎉</span><p className="eyebrow">MISSION COMPLETE</p><h1>You did it, Captain!</h1><p>You collected every star on {planet.name}.</p>{planet.id < planets.length ? action("Unlock next planet", unlockNext) : action("Return to planet map", () => setScreen("map"))}</main>;
   } else if (screen === "unlock") {
-    const next = planets[planet.id];
-    content = <main className="unlock-panel"><span className="unlock-planet" style={{ color: next.color }}>{next.emoji}</span><p className="eyebrow">NEW DESTINATION</p><h1>{next.name} unlocked!</h1><p>Your next mission is ready: {next.description}.</p>{action(`Explore ${next.name}`, () => setScreen("planet"))}</main>;
+    content = <main className="unlock-panel"><PlanetVisual planet={nextPlanet} className="unlock-planet planet-art" /><p className="eyebrow">NEW DESTINATION</p><h1>{nextPlanet.name} unlocked!</h1><p>Your next mission is ready: {nextPlanet.description}.</p>{action(`Explore ${nextPlanet.name}`, () => setScreen("planet"))}</main>;
   } else {
     content = <main className="settings-panel"><p className="eyebrow">MISSION CONTROL</p><h1>Settings</h1><label className="setting-row">Sound effects and spoken prompts <button className="toggle" aria-pressed={soundOn} onClick={() => setSoundOn((on) => !on)}>{soundOn ? "On" : "Off"}</button></label><button className="danger-button" onClick={resetProgress}>Reset game progress</button></main>;
   }
