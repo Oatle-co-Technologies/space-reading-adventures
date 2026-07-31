@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import { questions } from "./data/questions";
 import { lowercaseQuestions } from "./data/lowercaseQuestions";
@@ -13,6 +13,16 @@ import correctSound from "./sounds/correct.mp3";
 import wrongSound from "./sounds/wrong.mp3";
 import victorySound from "./sounds/victory.mp3";
 import blastoffSound from "./sounds/blastoff.mp3";
+
+const phonicsAudio = import.meta.glob("./sounds/*-sound.mp3", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+
+console.log(phonicsAudio);
+
+
 
 const planets = [
   { id: 1, name: "Mercury", image: mercuryImage, color: "#ffbd59", description: "Learn capital letters", questions },
@@ -60,12 +70,16 @@ function App() {
   const [screen, setScreen] = useState("home");
   const [soundOn, setSoundOn] = useState(true);
   const [feedback, setFeedback] = useState("");
+  const promptAudio = useRef(null);
 
   const planet = planets.find((item) => item.id === progress.activePlanet) || planets[0];
   const nextPlanet = planets[planet.id] || { name: "Mission complete", emoji: "🏁" };
   const missionQuestions = useMemo(() => shuffleArray(planet.questions), [planet.questions]);
   const question = missionQuestions[progress.question] || missionQuestions[0];
+  const recording = phonicsAudio[`./sounds/${question.answer.toLowerCase()}-sound.mp3`];
   const options = useMemo(() => generateOptions(question.answer), [question.answer]);
+  console.log("Question:", question.answer);
+  console.log("Recording:", recording); 
 
   useEffect(() => {
     localStorage.setItem("atli-space-progress", JSON.stringify(progress));
@@ -86,12 +100,20 @@ function App() {
   };
 
   const speak = () => {
-    if (soundOn && "speechSynthesis" in window && question.sound) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(question.sound);
-      utterance.rate = 0.75;
-      window.speechSynthesis.speak(utterance);
+    if (!soundOn || !question.sound) return;
+    window.speechSynthesis?.cancel();
+    if (recording) {
+      promptAudio.current?.pause();
+      const audio = new Audio(recording);
+      audio.volume = 0.8;
+      promptAudio.current = audio;
+      audio.play().catch(() => {});
+      return;
     }
+    if (!("speechSynthesis" in window)) return;
+    const utterance = new SpeechSynthesisUtterance(question.sound);
+    utterance.rate = 0.75;
+    window.speechSynthesis.speak(utterance);
   };
 
   useEffect(() => {
