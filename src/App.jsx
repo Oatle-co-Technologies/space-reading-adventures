@@ -8,12 +8,11 @@ import { readingQuestions } from "./data/readingQuestions";
 import { generateOptions } from "./utils/generateOptions";
 import { generateReadingOptions } from "./utils/generateReadingOptions";
 
-import mercuryImage from "./assets/mercury.png";
-import venusImage from "./assets/venus.png";
-import earthImage from "./assets/earth.png";
-import marsImage from "./assets/mars.png";
-import jupiterImage from "./assets/jupitor.png";
-
+import mercuryImage from "./assets/images/planets/mercury.png";
+import venusImage from "./assets/images/planets/venus.png";
+import earthImage from "./assets/images/planets/earth.png";
+import marsImage from "./assets/images/planets/mars.png";
+import jupiterImage from "./assets/images/planets/jupitor.png";
 import saturnImage from "./assets/images/planets/saturn.png";
 import uranusImage from "./assets/images/planets/uranus.png";
 import neptuneImage from "./assets/images/planets/neptune.png";
