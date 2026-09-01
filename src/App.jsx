@@ -14,6 +14,10 @@ import earthImage from "./assets/earth.png";
 import marsImage from "./assets/mars.png";
 import jupiterImage from "./assets/jupitor.png";
 
+import saturnImage from "./assets/images/planets/saturn.png";
+import uranusImage from "./assets/images/planets/uranus.png";
+import neptuneImage from "./assets/images/planets/neptune.png";
+import plutoImage from "./assets/images/planets/pluto.png";
 import correctSound from "./sounds/correct.mp3";
 import wrongSound from "./sounds/wrong.mp3";
 import victorySound from "./sounds/victory.mp3";
