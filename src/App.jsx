@@ -4,11 +4,13 @@ import { questions } from "./data/questions";
 import { lowercaseQuestions } from "./data/lowercaseQuestions";
 import { matchingQuestions } from "./data/matchingQuestions";
 import { phonicsQuestions } from "./data/phonicsQuestions";
+import {readingQuestions} from "/data/readingQuestions"
 import { generateOptions } from "./utils/generateOptions";
 import mercuryImage from "./assets/mercury.png";
 import venusImage from "./assets/venus.png";
 import earthImage from "./assets/earth.png";
 import marsImage from "./assets/mars.png";
+import jupitorImage from "/assets/jupitor.png"
 import correctSound from "./sounds/correct.mp3";
 import wrongSound from "./sounds/wrong.mp3";
 import victorySound from "./sounds/victory.mp3";
@@ -25,10 +27,78 @@ console.log(phonicsAudio);
 
 
 const planets = [
-  { id: 1, name: "Mercury", image: mercuryImage, color: "#ffbd59", description: "Learn capital letters", questions },
-  { id: 2, name: "Venus", image: venusImage, color: "#ff8d70", description: "Explore lowercase letters", questions: lowercaseQuestions },
-  { id: 3, name: "Earth", image: earthImage, color: "#55c6ff", description: "Match upper and lowercase", questions: matchingQuestions },
-  { id: 4, name: "Mars", image: marsImage, color: "#ef5b5b", description: "Listen for letter sounds", questions: phonicsQuestions },
+  {
+    id: 1,
+    name: "Mercury",
+    image: mercuryImage,
+    color: "#FFBD59",
+    description: "Learn capital letters",
+    questions,
+  },
+  {
+    id: 2,
+    name: "Venus",
+    image: venusImage,
+    color: "#FF8D70",
+    description: "Explore lowercase letters",
+    questions: lowercaseQuestions,
+  },
+  {
+    id: 3,
+    name: "Earth",
+    image: earthImage,
+    color: "#55C6FF",
+    description: "Match upper and lowercase",
+    questions: matchingQuestions,
+  },
+  {
+    id: 4,
+    name: "Mars",
+    image: marsImage,
+    color: "#EF5B5B",
+    description: "Listen for letter sounds",
+    questions: phonicsQuestions,
+  },
+  {
+    id: 5,
+    name: "Jupiter",
+    image: jupiterImage,
+    color: "#D6B44C",
+    description: "Read simple words",
+    questions: readingQuestions,
+  },
+  {
+    id: 6,
+    name: "Saturn",
+    image: saturnImage,
+    color: "#E7C77A",
+    description: "Coming soon",
+    questions: [],
+  },
+  {
+    id: 7,
+    name: "Uranus",
+    image: uranusImage,
+    color: "#76D8E8",
+    description: "Coming soon",
+    questions: [],
+  },
+  {
+    id: 8,
+    name: "Neptune",
+    image: neptuneImage,
+    color: "#4C78FF",
+    description: "Coming soon",
+    questions: [],
+  },
+  {
+    id: 9,
+    name: "Pluto",
+    image: plutoImage,
+    color: "#D9C5A4",
+    description: "Coming soon",
+    questions: [],
+  },
 ];
 
 function shuffleArray(items) {
