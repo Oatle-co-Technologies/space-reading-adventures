@@ -22,24 +22,17 @@ import uranusImage from "./assets/images/planets/uranus.png";
 import neptuneImage from "./assets/images/planets/neptune.png";
 import plutoImage from "./assets/images/planets/pluto.png";
 
+import mapImage from "./assets/images/words/map.png";
+import bagImage from "./assets/images/words/bag.png";
+import rugImage from "./assets/images/words/rug.png";
+import dogImage from "./assets/images/words/dog.png";
+import netImage from "./assets/images/words/net.png";
+import vanImage from "./assets/images/words/van.png";
 
 import correctSound from "./sounds/correct.mp3";
 import wrongSound from "./sounds/wrong.mp3";
 import victorySound from "./sounds/victory.mp3";
 import blastoffSound from "./sounds/blastoff.mp3";
-
-import neptunePage1 from "./assets/images/story/neptune-page1.png";
-import neptunePage2 from "./assets/images/story/neptune-page2.png";
-import neptunePage3 from "./assets/images/story/neptune-page3.png";
-import neptunePage4 from "./assets/images/story/neptune-page4.png";
-import neptunePage5 from "./assets/images/story/neptune-page5.png";
-import neptunePage6 from "./assets/images/story/neptune-page6.png";
-import neptunePage7 from "./assets/images/story/neptune-page7.png";
-import neptunePage8 from "./assets/images/story/neptune-page8.png";
-import neptunePage9 from "./assets/images/story/neptune-page9.png";
-import neptunePage10 from "./assets/images/story/neptune-page10.png";
-import neptunePage11 from "./assets/images/story/neptune-page11.png";
-import neptunePage12 from "./assets/images/story/neptune-page12.png";
 
 const phonicsAudio = import.meta.glob("./sounds/*-sound.mp3", {
   eager: true,
@@ -51,54 +44,77 @@ console.log(phonicsAudio);
 
 const neptuneStory = [
   {
-    image: neptunePage1,
-    text: ["Atli is on Neptune."],
+    image: neptuneImage,
+    text: [
+      "Atli is an astronaut.",
+      "Atli is on Neptune.",
+    ],
   },
   {
-    image: neptunePage2,
-    text: ["Atli has a red map."],
+    image: mapImage,
+    text: [
+      "Atli has a map.",
+      "The map is red.",
+    ],
   },
   {
-    image: neptunePage3,
-    text: ["Atli has his bag."],
+    image: vanImage,
+    text: [
+      "Atli gets out of the van.",
+      "Atli has his bag.",
+    ],
   },
   {
-    image: neptunePage4,
-    text: ["Atli lost his map."],
+    image: bagImage,
+    text: [
+      "Oh no!",
+      "Atli lost his map.",
+    ],
   },
   {
-    image: neptunePage5,
-    text: ["Atli looks in his bag."],
+    image: bagImage,
+    text: [
+      "Atli looks in the bag.",
+      "No map.",
+    ],
   },
   {
-    image: neptunePage6,
-    text: ["Atli looks on the rug."],
+    image: rugImage,
+    text: [
+      "Atli looks on the rug.",
+      "No map.",
+    ],
   },
   {
-    image: neptunePage7,
-    text: ["Atli sees a dog."],
+    image: dogImage,
+    text: [
+      "Atli sees a dog.",
+      "The dog can run.",
+    ],
   },
   {
-    image: neptunePage8,
-    text: ["The dog runs to the net."],
+    image: netImage,
+    text: [
+      "The dog runs to the net.",
+      "Atli runs to the net.",
+    ],
   },
   {
-    image: neptunePage9,
-    text: ["Atli finds his map under the net."],
+    image: mapImage,
+    text: [
+      "The map is under the net.",
+      "Atli found his map!",
+    ],
   },
   {
-    image: neptunePage10,
-    text: ["Atli can go home."],
+    image: neptuneImage,
+    text: [
+      "Atli has his map.",
+      "Atli can go home.",
+      "Bye, Neptune!",
+    ],
   },
-  {
-    image: neptunePage11,
-    text: ["Atli is home with Mom and his brother."],
-  },
-  {
-    image: neptunePage12,
-    text: ["The stars will guide you home."],
-  },
-]
+];
 
 const planets = [
   {
@@ -471,32 +487,46 @@ function App() {
     }
 
     setFeedback("");
-    setIsProcessing(true);
-
-    // Keep the completed word visible on Saturn while the child reads it.
-    if (planet.id === 6) {
-      setRevealedAnswer(selectedAnswer);
-    }
-
     playSound(correctSound);
 
-    advanceTimer.current = setTimeout(() => {
-      if (progress.question < missionQuestions.length - 1) {
-        setProgress((current) => ({
-          ...current,
-          question: current.question + 1,
-        }));
+    // Only Saturn keeps the 3-second reveal delay.
+    // The other letter/word missions should advance immediately.
+    if (planet.id === 6) {
+      setIsProcessing(true);
+      setRevealedAnswer(selectedAnswer);
 
-        setRevealedAnswer("");
+      advanceTimer.current = setTimeout(() => {
+        if (progress.question < missionQuestions.length - 1) {
+          setProgress((current) => ({
+            ...current,
+            question: current.question + 1,
+          }));
+
+          setRevealedAnswer("");
+          setIsProcessing(false);
+
+          return;
+        }
+
+        playSound(victorySound);
+        setScreen("celebration");
         setIsProcessing(false);
+      }, 3000);
 
-        return;
-      }
+      return;
+    }
 
-      playSound(victorySound);
-      setScreen("celebration");
-      setIsProcessing(false);
-    }, 3000);
+    if (progress.question < missionQuestions.length - 1) {
+      setProgress((current) => ({
+        ...current,
+        question: current.question + 1,
+      }));
+
+      return;
+    }
+
+    playSound(victorySound);
+    setScreen("celebration");
   };
 
   const unlockNext = () => {
