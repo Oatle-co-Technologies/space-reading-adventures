@@ -583,3 +583,35 @@ button {
     font-size: 1.8rem;
   }
 }
+
+/* Saturn missing-letter mission */
+
+.missing-word-target {
+  min-height: 150px;
+  margin: 18px auto 30px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #e7c77a;
+  border-radius: 22px;
+  background: #172555;
+  box-shadow:
+    0 10px 30px #00000035,
+    0 0 24px #e7c77a25;
+  color: #fff;
+  font-size: clamp(4rem, 12vw, 6rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+@media (max-width: 600px) {
+  .missing-word-target {
+    min-height: 130px;
+    margin: 14px auto 24px;
+    padding: 18px;
+    border-radius: 18px;
+    font-size: 3.5rem;
+  }
+}
