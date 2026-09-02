@@ -420,7 +420,16 @@ function App() {
   };
 
   const selectSentenceWord = (word) => {
-    if (isProcessing) return;
+    if (isProcessing || builtSentence.length >= question.words.length) return;
+
+    const expectedWord = question.words[builtSentence.length];
+    const correctWord = word === expectedWord;
+
+    if (correctWord) {
+      playSound(correctSound);
+    } else {
+      playSound(wrongSound);
+    }
 
     const nextSentence = [...builtSentence, word];
 
@@ -437,13 +446,10 @@ function App() {
       );
 
     if (!correct) {
-      playSound(wrongSound);
-      setFeedback("Almost! Check your sentence.");
       return;
     }
 
     setIsProcessing(true);
-    playSound(correctSound);
 
     advanceTimer.current = setTimeout(() => {
       if (progress.question < missionQuestions.length - 1) {
@@ -470,7 +476,13 @@ function App() {
 
     if (selectedAnswer !== question.answer) {
       playSound(wrongSound);
-      setFeedback("Almost! Try another star.");
+
+      if (planet.id === 6) {
+        setFeedback("");
+      } else {
+        setFeedback("Almost! Try another star.");
+      }
+
       return;
     }
 
@@ -811,18 +823,24 @@ function App() {
 
             <div className="sentence-target" aria-live="polite">
               {builtSentence.length > 0 ? (
-                builtSentence.map((word, index) => (
-                  <button
-                    key={`${word}-${index}`}
-                    className="sentence-word"
-                    onClick={() => removeSentenceWord(index)}
-                    disabled={isProcessing}
-                    aria-label={`Remove ${word}`}
-                    type="button"
-                  >
-                    {word} ×
-                  </button>
-                ))
+                <>
+                  {builtSentence.map((word, index) => (
+                    <button
+                      key={`${word}-${index}`}
+                      className="sentence-word"
+                      onClick={() => removeSentenceWord(index)}
+                      disabled={isProcessing}
+                      aria-label={`Remove ${word}`}
+                      type="button"
+                    >
+                      {word}
+                    </button>
+                  ))}
+
+                  <span className="sentence-hint">
+                    Tap a word to remove it.
+                  </span>
+                </>
               ) : (
                 <span className="sentence-placeholder">
                   Tap the words in the right order
