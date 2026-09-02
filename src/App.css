@@ -776,3 +776,94 @@ button {
     font-size: 1.5rem;
   }
 }
+
+/* =========================================================
+   NEPTUNE STORYBOOK — large illustrations
+   Add these rules to the BOTTOM of App.css.
+   ========================================================= */
+
+.story-book {
+  width: min(600px, 100%);
+  margin: 20px auto 0;
+}
+
+.story-page {
+  min-height: 540px;
+  padding: 24px 24px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.story-page-number {
+  margin-bottom: 10px;
+  flex: 0 0 auto;
+}
+
+/* Make the illustration use almost the entire width of the book's
+   upper section while leaving a comfortable area for the sentence. */
+.story-image-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 350px !important;
+  margin: 0 auto 10px !important;
+  flex: 0 0 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.story-image {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.story-text {
+  min-height: 82px !important;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.story-text p {
+  margin: 4px 0;
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.story-controls {
+  width: min(600px, 100%);
+  margin: 14px auto 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+@media (max-width: 600px) {
+  .story-page {
+    min-height: 500px;
+    padding: 20px 14px 18px;
+  }
+
+  .story-image-container {
+    height: 290px !important;
+    flex-basis: 290px;
+    margin-bottom: 8px !important;
+  }
+
+  .story-text {
+    min-height: 78px !important;
+  }
+
+  .story-text p {
+    font-size: 1.45rem;
+  }
+}
+
