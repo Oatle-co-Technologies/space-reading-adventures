@@ -6,9 +6,11 @@ import { matchingQuestions } from "./data/matchingQuestions";
 import { phonicsQuestions } from "./data/phonicsQuestions";
 import { readingQuestions } from "./data/readingQuestions";
 import { sentenceQuestions } from "./data/sentenceQuestions";
+import { missingLettersQuestions } from "./data/missingLettersQuestions";
 import { generateOptions } from "./utils/generateOptions";
 import { generateReadingOptions } from "./utils/generateReadingOptions";
 import { generateSentenceOptions } from "./utils/generateSentenceOptions";
+import { generateMissingLettersOptions } from "./utils/generateMissingLettersOptions";
 
 import mercuryImage from "./assets/images/planets/mercury.png";
 import venusImage from "./assets/images/planets/venus.png";
@@ -79,16 +81,7 @@ const planets = [
     image: saturnImage,
     color: "#E7C77A",
     description: "Fill in the missing letter",
-    questions: readingQuestions.map((question) => {
-      const word = question.answer;
-      const missingIndex = missingLetterPositions[word];
-
-      return {
-        word,
-        display: `${word.slice(0, missingIndex)}_${word.slice(missingIndex + 1)}`,
-        answer: word[missingIndex],
-      };
-    }),
+    questions: missingLettersQuestions,
   },
   {
     id: 7,
@@ -129,45 +122,6 @@ function shuffleArray(items) {
   }
 
   return shuffled;
-}
-
-const missingLetterPositions = {
-  ant: 0,
-  bag: 1,
-  cab: 2,
-  dog: 1,
-  egg: 0,
-  fan: 2,
-  gas: 1,
-  hat: 0,
-  ice: 2,
-  jam: 1,
-  key: 2,
-  lid: 0,
-  map: 1,
-  net: 2,
-  owl: 0,
-  pen: 1,
-  queen: 0,
-  rug: 2,
-  sun: 1,
-  tag: 0,
-  umbrella: 0,
-  van: 1,
-  web: 2,
-  xylophone: 0,
-  yoyo: 1,
-  zip: 2,
-};
-
-function generateMissingLetterOptions(correctLetter) {
-  const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
-  const wrongLetters = alphabet.filter((letter) => letter !== correctLetter);
-
-  return shuffleArray([
-    correctLetter,
-    ...shuffleArray(wrongLetters).slice(0, 3),
-  ]);
 }
 
 const savedGame = () => {
@@ -263,7 +217,7 @@ function App() {
     }
 
     if (planet.id === 6) {
-      return generateMissingLetterOptions(question.answer);
+      return generateMissingLettersOptions(question.answer);
     }
 
     if (planet.id === 7) {
@@ -282,14 +236,6 @@ function App() {
       JSON.stringify(progress)
     );
   }, [progress]);
-
-  useEffect(() => {
-    return () => {
-      if (advanceTimer.current) {
-        clearTimeout(advanceTimer.current);
-      }
-    };
-  }, []);
 
   const playSound = (sound) => {
     if (!soundOn) return;
@@ -412,7 +358,7 @@ function App() {
     setFeedback("");
     setIsProcessing(true);
 
-    // On Saturn, reveal the completed word during the reading pause.
+    // Keep the completed word visible on Saturn while the child reads it.
     if (planet.id === 6) {
       setRevealedAnswer(selectedAnswer);
     }
@@ -672,7 +618,9 @@ function App() {
             <p className="eyebrow">FILL IN THE MISSING LETTER</p>
 
             <div className="missing-word-target">
-              {revealedAnswer ? question.word : question.display}
+              {revealedAnswer
+                ? question.word
+                : question.display}
             </div>
 
             <div className="answer-grid">
@@ -792,13 +740,7 @@ function App() {
           className="unlock-planet planet-art"
         />
 
-        <p className="eyebrow">NEW DESTINATION</p>
-
-        <h1>{nextPlanet.name} unlocked!</h1>
-
-        <p>
-          Your next mission is ready: {nextPlanet.description}.
-        </p>
+        <h1>Welcome to Planet {nextPlanet.name}</h1>
 
         {action(
           `Explore ${nextPlanet.name}`,
