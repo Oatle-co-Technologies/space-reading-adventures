@@ -21,6 +21,14 @@ import saturnImage from "./assets/images/planets/saturn.png";
 import uranusImage from "./assets/images/planets/uranus.png";
 import neptuneImage from "./assets/images/planets/neptune.png";
 import plutoImage from "./assets/images/planets/pluto.png";
+
+import mapImage from "./assets/images/words/map.png";
+import bagImage from "./assets/images/words/bag.png";
+import rugImage from "./assets/images/words/rug.png";
+import dogImage from "./assets/images/words/dog.png";
+import netImage from "./assets/images/words/net.png";
+import vanImage from "./assets/images/words/van.png";
+
 import correctSound from "./sounds/correct.mp3";
 import wrongSound from "./sounds/wrong.mp3";
 import victorySound from "./sounds/victory.mp3";
@@ -33,6 +41,80 @@ const phonicsAudio = import.meta.glob("./sounds/*-sound.mp3", {
 });
 
 console.log(phonicsAudio);
+
+const neptuneStory = [
+  {
+    image: neptuneImage,
+    text: [
+      "Atli is an astronaut.",
+      "Atli is on Neptune.",
+    ],
+  },
+  {
+    image: mapImage,
+    text: [
+      "Atli has a map.",
+      "The map is red.",
+    ],
+  },
+  {
+    image: vanImage,
+    text: [
+      "Atli gets out of the van.",
+      "Atli has his bag.",
+    ],
+  },
+  {
+    image: bagImage,
+    text: [
+      "Oh no!",
+      "Atli lost his map.",
+    ],
+  },
+  {
+    image: bagImage,
+    text: [
+      "Atli looks in the bag.",
+      "No map.",
+    ],
+  },
+  {
+    image: rugImage,
+    text: [
+      "Atli looks on the rug.",
+      "No map.",
+    ],
+  },
+  {
+    image: dogImage,
+    text: [
+      "Atli sees a dog.",
+      "The dog can run.",
+    ],
+  },
+  {
+    image: netImage,
+    text: [
+      "The dog runs to the net.",
+      "Atli runs to the net.",
+    ],
+  },
+  {
+    image: mapImage,
+    text: [
+      "The map is under the net.",
+      "Atli found his map!",
+    ],
+  },
+  {
+    image: neptuneImage,
+    text: [
+      "Atli has his map.",
+      "Atli can go home.",
+      "Bye, Neptune!",
+    ],
+  },
+];
 
 const planets = [
   {
@@ -96,8 +178,8 @@ const planets = [
     name: "Neptune",
     image: neptuneImage,
     color: "#4C78FF",
-    description: "Coming soon",
-    questions: [],
+    description: "Read Atli and the Lost Map",
+    questions: neptuneStory,
   },
   {
     id: 9,
@@ -195,9 +277,14 @@ function App() {
       emoji: "🏁",
     };
 
+  // Neptune is a story, so its pages must stay in order.
+  // All other planets continue to shuffle their questions.
   const missionQuestions = useMemo(
-    () => shuffleArray(planet.questions),
-    [planet.questions]
+    () =>
+      planet.id === 8
+        ? planet.questions
+        : shuffleArray(planet.questions),
+    [planet.questions, planet.id]
   );
 
   const question =
@@ -210,7 +297,7 @@ function App() {
     : null;
 
   const options = useMemo(() => {
-    if (!question) return [];
+    if (!question || planet.id === 8) return [];
 
     if (planet.id === 5) {
       return generateReadingOptions(question.answer);
@@ -258,7 +345,11 @@ function App() {
     setBuiltSentence([]);
     setIsProcessing(false);
     setRevealedAnswer("");
-    if (advanceTimer.current) clearTimeout(advanceTimer.current);
+
+    if (advanceTimer.current) {
+      clearTimeout(advanceTimer.current);
+    }
+
     setScreen("planet");
   };
 
@@ -295,6 +386,29 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screen, progress.question, planet.id]);
 
+  const previousStoryPage = () => {
+    if (progress.question === 0) return;
+
+    setProgress((current) => ({
+      ...current,
+      question: current.question - 1,
+    }));
+  };
+
+  const nextStoryPage = () => {
+    if (progress.question < missionQuestions.length - 1) {
+      setProgress((current) => ({
+        ...current,
+        question: current.question + 1,
+      }));
+
+      return;
+    }
+
+    playSound(victorySound);
+    setScreen("celebration");
+  };
+
   const selectSentenceWord = (word) => {
     if (isProcessing) return;
 
@@ -308,7 +422,9 @@ function App() {
     }
 
     const correct =
-      nextSentence.every((item, index) => item === question.words[index]);
+      nextSentence.every(
+        (item, index) => item === question.words[index]
+      );
 
     setIsProcessing(true);
 
@@ -337,6 +453,7 @@ function App() {
         setBuiltSentence([]);
         setFeedback("");
         setIsProcessing(false);
+
         return;
       }
 
@@ -374,6 +491,7 @@ function App() {
 
         setRevealedAnswer("");
         setIsProcessing(false);
+
         return;
       }
 
@@ -530,18 +648,22 @@ function App() {
         <h1>Welcome to Planet {planet.name}</h1>
 
         <p>
-          {planet.description}. You have {missionQuestions.length} stars
-          to collect.
+          {planet.id === 8
+            ? `${planet.description}. Turn the pages and read the story.`
+            : `${planet.description}. You have ${missionQuestions.length} stars to collect.`}
         </p>
 
-        {action("Start mission", () => {
-          playSound(blastoffSound);
-          setBuiltSentence([]);
-          setFeedback("");
-          setIsProcessing(false);
-          setRevealedAnswer("");
-          setScreen("mission");
-        })}
+        {action(
+          planet.id === 8 ? "Read story" : "Start mission",
+          () => {
+            playSound(blastoffSound);
+            setBuiltSentence([]);
+            setFeedback("");
+            setIsProcessing(false);
+            setRevealedAnswer("");
+            setScreen("mission");
+          }
+        )}
       </main>
     );
   } else if (screen === "mission") {
@@ -559,8 +681,8 @@ function App() {
           </button>
 
           <span>
-            {planet.name} · Star {progress.question + 1} of{" "}
-            {missionQuestions.length}
+            {planet.name} · {planet.id === 8 ? "Page" : "Star"}{" "}
+            {progress.question + 1} of {missionQuestions.length}
           </span>
         </div>
 
@@ -588,7 +710,52 @@ function App() {
           />
         </div>
 
-        {planet.id === 5 ? (
+        {planet.id === 8 ? (
+          <>
+            <p className="eyebrow">ATLI AND THE LOST MAP</p>
+
+            <div className="story-book">
+              <div className="story-page">
+                <div className="story-page-number">
+                  Page {progress.question + 1} of {missionQuestions.length}
+                </div>
+
+                <div className="story-image-container">
+                  <img
+                    src={question.image}
+                    alt=""
+                    className="story-image"
+                  />
+                </div>
+
+                <div className="story-text">
+                  {question.text.map((line, index) => (
+                    <p key={index}>{line}</p>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="story-controls">
+              <button
+                className="secondary-button story-button"
+                onClick={previousStoryPage}
+                disabled={progress.question === 0}
+              >
+                ← Back
+              </button>
+
+              <button
+                className="primary-button story-button"
+                onClick={nextStoryPage}
+              >
+                {progress.question === missionQuestions.length - 1
+                  ? "Finish Book 🚀"
+                  : "Next Page →"}
+              </button>
+            </div>
+          </>
+        ) : planet.id === 5 ? (
           <>
             <p className="eyebrow">WHAT IS THIS?</p>
 
@@ -643,7 +810,10 @@ function App() {
             <div className="sentence-target" aria-live="polite">
               {builtSentence.length > 0 ? (
                 builtSentence.map((word, index) => (
-                  <span key={`${word}-${index}`} className="sentence-word">
+                  <span
+                    key={`${word}-${index}`}
+                    className="sentence-word"
+                  >
                     {word}
                   </span>
                 ))
@@ -660,7 +830,10 @@ function App() {
                   key={`${word}-${index}`}
                   className="word-button"
                   onClick={() => selectSentenceWord(word)}
-                  disabled={isProcessing || builtSentence.includes(word)}
+                  disabled={
+                    isProcessing ||
+                    builtSentence.includes(word)
+                  }
                 >
                   {word}
                 </button>
@@ -721,7 +894,9 @@ function App() {
         <h1>You did it, Captain!</h1>
 
         <p>
-          You collected every star on {planet.name}.
+          {planet.id === 8
+            ? "You finished Atli and the Lost Map!"
+            : `You collected every star on ${planet.name}.`}
         </p>
 
         {planet.id < planets.length
