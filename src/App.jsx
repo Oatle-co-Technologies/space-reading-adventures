@@ -6,6 +6,8 @@ import { matchingQuestions } from "./data/matchingQuestions";
 import { phonicsQuestions } from "./data/phonicsQuestions";
 import { readingQuestions } from "./data/readingQuestions";
 import { sentenceQuestions } from "./data/sentenceQuestions";
+import { missingLetterQuestions } from "./data/missingLetterQuestions";
+import { generateMissingLetterOptions } from "./utils/generateMissingLetterOptions";
 import { generateOptions } from "./utils/generateOptions";
 import { generateReadingOptions } from "./utils/generateReadingOptions";
 import { generateSentenceOptions } from "./utils/generateSentenceOptions";
@@ -79,16 +81,7 @@ const planets = [
     image: saturnImage,
     color: "#E7C77A",
     description: "Fill in the missing letter",
-    questions: readingQuestions.map((question) => {
-      const word = question.answer;
-      const missingIndex = missingLetterPositions[word];
-
-      return {
-        word,
-        display: `${word.slice(0, missingIndex)}_${word.slice(missingIndex + 1)}`,
-        answer: word[missingIndex],
-      };
-    }),
+    questions: missingLetterQuestions,
   },
   {
     id: 7,
