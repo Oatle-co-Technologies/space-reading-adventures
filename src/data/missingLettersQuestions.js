@@ -1,6 +1,6 @@
 import { readingQuestions } from "./readingQuestions";
 
-const missingLetterPositions = {
+const missingLettersPositions = {
   ant: 0,
   bag: 1,
   cab: 2,
@@ -31,7 +31,7 @@ const missingLetterPositions = {
 
 export const missingLetterQuestions = readingQuestions.map((question) => {
   const word = question.answer;
-  const missingIndex = missingLetterPositions[word];
+  const missingIndex = missingLettersPositions[word];
 
   return {
     word,
