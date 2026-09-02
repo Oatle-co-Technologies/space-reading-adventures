@@ -526,3 +526,60 @@ button {
   }
 }
 }
+
+/* Uranus sentence builder */
+
+.sentence-target {
+  min-height: 150px;
+  margin: 18px auto 30px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  border: 3px solid #76d8e8;
+  border-radius: 22px;
+  background: #172555;
+  box-shadow:
+    0 10px 30px #00000035,
+    0 0 24px #76d8e825;
+}
+
+.sentence-word {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 16px;
+  border: 2px solid var(--game-green);
+  border-radius: 12px;
+  background: #24376f;
+  color: #fff;
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.sentence-placeholder {
+  color: #8f9bc4;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.sentence-options {
+  gap: 14px;
+}
+
+@media (max-width: 600px) {
+  .sentence-target {
+    min-height: 130px;
+    margin: 14px auto 24px;
+    padding: 18px;
+    gap: 10px;
+    border-radius: 18px;
+  }
+
+  .sentence-word {
+    padding: 9px 13px;
+    font-size: 1.8rem;
+  }
+}
