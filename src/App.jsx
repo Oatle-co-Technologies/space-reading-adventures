@@ -409,6 +409,16 @@ function App() {
     setScreen("celebration");
   };
 
+  const removeSentenceWord = (index) => {
+    if (isProcessing) return;
+
+    setBuiltSentence((current) =>
+      current.filter((_, wordIndex) => wordIndex !== index)
+    );
+
+    setFeedback("");
+  };
+
   const selectSentenceWord = (word) => {
     if (isProcessing) return;
 
@@ -426,21 +436,13 @@ function App() {
         (item, index) => item === question.words[index]
       );
 
-    setIsProcessing(true);
-
     if (!correct) {
       playSound(wrongSound);
-      setFeedback("Almost! Try another order.");
-
-      advanceTimer.current = setTimeout(() => {
-        setBuiltSentence([]);
-        setFeedback("");
-        setIsProcessing(false);
-      }, 3000);
-
+      setFeedback("Almost! Check your sentence.");
       return;
     }
 
+    setIsProcessing(true);
     playSound(correctSound);
 
     advanceTimer.current = setTimeout(() => {
@@ -810,12 +812,16 @@ function App() {
             <div className="sentence-target" aria-live="polite">
               {builtSentence.length > 0 ? (
                 builtSentence.map((word, index) => (
-                  <span
+                  <button
                     key={`${word}-${index}`}
                     className="sentence-word"
+                    onClick={() => removeSentenceWord(index)}
+                    disabled={isProcessing}
+                    aria-label={`Remove ${word}`}
+                    type="button"
                   >
-                    {word}
-                  </span>
+                    {word} ×
+                  </button>
                 ))
               ) : (
                 <span className="sentence-placeholder">
