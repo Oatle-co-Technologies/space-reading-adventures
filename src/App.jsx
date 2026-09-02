@@ -433,26 +433,20 @@ function App() {
       return;
     }
 
-    setIsProcessing(true);
+    if (progress.question < missionQuestions.length - 1) {
+      setProgress((current) => ({
+        ...current,
+        question: current.question + 1,
+      }));
 
-    advanceTimer.current = setTimeout(() => {
-      if (progress.question < missionQuestions.length - 1) {
-        setProgress((current) => ({
-          ...current,
-          question: current.question + 1,
-        }));
+      setBuiltSentence([]);
+      setFeedback("");
 
-        setBuiltSentence([]);
-        setFeedback("");
-        setIsProcessing(false);
+      return;
+    }
 
-        return;
-      }
-
-      playSound(victorySound);
-      setScreen("celebration");
-      setIsProcessing(false);
-    }, 3000);
+    playSound(victorySound);
+    setScreen("celebration");
   };
 
   const answer = (selectedAnswer) => {
@@ -500,8 +494,7 @@ function App() {
       return;
     }
 
-    // Mercury through Jupiter advance immediately.
-    // Uranus has its own 3-second delay in selectSentenceWord().
+    // All regular answer missions except Saturn advance immediately.
     if (progress.question < missionQuestions.length - 1) {
       setProgress((current) => ({
         ...current,
