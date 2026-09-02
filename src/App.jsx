@@ -5,24 +5,10 @@ import { lowercaseQuestions } from "./data/lowercaseQuestions";
 import { matchingQuestions } from "./data/matchingQuestions";
 import { phonicsQuestions } from "./data/phonicsQuestions";
 import { readingQuestions } from "./data/readingQuestions";
+import { sentenceQuestions } from "./data/sentenceQuestions";
 import { generateOptions } from "./utils/generateOptions";
 import { generateReadingOptions } from "./utils/generateReadingOptions";
-
-const missingLetterPositions = {
-  ant: 0, bag: 1, cab: 2, dog: 1, egg: 0, fan: 2, gas: 1,
-  hat: 0, ice: 2, jam: 1, key: 2, lid: 0, map: 1, net: 2,
-  owl: 0, pen: 1, queen: 0, rug: 2, sun: 1, tag: 0, umbrella: 0,
-  van: 1, web: 2, xylophone: 0, yoyo: 1, zip: 2,
-};
-
-function generateMissingLetterOptions(correctLetter) {
-  const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
-  const wrongLetters = alphabet.filter((letter) => letter !== correctLetter);
-  return shuffleArray([
-    correctLetter,
-    ...shuffleArray(wrongLetters).slice(0, 3),
-  ]);
-}
+import { generateSentenceOptions } from "./utils/generateSentenceOptions";
 
 import mercuryImage from "./assets/images/planets/mercury.png";
 import venusImage from "./assets/images/planets/venus.png";
@@ -109,8 +95,8 @@ const planets = [
     name: "Uranus",
     image: uranusImage,
     color: "#76D8E8",
-    description: "Coming soon",
-    questions: [],
+    description: "Build simple sentences",
+    questions: sentenceQuestions,
   },
   {
     id: 8,
@@ -198,6 +184,7 @@ function App() {
   const [screen, setScreen] = useState("home");
   const [soundOn, setSoundOn] = useState(true);
   const [feedback, setFeedback] = useState("");
+  const [builtSentence, setBuiltSentence] = useState([]);
   const promptAudio = useRef(null);
 
   const planet =
@@ -237,6 +224,10 @@ function App() {
       return generateMissingLetterOptions(question.answer);
     }
 
+    if (planet.id === 7) {
+      return generateSentenceOptions(question.words);
+    }
+
     return generateOptions(question.answer);
   }, [question, planet.id]);
 
@@ -268,6 +259,7 @@ function App() {
     }));
 
     setFeedback("");
+    setBuiltSentence([]);
     setScreen("planet");
   };
 
@@ -303,6 +295,42 @@ function App() {
     // Playing the prompt when a phonics question changes is intentional.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screen, progress.question, planet.id]);
+
+  const selectSentenceWord = (word) => {
+    const nextSentence = [...builtSentence, word];
+
+    setBuiltSentence(nextSentence);
+    setFeedback("");
+
+    if (nextSentence.length !== question.words.length) {
+      return;
+    }
+
+    const correct =
+      nextSentence.every((item, index) => item === question.words[index]);
+
+    if (!correct) {
+      playSound(wrongSound);
+      setFeedback("Almost! Try another order.");
+      setBuiltSentence([]);
+      return;
+    }
+
+    if (progress.question < missionQuestions.length - 1) {
+      playSound(correctSound);
+
+      setProgress((current) => ({
+        ...current,
+        question: current.question + 1,
+      }));
+
+      setBuiltSentence([]);
+      return;
+    }
+
+    playSound(victorySound);
+    setScreen("celebration");
+  };
 
   const answer = (selectedAnswer) => {
     if (selectedAnswer !== question.answer) {
@@ -481,6 +509,7 @@ function App() {
 
         {action("Start mission", () => {
           playSound(blastoffSound);
+          setBuiltSentence([]);
           setScreen("mission");
         })}
       </main>
@@ -569,6 +598,37 @@ function App() {
                   onClick={() => answer(letter)}
                 >
                   {letter}
+                </button>
+              ))}
+            </div>
+          </>
+        ) : planet.id === 7 ? (
+          <>
+            <p className="eyebrow">BUILD THE SENTENCE</p>
+
+            <div className="sentence-target" aria-live="polite">
+              {builtSentence.length > 0 ? (
+                builtSentence.map((word, index) => (
+                  <span key={`${word}-${index}`} className="sentence-word">
+                    {word}
+                  </span>
+                ))
+              ) : (
+                <span className="sentence-placeholder">
+                  Tap the words in the right order
+                </span>
+              )}
+            </div>
+
+            <div className="answer-grid sentence-options">
+              {options.map((word, index) => (
+                <button
+                  key={`${word}-${index}`}
+                  className="word-button"
+                  onClick={() => selectSentenceWord(word)}
+                  disabled={builtSentence.includes(word)}
+                >
+                  {word}
                 </button>
               ))}
             </div>
