@@ -2,7 +2,7 @@ function shuffle(array) {
   return [...array].sort(() => Math.random() - 0.5);
 }
 
-export function generateMissingLetterOptions(correctLetter) {
+export function generateMissingLettersOptions(correctLetter) {
   const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
   const wrongLetters = alphabet.filter((letter) => letter !== correctLetter);
 
