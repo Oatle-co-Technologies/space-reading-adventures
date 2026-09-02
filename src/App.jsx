@@ -6,11 +6,11 @@ import { matchingQuestions } from "./data/matchingQuestions";
 import { phonicsQuestions } from "./data/phonicsQuestions";
 import { readingQuestions } from "./data/readingQuestions";
 import { sentenceQuestions } from "./data/sentenceQuestions";
-import { missingLetterQuestions } from "./data/missingLetterQuestions";
-import { generateMissingLetterOptions } from "./utils/generateMissingLetterOptions";
+import { missingLettersQuestions } from "./data/missingLettersQuestions";
 import { generateOptions } from "./utils/generateOptions";
 import { generateReadingOptions } from "./utils/generateReadingOptions";
 import { generateSentenceOptions } from "./utils/generateSentenceOptions";
+import { generateMissingLettersOptions } from "./utils/generateMissingLettersOptions";
 
 import mercuryImage from "./assets/images/planets/mercury.png";
 import venusImage from "./assets/images/planets/venus.png";
@@ -81,7 +81,7 @@ const planets = [
     image: saturnImage,
     color: "#E7C77A",
     description: "Fill in the missing letter",
-    questions: missingLetterQuestions,
+    questions: missingLettersQuestions,
   },
   {
     id: 7,
@@ -178,7 +178,10 @@ function App() {
   const [soundOn, setSoundOn] = useState(true);
   const [feedback, setFeedback] = useState("");
   const [builtSentence, setBuiltSentence] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [revealedAnswer, setRevealedAnswer] = useState("");
   const promptAudio = useRef(null);
+  const advanceTimer = useRef(null);
 
   const planet =
     planets.find((item) => item.id === progress.activePlanet) ||
@@ -214,7 +217,7 @@ function App() {
     }
 
     if (planet.id === 6) {
-      return generateMissingLetterOptions(question.answer);
+      return generateMissingLettersOptions(question.answer);
     }
 
     if (planet.id === 7) {
@@ -253,6 +256,9 @@ function App() {
 
     setFeedback("");
     setBuiltSentence([]);
+    setIsProcessing(false);
+    setRevealedAnswer("");
+    if (advanceTimer.current) clearTimeout(advanceTimer.current);
     setScreen("planet");
   };
 
@@ -290,6 +296,8 @@ function App() {
   }, [screen, progress.question, planet.id]);
 
   const selectSentenceWord = (word) => {
+    if (isProcessing) return;
+
     const nextSentence = [...builtSentence, word];
 
     setBuiltSentence(nextSentence);
@@ -302,30 +310,45 @@ function App() {
     const correct =
       nextSentence.every((item, index) => item === question.words[index]);
 
+    setIsProcessing(true);
+
     if (!correct) {
       playSound(wrongSound);
       setFeedback("Almost! Try another order.");
-      setBuiltSentence([]);
+
+      advanceTimer.current = setTimeout(() => {
+        setBuiltSentence([]);
+        setFeedback("");
+        setIsProcessing(false);
+      }, 3000);
+
       return;
     }
 
-    if (progress.question < missionQuestions.length - 1) {
-      playSound(correctSound);
+    playSound(correctSound);
 
-      setProgress((current) => ({
-        ...current,
-        question: current.question + 1,
-      }));
+    advanceTimer.current = setTimeout(() => {
+      if (progress.question < missionQuestions.length - 1) {
+        setProgress((current) => ({
+          ...current,
+          question: current.question + 1,
+        }));
 
-      setBuiltSentence([]);
-      return;
-    }
+        setBuiltSentence([]);
+        setFeedback("");
+        setIsProcessing(false);
+        return;
+      }
 
-    playSound(victorySound);
-    setScreen("celebration");
+      playSound(victorySound);
+      setScreen("celebration");
+      setIsProcessing(false);
+    }, 3000);
   };
 
   const answer = (selectedAnswer) => {
+    if (isProcessing) return;
+
     if (selectedAnswer !== question.answer) {
       playSound(wrongSound);
       setFeedback("Almost! Try another star.");
@@ -333,20 +356,31 @@ function App() {
     }
 
     setFeedback("");
+    setIsProcessing(true);
 
-    if (progress.question < missionQuestions.length - 1) {
-      playSound(correctSound);
-
-      setProgress((current) => ({
-        ...current,
-        question: current.question + 1,
-      }));
-
-      return;
+    // Keep the completed word visible on Saturn while the child reads it.
+    if (planet.id === 6) {
+      setRevealedAnswer(selectedAnswer);
     }
 
-    playSound(victorySound);
-    setScreen("celebration");
+    playSound(correctSound);
+
+    advanceTimer.current = setTimeout(() => {
+      if (progress.question < missionQuestions.length - 1) {
+        setProgress((current) => ({
+          ...current,
+          question: current.question + 1,
+        }));
+
+        setRevealedAnswer("");
+        setIsProcessing(false);
+        return;
+      }
+
+      playSound(victorySound);
+      setScreen("celebration");
+      setIsProcessing(false);
+    }, 3000);
   };
 
   const unlockNext = () => {
@@ -503,6 +537,9 @@ function App() {
         {action("Start mission", () => {
           playSound(blastoffSound);
           setBuiltSentence([]);
+          setFeedback("");
+          setIsProcessing(false);
+          setRevealedAnswer("");
           setScreen("mission");
         })}
       </main>
@@ -569,6 +606,7 @@ function App() {
                   key={word}
                   className="word-button"
                   onClick={() => answer(word)}
+                  disabled={isProcessing}
                 >
                   {word}
                 </button>
@@ -580,7 +618,9 @@ function App() {
             <p className="eyebrow">FILL IN THE MISSING LETTER</p>
 
             <div className="missing-word-target">
-              {question.display}
+              {revealedAnswer
+                ? question.word
+                : question.display}
             </div>
 
             <div className="answer-grid">
@@ -589,6 +629,7 @@ function App() {
                   key={letter}
                   className="letter-button"
                   onClick={() => answer(letter)}
+                  disabled={isProcessing}
                 >
                   {letter}
                 </button>
@@ -619,7 +660,7 @@ function App() {
                   key={`${word}-${index}`}
                   className="word-button"
                   onClick={() => selectSentenceWord(word)}
-                  disabled={builtSentence.includes(word)}
+                  disabled={isProcessing || builtSentence.includes(word)}
                 >
                   {word}
                 </button>
@@ -653,6 +694,7 @@ function App() {
                   key={letter}
                   className="letter-button"
                   onClick={() => answer(letter)}
+                  disabled={isProcessing}
                 >
                   {letter}
                 </button>
