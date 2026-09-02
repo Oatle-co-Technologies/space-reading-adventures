@@ -433,20 +433,29 @@ function App() {
       return;
     }
 
-    if (progress.question < missionQuestions.length - 1) {
-      setProgress((current) => ({
-        ...current,
-        question: current.question + 1,
-      }));
+    setIsProcessing(true);
 
-      setBuiltSentence([]);
-      setFeedback("");
+    advanceTimer.current = setTimeout(() => {
+      if (progress.question < missionQuestions.length - 1) {
+        setProgress((current) => ({
+          ...current,
+          question: current.question + 1,
+        }));
 
-      return;
-    }
+        setBuiltSentence([]);
+        setFeedback("");
+        setIsProcessing(false);
 
-    playSound(victorySound);
-    setScreen("celebration");
+        return;
+      }
+
+      playSound(victorySound);
+      setScreen("celebration");
+      setIsProcessing(false);
+    }, 3000);
+
+    return;
+
   };
 
   const answer = (selectedAnswer) => {
@@ -695,7 +704,7 @@ function App() {
 
         <div
           className="journey-track"
-          aria-label={`Traveling from ${planet.name} to ${nextPlanet.name}. ${progress.question} questions completed.`}
+          aria-label={`Currently on ${planet.name}. ${progress.question} questions completed.`}
         >
           <PlanetVisual
             planet={planet}
@@ -710,11 +719,6 @@ function App() {
               🚀
             </b>
           </div>
-
-          <PlanetVisual
-            planet={nextPlanet}
-            className="journey-planet planet-art"
-          />
         </div>
 
         {planet.id === 8 ? (
