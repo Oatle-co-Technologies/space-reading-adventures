@@ -29,7 +29,7 @@ const missingLettersPositions = {
   zip: 2,
 };
 
-export const missingLetterQuestions = readingQuestions.map((question) => {
+export const missingLettersQuestions = readingQuestions.map((question) => {
   const word = question.answer;
   const missingIndex = missingLettersPositions[word];
 
