@@ -253,14 +253,6 @@ function App() {
     planets.find((item) => item.id === progress.activePlanet) ||
     planets[0];
 
-  // This is ONLY the destination shown on the travel track.
-  // The current planet is always represented by `planet`.
-  const nextPlanet =
-    planets.find((item) => item.id === planet.id + 1) || {
-      name: "Mission complete",
-      emoji: "🏁",
-    };
-
   // Neptune is a story, so its pages must stay in order.
   // All other planets continue to shuffle their questions.
   const missionQuestions = useMemo(
@@ -519,6 +511,9 @@ function App() {
 
   const unlockNext = () => {
     const nextPlanetId = planet.id + 1;
+    const unlockedPlanet = planets.find(
+      (item) => item.id === nextPlanetId
+    );
 
     if (nextPlanetId > planets.length) {
       setScreen("map");
@@ -534,7 +529,7 @@ function App() {
       question: 0,
     }));
 
-    setScreen("unlock");
+    setScreen(unlockedPlanet ? "planet" : "map");
   };
 
   const resetProgress = () => {
@@ -956,22 +951,6 @@ function App() {
               "Return to planet map",
               () => setScreen("map")
             )}
-      </main>
-    );
-  } else if (screen === "unlock") {
-    content = (
-      <main className="unlock-panel">
-        <PlanetVisual
-          planet={nextPlanet}
-          className="unlock-planet planet-art"
-        />
-
-        <h1>Welcome to Planet {nextPlanet.name}</h1>
-
-        {action(
-          `Explore ${nextPlanet.name}`,
-          () => setScreen("planet")
-        )}
       </main>
     );
   } else {
