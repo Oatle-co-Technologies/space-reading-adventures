@@ -7,6 +7,10 @@ import { phonicsQuestions } from "./data/phonicsQuestions";
 import { readingQuestions } from "./data/readingQuestions";
 import { sentenceQuestions } from "./data/sentenceQuestions";
 import { missingLettersQuestions } from "./data/missingLettersQuestions";
+import {
+  assessmentQuestions,
+  assessmentSkills,
+} from "./data/assessmentQuestions";
 import { generateOptions } from "./utils/generateOptions";
 import { generateReadingOptions } from "./utils/generateReadingOptions";
 import { generateSentenceOptions } from "./utils/generateSentenceOptions";
@@ -171,33 +175,13 @@ const planets = [
     image: plutoImage,
     color: "#D9C5A4",
     description: "Complete the final skills assessment",
-    questions: "pluto-assessment",
+    questions: assessmentQuestions,
   },
-];
-
-const plutoSkills = [
-  { id: "capital", name: "Capital letters" },
-  { id: "lowercase", name: "Lowercase letters" },
-  { id: "matching", name: "Upper/lowercase matching" },
-  { id: "phonics", name: "Letter sounds / phonics" },
-  { id: "reading", name: "Reading simple words" },
-  { id: "missing", name: "Missing letters" },
-  { id: "sentences", name: "Building simple sentences" },
-];
-
-const plutoQuestions = [
-  ...questions.slice(0, 4).map((question) => ({ ...question, skill: "capital", type: "letters" })),
-  ...lowercaseQuestions.slice(0, 4).map((question) => ({ ...question, skill: "lowercase", type: "letters" })),
-  ...matchingQuestions.slice(0, 4).map((question) => ({ ...question, skill: "matching", type: "letters" })),
-  ...phonicsQuestions.slice(0, 4).map((question) => ({ ...question, skill: "phonics", type: "phonics" })),
-  ...readingQuestions.slice(0, 4).map((question) => ({ ...question, skill: "reading", type: "reading" })),
-  ...missingLettersQuestions.slice(0, 4).map((question) => ({ ...question, skill: "missing", type: "missing" })),
-  ...sentenceQuestions.slice(0, 4).map((question) => ({ ...question, skill: "sentences", type: "sentences" })),
 ];
 
 const emptyPlutoResults = () =>
   Object.fromEntries(
-    plutoSkills.map((skill) => [skill.id, { correct: 0, total: 4 }])
+    assessmentSkills.map((skill) => [skill.id, { correct: 0, total: 4 }])
   );
 
 const savedAssessmentResults = () => {
@@ -294,8 +278,6 @@ function App() {
     () =>
       planet.id === 8
         ? planet.questions
-        : planet.id === 9
-          ? shuffleArray(plutoQuestions)
         : shuffleArray(planet.questions),
     [planet.id, planet.questions]
   );
@@ -1068,7 +1050,7 @@ function App() {
       </main>
     );
   } else if (screen === "results") {
-    const resultEntries = plutoSkills.map((skill) => {
+    const resultEntries = assessmentSkills.map((skill) => {
       const result = assessmentResults?.[skill.id] || { correct: 0, total: 4 };
       const percentage = Math.round((result.correct / result.total) * 100);
       const status =
