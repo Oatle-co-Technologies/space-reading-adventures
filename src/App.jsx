@@ -171,7 +171,7 @@ const planets = [
     image: plutoImage,
     color: "#D9C5A4",
     description: "Complete the final skills assessment",
-    questions: [],
+    questions: "pluto-assessment",
   },
 ];
 
@@ -380,6 +380,10 @@ function App() {
   };
 
   const startPlutoAssessment = () => {
+    setProgress((current) => ({
+      ...current,
+      question: 0,
+    }));
     setAssessmentScores(emptyPlutoResults());
     setBuiltSentence([]);
     setFeedback("");
