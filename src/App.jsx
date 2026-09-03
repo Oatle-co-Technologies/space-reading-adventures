@@ -170,10 +170,43 @@ const planets = [
     name: "Pluto",
     image: plutoImage,
     color: "#D9C5A4",
-    description: "Coming soon",
+    description: "Complete the final skills assessment",
     questions: [],
   },
 ];
+
+const plutoSkills = [
+  { id: "capital", name: "Capital letters" },
+  { id: "lowercase", name: "Lowercase letters" },
+  { id: "matching", name: "Upper/lowercase matching" },
+  { id: "phonics", name: "Letter sounds / phonics" },
+  { id: "reading", name: "Reading simple words" },
+  { id: "missing", name: "Missing letters" },
+  { id: "sentences", name: "Building simple sentences" },
+];
+
+const plutoQuestions = [
+  ...questions.slice(0, 4).map((question) => ({ ...question, skill: "capital", type: "letters" })),
+  ...lowercaseQuestions.slice(0, 4).map((question) => ({ ...question, skill: "lowercase", type: "letters" })),
+  ...matchingQuestions.slice(0, 4).map((question) => ({ ...question, skill: "matching", type: "letters" })),
+  ...phonicsQuestions.slice(0, 4).map((question) => ({ ...question, skill: "phonics", type: "phonics" })),
+  ...readingQuestions.slice(0, 4).map((question) => ({ ...question, skill: "reading", type: "reading" })),
+  ...missingLettersQuestions.slice(0, 4).map((question) => ({ ...question, skill: "missing", type: "missing" })),
+  ...sentenceQuestions.slice(0, 4).map((question) => ({ ...question, skill: "sentences", type: "sentences" })),
+];
+
+const emptyPlutoResults = () =>
+  Object.fromEntries(
+    plutoSkills.map((skill) => [skill.id, { correct: 0, total: 4 }])
+  );
+
+const savedAssessmentResults = () => {
+  try {
+    return JSON.parse(localStorage.getItem("atli-space-assessment-results")) || null;
+  } catch {
+    return null;
+  }
+};
 
 function shuffleArray(items) {
   const shuffled = [...items];
@@ -241,6 +274,8 @@ function PlanetVisual({ planet, className = "" }) {
 function App() {
   const [progress, setProgress] = useState(savedGame);
   const [screen, setScreen] = useState("home");
+  const [assessmentResults, setAssessmentResults] = useState(savedAssessmentResults);
+  const [assessmentScores, setAssessmentScores] = useState(emptyPlutoResults);
   const [soundOn, setSoundOn] = useState(true);
   const [feedback, setFeedback] = useState("");
   const [builtSentence, setBuiltSentence] = useState([]);
@@ -259,8 +294,10 @@ function App() {
     () =>
       planet.id === 8
         ? planet.questions
+        : planet.id === 9
+          ? shuffleArray(plutoQuestions)
         : shuffleArray(planet.questions),
-    [planet.questions, planet.id]
+    [planet.id, planet.questions]
   );
 
   const question =
@@ -275,15 +312,15 @@ function App() {
   const options = useMemo(() => {
     if (!question || planet.id === 8) return [];
 
-    if (planet.id === 5) {
+    if (planet.id === 5 || question.type === "reading") {
       return generateReadingOptions(question.answer);
     }
 
-    if (planet.id === 6) {
+    if (planet.id === 6 || question.type === "missing") {
       return generateMissingLettersOptions(question.answer);
     }
 
-    if (planet.id === 7) {
+    if (planet.id === 7 || question.type === "sentences") {
       return generateSentenceOptions(question.words);
     }
 
@@ -299,6 +336,15 @@ function App() {
       JSON.stringify(progress)
     );
   }, [progress]);
+
+  useEffect(() => {
+    if (assessmentResults) {
+      localStorage.setItem(
+        "atli-space-assessment-results",
+        JSON.stringify(assessmentResults)
+      );
+    }
+  }, [assessmentResults]);
 
   const playSound = (sound) => {
     if (!soundOn) return;
@@ -322,11 +368,44 @@ function App() {
     setIsProcessing(false);
     setRevealedAnswer("");
 
+    if (id === 9) {
+      setAssessmentScores(emptyPlutoResults());
+    }
+
     if (advanceTimer.current) {
       clearTimeout(advanceTimer.current);
     }
 
     setScreen("planet");
+  };
+
+  const startPlutoAssessment = () => {
+    setAssessmentScores(emptyPlutoResults());
+    setBuiltSentence([]);
+    setFeedback("");
+    setIsProcessing(false);
+    setRevealedAnswer("");
+    setScreen("mission");
+  };
+
+  const savePlutoAnswer = (isCorrect) => {
+    const nextScores = {
+      ...assessmentScores,
+      [question.skill]: {
+        ...assessmentScores[question.skill],
+        correct:
+          assessmentScores[question.skill].correct + (isCorrect ? 1 : 0),
+      },
+    };
+
+    setAssessmentScores(nextScores);
+    return nextScores;
+  };
+
+  const finishPlutoAssessment = (scores) => {
+    setAssessmentResults(scores);
+    playSound(victorySound);
+    setScreen("celebration");
   };
 
   const speak = () => {
@@ -425,6 +504,7 @@ function App() {
       return;
     }
 
+    const nextScores = planet.id === 9 ? savePlutoAnswer(true) : null;
     setIsProcessing(true);
 
     advanceTimer.current = setTimeout(() => {
@@ -441,8 +521,12 @@ function App() {
         return;
       }
 
-      playSound(victorySound);
-      setScreen("celebration");
+      if (planet.id === 9) {
+        finishPlutoAssessment(nextScores);
+      } else {
+        playSound(victorySound);
+        setScreen("celebration");
+      }
       setIsProcessing(false);
     }, 3000);
 
@@ -468,9 +552,11 @@ function App() {
     setFeedback("");
     playSound(correctSound);
 
+    const nextScores = planet.id === 9 ? savePlutoAnswer(true) : null;
+
     // Saturn is the only regular answer mission that needs a
     // 3-second pause so the child can read the completed word.
-    if (planet.id === 6) {
+    if (planet.id === 6 || question.type === "reading") {
       setIsProcessing(true);
       setRevealedAnswer(selectedAnswer);
 
@@ -487,8 +573,12 @@ function App() {
           return;
         }
 
-        playSound(victorySound);
-        setScreen("celebration");
+        if (planet.id === 9) {
+          finishPlutoAssessment(nextScores);
+        } else {
+          playSound(victorySound);
+          setScreen("celebration");
+        }
         setIsProcessing(false);
       }, 3000);
 
@@ -505,8 +595,12 @@ function App() {
       return;
     }
 
-    playSound(victorySound);
-    setScreen("celebration");
+    if (planet.id === 9) {
+      finishPlutoAssessment(nextScores);
+    } else {
+      playSound(victorySound);
+      setScreen("celebration");
+    }
   };
 
   const unlockNext = () => {
@@ -579,6 +673,13 @@ function App() {
             () => setScreen("mission"),
             "secondary-button"
           )}
+
+          {assessmentResults &&
+            action(
+              "Parent Results",
+              () => setScreen("results"),
+              "secondary-button"
+            )}
         </div>
       </main>
     );
@@ -665,14 +766,22 @@ function App() {
         </p>
 
         {action(
-          planet.id === 8 ? "Read story" : "Start mission",
+          planet.id === 8
+            ? "Read story"
+            : planet.id === 9
+              ? "Start assessment"
+              : "Start mission",
           () => {
             playSound(blastoffSound);
-            setBuiltSentence([]);
-            setFeedback("");
-            setIsProcessing(false);
-            setRevealedAnswer("");
-            setScreen("mission");
+            if (planet.id === 9) {
+              startPlutoAssessment();
+            } else {
+              setBuiltSentence([]);
+              setFeedback("");
+              setIsProcessing(false);
+              setRevealedAnswer("");
+              setScreen("mission");
+            }
           }
         )}
       </main>
@@ -692,7 +801,7 @@ function App() {
           </button>
 
           <span>
-            {planet.name} · {planet.id === 8 ? "Page" : "Star"}{" "}
+            {planet.name} · {planet.id === 8 ? "Page" : planet.id === 9 ? "Question" : "Star"}{" "}
             {progress.question + 1} of {missionQuestions.length}
           </span>
         </div>
@@ -791,7 +900,7 @@ function App() {
               </button>
             </div>
           </>
-        ) : planet.id === 5 ? (
+        ) : planet.id === 5 || question.type === "reading" ? (
           <>
             <p className="eyebrow">WHAT IS THIS?</p>
 
@@ -816,7 +925,7 @@ function App() {
               ))}
             </div>
           </>
-        ) : planet.id === 6 ? (
+        ) : planet.id === 6 || question.type === "missing" ? (
           <>
             <p className="eyebrow">FILL IN THE MISSING LETTER</p>
 
@@ -839,7 +948,7 @@ function App() {
               ))}
             </div>
           </>
-        ) : planet.id === 7 ? (
+        ) : planet.id === 7 || question.type === "sentences" ? (
           <>
             <p className="eyebrow">BUILD THE SENTENCE</p>
 
@@ -942,15 +1051,84 @@ function App() {
         <p>
           {planet.id === 8
             ? "You finished Atli and the Lost Map!"
-            : `You collected every star on ${planet.name}.`}
+            : planet.id === 9
+              ? "You finished the final Pluto assessment!"
+              : `You collected every star on ${planet.name}.`}
         </p>
 
-        {planet.id < planets.length
-          ? action("Unlock next planet", unlockNext)
-          : action(
-              "Return to planet map",
-              () => setScreen("map")
-            )}
+        {planet.id === 9
+          ? action("See Parent Results", () => setScreen("results"))
+          : planet.id < planets.length
+            ? action("Unlock next planet", unlockNext)
+            : action("Return to planet map", () => setScreen("map"))}
+      </main>
+    );
+  } else if (screen === "results") {
+    const resultEntries = plutoSkills.map((skill) => {
+      const result = assessmentResults?.[skill.id] || { correct: 0, total: 4 };
+      const percentage = Math.round((result.correct / result.total) * 100);
+      const status =
+        percentage >= 90
+          ? "Strong"
+          : percentage >= 70
+            ? "Developing"
+            : "Keep Practicing";
+
+      return { ...skill, ...result, percentage, status };
+    });
+    const overallCorrect = resultEntries.reduce(
+      (total, result) => total + result.correct,
+      0
+    );
+    const overallTotal = resultEntries.reduce(
+      (total, result) => total + result.total,
+      0
+    );
+    const doingWell = resultEntries.filter((result) => result.percentage >= 70);
+    const keepPracticing = resultEntries.filter(
+      (result) => result.percentage < 70
+    );
+
+    content = (
+      <main className="page results-page">
+        <p className="eyebrow">ATLI SPACE GAME</p>
+
+        <h1>Parent Results</h1>
+
+        <p className="page-intro">
+          Results from the final Pluto assessment in Atli Space Game.
+        </p>
+
+        <div className="result-summary">
+          <h2>Overall score</h2>
+          <strong>{overallCorrect}/{overallTotal}</strong>
+          <span>{Math.round((overallCorrect / overallTotal) * 100)}%</span>
+        </div>
+
+        <div className="result-list">
+          {resultEntries.map((result) => (
+            <div className="result-row" key={result.id}>
+              <strong>{result.name}</strong>
+              <span>{result.correct}/{result.total}</span>
+              <span>{result.percentage}%</span>
+              <span>{result.status}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="result-columns">
+          <section>
+            <h2>Doing well</h2>
+            <p>{doingWell.length > 0 ? doingWell.map((result) => result.name).join(", ") : "Keep exploring each skill."}</p>
+          </section>
+
+          <section>
+            <h2>Keep practicing</h2>
+            <p>{keepPracticing.length > 0 ? keepPracticing.map((result) => result.name).join(", ") : "No skills to list."}</p>
+          </section>
+        </div>
+
+        {action("Return home", () => setScreen("home"), "secondary-button")}
       </main>
     );
   } else {
@@ -972,10 +1150,7 @@ function App() {
           </button>
         </label>
 
-        <button
-          className="danger-button"
-          onClick={resetProgress}
-        >
+        <button className="danger-button" onClick={resetProgress}>
           Reset game progress
         </button>
       </main>

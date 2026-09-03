@@ -205,6 +205,82 @@ button {
   color: #c7d2f6;
 }
 
+.result-summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 14px;
+  margin: 34px auto 22px;
+  padding: 22px;
+  border: 2px solid #8fe7ff;
+  border-radius: 14px;
+  background: #111a42cc;
+}
+
+.result-summary h2,
+.result-columns h2 {
+  margin: 0;
+  font: 700 1.25rem "Pixelify Sans", sans-serif;
+}
+
+.result-summary strong {
+  color: var(--game-green);
+  font: 700 2.2rem "Pixelify Sans", sans-serif;
+}
+
+.result-summary span {
+  color: #ffdb64;
+  font-weight: 900;
+}
+
+.result-list {
+  display: grid;
+  gap: 9px;
+  text-align: left;
+}
+
+.result-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid #ffffff28;
+  border-radius: 10px;
+  background: #111a42cc;
+}
+
+.result-row span:last-child {
+  min-width: 116px;
+  color: #ffdb64;
+  font-weight: 900;
+  text-align: right;
+}
+
+.result-columns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-top: 24px;
+  text-align: left;
+}
+
+.result-columns section {
+  padding: 18px;
+  border-left: 3px solid var(--game-green);
+  background: #111a42cc;
+}
+
+.result-columns section:last-child {
+  border-left-color: #ffdb64;
+}
+
+.result-columns p {
+  margin-bottom: 0;
+  color: #c7d2f6;
+  line-height: 1.5;
+}
+
 .planet-map {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -486,6 +562,23 @@ button {
 
   .planet-map {
     grid-template-columns: 1fr;
+  }
+
+  .result-summary {
+    flex-wrap: wrap;
+  }
+
+  .result-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .result-row {
+    grid-template-columns: 1fr auto;
+  }
+
+  .result-row span:last-child {
+    min-width: 0;
+    text-align: left;
   }
 
   .mission-panel {
