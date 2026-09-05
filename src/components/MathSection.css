@@ -74,6 +74,15 @@
   text-align: center;
 }
 
+.math-mission-planet {
+  display: block;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 5px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px #8fe7ff99);
+}
+
 .math-mission-card.locked .math-mission-number {
   color: inherit;
   font-size: 2rem;
@@ -121,7 +130,7 @@
   height: 46px;
   display: grid;
   place-items: center;
-  font-size: 2.25rem;
+  object-fit: contain;
   filter: drop-shadow(0 0 12px #8fe7ff99);
 }
 
@@ -173,7 +182,7 @@
 .math-number-display {
   min-height: 150px;
   color: var(--game-green);
-  font: 700 8rem/1 "Pixelify Sans", sans-serif;
+  font: 900 8rem/1 Nunito, sans-serif;
   text-shadow: 0 0 18px #66ff6655;
 }
 

@@ -163,7 +163,11 @@ function MissionCard({ mission, locked, onSelect }) {
       disabled={locked}
       onClick={onSelect}
     >
-      <span className="math-mission-number">{locked ? "🔒" : mission.id}</span>
+      {locked ? (
+        <span className="math-mission-number">🔒</span>
+      ) : (
+        <img className="math-mission-planet" src={mission.image} alt="" />
+      )}
       <strong>{mission.title}</strong>
       <small>{locked ? "Complete the previous mission" : mission.description}</small>
     </button>
@@ -313,7 +317,7 @@ export default function MathSection({ onHome, soundOn }) {
         <span>{mission.title} · {progress.question + 1} of {mission.questions.length}</span>
       </div>
       <div className="math-journey-track" aria-label={`${progress.question} questions completed`}>
-        <span className="math-journey-planet" aria-hidden="true">🪐</span>
+        <img className="math-journey-planet" src={mission.image} alt="" />
         <div className="math-journey-line">
           <span className="math-journey-rocket" style={{ left: `${journeyPercent}%` }}>🚀</span>
         </div>

@@ -1,3 +1,13 @@
+import mercuryImage from "../assets/images/planets/mercury.png";
+import venusImage from "../assets/images/planets/venus.png";
+import earthImage from "../assets/images/planets/earth.png";
+import marsImage from "../assets/images/planets/mars.png";
+import jupiterImage from "../assets/images/planets/jupitor.png";
+import saturnImage from "../assets/images/planets/saturn.png";
+import uranusImage from "../assets/images/planets/uranus.png";
+import neptuneImage from "../assets/images/planets/neptune.png";
+import plutoImage from "../assets/images/planets/pluto.png";
+
 const choice = (prompt, answer, options, extra = {}) => ({
   prompt,
   answer: String(answer),
@@ -35,6 +45,7 @@ export const mathMissions = [
     title: "Number recognition",
     description: "Meet the numbers from 0 to 20.",
     color: "#ffbd59",
+    image: mercuryImage,
     questions: [
       choice("Which number is this?", 0, [0, 3, 5], { display: "0" }),
       choice("Which number is this?", 7, [4, 7, 9], { display: "7" }),
@@ -48,6 +59,7 @@ export const mathMissions = [
     title: "Counting shapes",
     description: "Count the shapes in each space group.",
     color: "#55c6ff",
+    image: venusImage,
     questions: [
       choice("How many circles do you see?", 3, [2, 3, 4], { shape: shapes.circle, count: 3 }),
       choice("How many squares do you see?", 5, [4, 5, 6], { shape: shapes.square, count: 5 }),
@@ -61,6 +73,7 @@ export const mathMissions = [
     title: "Primary colours",
     description: "Find red, yellow, and blue.",
     color: "#ef5b5b",
+    image: earthImage,
     questions: [
       choice("Find the red shape.", "red", ["red", "yellow", "blue"], { color: colors.red, shape: shapes.circle }),
       choice("Find the yellow shape.", "yellow", ["blue", "yellow", "red"], { color: colors.yellow, shape: shapes.square }),
@@ -74,6 +87,7 @@ export const mathMissions = [
     title: "Tertiary colours",
     description: "Explore colours made by mixing nearby colours.",
     color: "#a875e8",
+    image: marsImage,
     questions: [
       choice("Find red-orange.", "red-orange", ["red-orange", "blue-green", "yellow-green"], { color: colors.redOrange, shape: shapes.circle }),
       choice("Find yellow-orange.", "yellow-orange", ["blue-purple", "yellow-orange", "red-purple"], { color: colors.yellowOrange, shape: shapes.square }),
@@ -87,6 +101,7 @@ export const mathMissions = [
     title: "Matching and sorting",
     description: "Match and sort by colour, shape, and number.",
     color: "#66d17a",
+    image: jupiterImage,
     questions: [
       choice("Which shape matches the red circle?", "red circle", ["blue circle", "red circle", "red square"], { match: { color: colors.red, shape: shapes.circle } }),
       choice("Which group has only triangles?", "triangles", ["circles", "squares", "triangles"], { sort: shapes.triangle }),
@@ -100,6 +115,7 @@ export const mathMissions = [
     title: "Adding numbers",
     description: "Put space objects together to find the total.",
     color: "#ff9f43",
+    image: saturnImage,
     questions: [
       choice("1 star and 1 star make", 2, [1, 2, 3], { operation: "+", values: [1, 1] }),
       choice("2 planets and 1 planet make", 3, [2, 3, 4], { operation: "+", values: [2, 1] }),
@@ -113,6 +129,7 @@ export const mathMissions = [
     title: "Taking away",
     description: "Take objects away and count what is left.",
     color: "#76d8e8",
+    image: uranusImage,
     questions: [
       choice("Take 1 star from 3. How many are left?", 2, [1, 2, 3], { operation: "-", values: [3, 1] }),
       choice("Take 2 planets from 5. How many are left?", 3, [2, 3, 4], { operation: "-", values: [5, 2] }),
@@ -126,6 +143,7 @@ export const mathMissions = [
     title: "Making equal groups",
     description: "Learn multiplication by making equal groups.",
     color: "#c260a8",
+    image: neptuneImage,
     questions: [
       choice("2 groups of 2 stars make", 4, [3, 4, 5], { operation: "x", values: [2, 2] }),
       choice("3 groups of 2 planets make", 6, [5, 6, 7], { operation: "x", values: [3, 2] }),
@@ -139,6 +157,7 @@ export const mathMissions = [
     title: "Maths assessment",
     description: "Show what you know across the space missions.",
     color: "#d9c5a4",
+    image: plutoImage,
     assessment: true,
     questions: [
       choice("Which number is this?", 18, [8, 12, 18], { display: "18", skill: "numbers" }),
