@@ -15,6 +15,7 @@ import { generateOptions } from "./utils/generateOptions";
 import { generateReadingOptions } from "./utils/generateReadingOptions";
 import { generateSentenceOptions } from "./utils/generateSentenceOptions";
 import { generateMissingLettersOptions } from "./utils/generateMissingLettersOptions";
+import MathSection from "./components/MathSection";
 
 import mercuryImage from "./assets/images/planets/mercury.png";
 import venusImage from "./assets/images/planets/venus.png";
@@ -669,24 +670,7 @@ function App() {
       </main>
     );
   } else if (screen === "counting-coming-soon") {
-    content = (
-      <main className="launch-panel">
-        <div className="countdown-orbit">
-          <span>1</span>
-          <span>2</span>
-          <span>3</span>
-          <b>🚀</b>
-        </div>
-
-        <p className="eyebrow">SPACE COUNTING ADVENTURES</p>
-
-        <h1>Counting missions are coming soon!</h1>
-
-        <p>Get ready for numbers, shapes, colours, and space counting challenges.</p>
-
-        {action("Back to adventures", () => setScreen("home"), "secondary-button")}
-      </main>
-    );
+    content = <MathSection onHome={() => setScreen("home")} />;
   } else if (screen === "launch") {
     content = (
       <main className="launch-panel">
