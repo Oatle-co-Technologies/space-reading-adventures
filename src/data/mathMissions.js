@@ -129,16 +129,17 @@ const missionDefinitions = [
   },
   {
     id: 4,
-    title: "Tertiary colours",
-    description: "Explore colours made by mixing nearby colours.",
+    title: "Mixing colours",
+    description: "Mix colours to discover new ones.",
     color: "#a875e8",
     image: marsImage,
     questions: [
-      choice("Red and orange make what colour?", "gold", ["gold", "turquoise", "lime"], { mix: [colors.red, colors.orange] }),
-      choice("Yellow and orange make what colour?", "gold", ["violet", "gold", "coral"], { mix: [colors.yellow, colors.orange] }),
-      choice("Yellow and green make what colour?", "lime", ["gold", "lime", "maroon"], { mix: [colors.yellow, colors.green] }),
+      choice("Red and yellow make what colour?", "orange", ["orange", "green", "purple"], { mix: [colors.red, colors.yellow] }),
+      choice("Yellow and blue make what colour?", "green", ["purple", "orange", "green"], { mix: [colors.yellow, colors.blue] }),
+      choice("Blue and red make what colour?", "purple", ["green", "purple", "orange"], { mix: [colors.blue, colors.red] }),
       choice("Blue and green make what colour?", "turquoise", ["pink", "turquoise", "gold"], { mix: [colors.blue, colors.green] }),
-      choice("Blue and purple make what colour?", "violet", ["violet", "lime", "maroon"], { mix: [colors.blue, colors.purple] }),
+      choice("Red and orange make what colour?", "coral", ["coral", "lime", "maroon"], { mix: [colors.red, colors.orange] }),
+      choice("Red and purple make what colour?", "maroon", ["gold", "maroon", "violet"], { mix: [colors.red, colors.purple] }),
     ],
   },
   {
