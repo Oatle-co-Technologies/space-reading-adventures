@@ -385,6 +385,14 @@
   height: 18px;
 }
 
+.math-option-group .math-shape-triangle {
+  width: 0;
+  height: 0;
+  border-right-width: 10px;
+  border-bottom-width: 18px;
+  border-left-width: 10px;
+}
+
 .math-colour-swatch {
   width: 26px;
   height: 26px;

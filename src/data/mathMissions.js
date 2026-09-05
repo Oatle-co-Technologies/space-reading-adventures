@@ -150,9 +150,9 @@ const missionDefinitions = [
     image: jupiterImage,
     questions: [
       choice("Which shape matches the red circle?", "red circle", ["blue circle", "red circle", "red square"], { match: { color: colors.red, shape: shapes.circle } }),
-      choice("Which group has only triangles?", "triangles", ["circles", "squares", "triangles"], { sort: shapes.triangle }),
+      choice("Which group has only triangles?", shapes.triangle, [shapes.circle, shapes.square, shapes.triangle], { sort: shapes.triangle }),
       choice("Which group has the most shapes?", "5", ["3", "5", "4"], { groups: [3, 5, 4] }),
-      choice("Which shape does not belong?", "triangle", ["circle", "square", "triangle"], { oddOneOut: [shapes.circle, shapes.square, shapes.triangle] }),
+      choice("Which shape does not belong?", shapes.triangle, [shapes.circle, shapes.square, shapes.triangle], { oddOneOut: [shapes.circle, shapes.square, shapes.triangle] }),
       choice("Sort this shape by colour.", "blue", ["red", "blue", "yellow"], { color: colors.blue, shape: shapes.oval }),
     ],
   },

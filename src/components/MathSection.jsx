@@ -174,7 +174,17 @@ function OptionVisual({ option, question }) {
   }
 
   if (question?.sort && shapes[option]) {
-    return <Shape name={option} color="#66d17a" />;
+    return (
+      <span className="math-option-group">
+        {Array.from({ length: 4 }, (_, index) => (
+          <Shape key={index} name={option} color="#66d17a" />
+        ))}
+      </span>
+    );
+  }
+
+  if (question?.oddOneOut && shapes[option]) {
+    return <Shape name={option} color="#55c6ff" />;
   }
 
   return option;
