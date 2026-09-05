@@ -155,11 +155,21 @@ function OptionVisual({ option, question }) {
   const isColorOption = Boolean(color);
 
   if (isColorOption) {
+    return <Shape name={question?.shape || shapes.circle} color={color} />;
+  }
+
+  if (question?.match) {
+    const [optionColor, optionShape] = option.split(" ");
+    return <Shape name={optionShape} color={colors[optionColor]} />;
+  }
+
+  if (question?.groups) {
     return (
-      <>
-        <span className="math-colour-swatch" style={{ background: color }} />
-        <span>{colorLabels[option] || option}</span>
-      </>
+      <span className="math-option-group">
+        {Array.from({ length: Number(option) }, (_, index) => (
+          <Shape key={index} name={shapes.circle} color="#55c6ff" />
+        ))}
+      </span>
     );
   }
 

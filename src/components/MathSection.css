@@ -372,6 +372,19 @@
   border-left-width: 16px;
 }
 
+.math-option-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  max-width: 150px;
+}
+
+.math-option-group .math-shape {
+  width: 18px;
+  height: 18px;
+}
+
 .math-colour-swatch {
   width: 26px;
   height: 26px;
