@@ -39,7 +39,7 @@ const colors = {
   redPurple: "#c260a8",
 };
 
-export const mathMissions = [
+const missionDefinitions = [
   {
     id: 1,
     title: "Number recognition",
@@ -52,6 +52,21 @@ export const mathMissions = [
       choice("Which number is this?", 12, [10, 12, 20], { display: "12" }),
       choice("Which number is this?", 20, [2, 12, 20], { display: "20" }),
       choice("Which number is this?", 15, [5, 15, 18], { display: "15" }),
+      choice("Which number is this?", 3, [1, 3, 6], { display: "3" }),
+      choice("Which number is this?", 9, [7, 8, 9], { display: "9" }),
+      choice("Which number is this?", 2, [2, 4, 6], { display: "2" }),
+      choice("Which number is this?", 18, [8, 16, 18], { display: "18" }),
+      choice("Which number is this?", 5, [3, 5, 8], { display: "5" }),
+      choice("Which number is this?", 11, [9, 11, 13], { display: "11" }),
+      choice("Which number is this?", 14, [12, 14, 16], { display: "14" }),
+      choice("Which number is this?", 1, [0, 1, 4], { display: "1" }),
+      choice("Which number is this?", 6, [4, 6, 9], { display: "6" }),
+      choice("Which number is this?", 16, [6, 14, 16], { display: "16" }),
+      choice("Which number is this?", 4, [2, 4, 7], { display: "4" }),
+      choice("Which number is this?", 8, [5, 8, 10], { display: "8" }),
+      choice("Which number is this?", 13, [11, 13, 15], { display: "13" }),
+      choice("Which number is this?", 10, [8, 10, 12], { display: "10" }),
+      choice("Which number is this?", 17, [7, 15, 17], { display: "17" }),
     ],
   },
   {
@@ -66,6 +81,21 @@ export const mathMissions = [
       choice("How many triangles do you see?", 7, [6, 7, 8], { shape: shapes.triangle, count: 7 }),
       choice("How many stars do you see?", 8, [6, 8, 10], { shape: shapes.star, count: 8 }),
       choice("How many ovals do you see?", 10, [8, 9, 10], { shape: shapes.oval, count: 10 }),
+      choice("How many circles do you see?", 4, [3, 4, 6], { shape: shapes.circle, count: 4 }),
+      choice("How many squares do you see?", 2, [1, 2, 5], { shape: shapes.square, count: 2 }),
+      choice("How many triangles do you see?", 6, [4, 6, 8], { shape: shapes.triangle, count: 6 }),
+      choice("How many stars do you see?", 9, [7, 9, 10], { shape: shapes.star, count: 9 }),
+      choice("How many ovals do you see?", 3, [2, 3, 5], { shape: shapes.oval, count: 3 }),
+      choice("How many circles do you see?", 6, [5, 6, 7], { shape: shapes.circle, count: 6 }),
+      choice("How many squares do you see?", 8, [6, 7, 8], { shape: shapes.square, count: 8 }),
+      choice("How many triangles do you see?", 4, [3, 4, 5], { shape: shapes.triangle, count: 4 }),
+      choice("How many stars do you see?", 5, [4, 5, 7], { shape: shapes.star, count: 5 }),
+      choice("How many ovals do you see?", 7, [5, 7, 9], { shape: shapes.oval, count: 7 }),
+      choice("How many circles do you see?", 8, [6, 8, 9], { shape: shapes.circle, count: 8 }),
+      choice("How many squares do you see?", 10, [8, 9, 10], { shape: shapes.square, count: 10 }),
+      choice("How many triangles do you see?", 5, [4, 5, 6], { shape: shapes.triangle, count: 5 }),
+      choice("How many stars do you see?", 3, [2, 3, 4], { shape: shapes.star, count: 3 }),
+      choice("How many ovals do you see?", 6, [4, 6, 8], { shape: shapes.oval, count: 6 }),
     ],
   },
   {
@@ -170,5 +200,18 @@ export const mathMissions = [
     ],
   },
 ];
+
+const minimumMissionQuestions = 13;
+
+export const mathMissions = missionDefinitions.map((mission) => {
+  if (mission.questions.length >= minimumMissionQuestions) return mission;
+
+  const questions = Array.from(
+    { length: minimumMissionQuestions },
+    (_, index) => mission.questions[index % mission.questions.length],
+  );
+
+  return { ...mission, questions };
+});
 
 export { colors, shapes };
