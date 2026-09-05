@@ -169,6 +169,7 @@
 
 .math-number-display,
 .math-feature-display,
+.math-mix-display,
 .math-count-display,
 .math-group-display,
 .math-feature-row,
@@ -188,6 +189,19 @@
 
 .math-feature-display {
   min-height: 150px;
+}
+
+.math-mix-display {
+  min-height: 150px;
+  gap: 28px;
+}
+
+.math-mix-swatch {
+  width: 82px;
+  height: 82px;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 18px #ffffff55;
 }
 
 .math-count-display {

@@ -43,6 +43,15 @@ const colors = {
   blueGreen: "#4abfa5",
   bluePurple: "#6878d8",
   redPurple: "#c260a8",
+  gold: "#f4c542",
+  lime: "#b7d94c",
+  violet: "#8f5de7",
+  pink: "#f27bbd",
+  turquoise: "#35c7c4",
+  coral: "#ff7f6e",
+  maroon: "#8f2d56",
+  skyBlue: "#55c6ff",
+  navyBlue: "#234a8a",
 };
 
 const missionDefinitions = [
@@ -125,11 +134,11 @@ const missionDefinitions = [
     color: "#a875e8",
     image: marsImage,
     questions: [
-      choice("Find red-orange.", "red-orange", ["red-orange", "blue-green", "yellow-green"], { color: colors.redOrange, shape: shapes.circle }),
-      choice("Find yellow-orange.", "yellow-orange", ["blue-purple", "yellow-orange", "red-purple"], { color: colors.yellowOrange, shape: shapes.square }),
-      choice("Find yellow-green.", "yellow-green", ["red-orange", "yellow-green", "blue-purple"], { color: colors.yellowGreen, shape: shapes.triangle }),
-      choice("Find blue-green.", "blue-green", ["red-purple", "blue-green", "yellow-orange"], { color: colors.blueGreen, shape: shapes.star }),
-      choice("Find blue-purple.", "blue-purple", ["blue-purple", "yellow-green", "red-orange"], { color: colors.bluePurple, shape: shapes.oval }),
+      choice("Red and orange make what colour?", "gold", ["gold", "turquoise", "lime"], { mix: [colors.red, colors.orange] }),
+      choice("Yellow and orange make what colour?", "gold", ["violet", "gold", "coral"], { mix: [colors.yellow, colors.orange] }),
+      choice("Yellow and green make what colour?", "lime", ["gold", "lime", "maroon"], { mix: [colors.yellow, colors.green] }),
+      choice("Blue and green make what colour?", "turquoise", ["pink", "turquoise", "gold"], { mix: [colors.blue, colors.green] }),
+      choice("Blue and purple make what colour?", "violet", ["violet", "lime", "maroon"], { mix: [colors.blue, colors.purple] }),
     ],
   },
   {

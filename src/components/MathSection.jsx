@@ -22,12 +22,15 @@ const readProgress = () => {
 };
 
 const colorLabels = {
-  redOrange: "red-orange",
-  yellowOrange: "yellow-orange",
-  yellowGreen: "yellow-green",
-  blueGreen: "blue-green",
-  bluePurple: "blue-purple",
-  redPurple: "red-purple",
+  gold: "gold",
+  lime: "lime",
+  violet: "violet",
+  pink: "pink",
+  turquoise: "turquoise",
+  coral: "coral",
+  maroon: "maroon",
+  skyBlue: "sky blue",
+  navyBlue: "navy blue",
 };
 
 const countColors = [colors.red, colors.yellow, colors.blue, colors.green, colors.orange, colors.purple];
@@ -43,6 +46,16 @@ function Shape({ name, color = "currentColor", className = "" }) {
 function QuestionVisual({ question }) {
   if (question.display) {
     return <div className="math-number-display">{question.display}</div>;
+  }
+
+  if (question.mix) {
+    return (
+      <div className="math-mix-display" aria-label="Two colours to mix">
+        {question.mix.map((color) => (
+          <span key={color} className="math-mix-swatch" style={{ background: color }} />
+        ))}
+      </div>
+    );
   }
 
   if (question.count) {
