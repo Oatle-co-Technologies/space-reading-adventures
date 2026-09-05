@@ -229,7 +229,7 @@ function AppNav({ onHome, onMap, onSettings }) {
   return (
     <header className="topbar">
       <button className="brand" onClick={onHome} aria-label="Go home">
-        🚀 Atli's Space Game
+        🚀 Oatle Kids
       </button>
 
       <nav>
@@ -639,24 +639,23 @@ function App() {
       <main className="hero-panel">
         <span className="hero-rocket">🚀</span>
 
-        <p className="eyebrow">WELCOME, CAPTAIN</p>
+        <p className="eyebrow">WELCOME TO OATLE KIDS</p>
 
-        <h1>Ready for a stellar adventure?</h1>
+        <h1>Choose your space adventure</h1>
 
         <p>
-          Learn letters, sounds, and matching while visiting every planet
-          in our solar system.
+          Explore reading and counting missions across the solar system.
         </p>
 
         <div className="button-row">
-          {action("Start", () => {
+          {action("Space Reading Adventures", () => {
             playSound(blastoffSound);
             setScreen("launch");
           })}
 
           {action(
-            "Keep Playing",
-            () => setScreen("mission"),
+            "Space Counting Adventures",
+            () => setScreen("counting-coming-soon"),
             "secondary-button"
           )}
 
@@ -667,6 +666,25 @@ function App() {
               "secondary-button"
             )}
         </div>
+      </main>
+    );
+  } else if (screen === "counting-coming-soon") {
+    content = (
+      <main className="launch-panel">
+        <div className="countdown-orbit">
+          <span>1</span>
+          <span>2</span>
+          <span>3</span>
+          <b>🚀</b>
+        </div>
+
+        <p className="eyebrow">SPACE COUNTING ADVENTURES</p>
+
+        <h1>Counting missions are coming soon!</h1>
+
+        <p>Get ready for numbers, shapes, colours, and space counting challenges.</p>
+
+        {action("Back to adventures", () => setScreen("home"), "secondary-button")}
       </main>
     );
   } else if (screen === "launch") {
