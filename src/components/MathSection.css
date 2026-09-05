@@ -7,7 +7,9 @@
 }
 
 .math-page {
-  padding: 46px 0 70px;
+  width: min(900px, calc(100% - 36px));
+  padding: 64px 0;
+  text-align: left;
 }
 
 .math-heading,
@@ -58,41 +60,28 @@
   margin-bottom: 20px;
 }
 
-.math-mission-map {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-top: 40px;
-}
-
 .math-mission-card {
-  min-height: 170px;
-  padding: 20px;
-  border: 2px solid var(--mission-color);
-  border-radius: 14px;
-  color: #f8fbff;
-  background: #111a42cc;
-  cursor: pointer;
-  text-align: left;
-  transition: transform .2s, background .2s;
-}
-
-.math-mission-card:hover:not(:disabled) {
-  transform: translateY(-4px);
-  background: #1b285acc;
-}
-
-.math-mission-card.is-locked {
-  border-color: #ffffff22;
-  color: #7984b5;
-  cursor: not-allowed;
+  border-color: var(--mission-color);
 }
 
 .math-mission-number {
   display: block;
-  margin-bottom: 22px;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 5px;
   color: var(--mission-color);
-  font: 700 2rem "Pixelify Sans", sans-serif;
+  font: 700 2.4rem/72px "Pixelify Sans", sans-serif;
+  text-align: center;
+}
+
+.math-mission-card.locked .math-mission-number {
+  color: inherit;
+  font-size: 2rem;
+}
+
+.math-mission-card strong {
+  margin-top: 5px;
+  color: var(--mission-color);
 }
 
 .math-mission-card strong,
@@ -116,21 +105,41 @@
   justify-content: space-between;
   gap: 12px;
   color: #c7d2f6;
+  font-size: .9rem;
 }
 
 .math-journey-track {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 50px;
+}
+
+.math-journey-planet {
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  font-size: 2.25rem;
+  filter: drop-shadow(0 0 12px #8fe7ff99);
+}
+
+.math-journey-line {
   position: relative;
-  height: 22px;
-  margin: 26px 0 42px;
-  border-bottom: 3px solid #8fe7ff88;
+  flex: 1;
+  height: 5px;
+  border-top: 3px dashed #66ff66;
 }
 
 .math-journey-rocket {
   position: absolute;
-  bottom: -13px;
-  transform: translateX(-50%);
+  top: 50%;
   font-size: 2rem;
-  transition: left .3s ease;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  transition: left .45s ease-out;
+  filter: drop-shadow(0 0 8px #ffffff99);
 }
 
 .math-mission-page {
@@ -266,14 +275,18 @@
 
 .math-answer-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 14px;
-  max-width: 700px;
+  max-width: 680px;
   margin: 20px auto 0;
 }
 
+.math-answer-grid.has-three-options {
+  grid-template-columns: repeat(3, 1fr);
+}
+
 .math-answer-button {
-  min-height: 70px;
+  min-height: 82px;
   display: flex;
   align-items: center;
   justify-content: center;

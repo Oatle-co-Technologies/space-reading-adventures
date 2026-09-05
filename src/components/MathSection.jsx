@@ -158,7 +158,7 @@ function OptionVisual({ option, question }) {
 function MissionCard({ mission, locked, onSelect }) {
   return (
     <button
-      className={`math-mission-card ${locked ? "is-locked" : ""}`}
+      className={`planet-card math-mission-card ${locked ? "locked" : ""}`}
       style={{ "--mission-color": mission.color }}
       disabled={locked}
       onClick={onSelect}
@@ -256,14 +256,13 @@ export default function MathSection({ onHome, soundOn }) {
 
   if (screen === "map") {
     return (
-      <main className="math-page">
-        <div className="math-heading">
-          <button className="math-back-button" onClick={onHome}>← Oatle Kids</button>
-          <p className="math-eyebrow">SPACE COUNTING ADVENTURES</p>
-          <h1>Choose a maths mission</h1>
-          <p>Count, sort, and solve your way across the stars.</p>
-        </div>
-        <div className="math-mission-map">
+      <main className="page math-page">
+        <p className="eyebrow">YOUR JOURNEY</p>
+        <h1>Maths Map</h1>
+        <p className="page-intro">
+          Complete each mission to unlock the next destination.
+        </p>
+        <div className="planet-map">
           {mathMissions.map((item) => (
             <MissionCard
               key={item.id}
@@ -314,12 +313,15 @@ export default function MathSection({ onHome, soundOn }) {
         <span>{mission.title} · {progress.question + 1} of {mission.questions.length}</span>
       </div>
       <div className="math-journey-track" aria-label={`${progress.question} questions completed`}>
-        <span className="math-journey-rocket" style={{ left: `${journeyPercent}%` }}>🚀</span>
+        <span className="math-journey-planet" aria-hidden="true">🪐</span>
+        <div className="math-journey-line">
+          <span className="math-journey-rocket" style={{ left: `${journeyPercent}%` }}>🚀</span>
+        </div>
       </div>
       <p className="math-eyebrow">{isAssessment ? "SHOW WHAT YOU KNOW" : mission.title.toUpperCase()}</p>
       <h1>{question.prompt}</h1>
       <QuestionVisual question={question} />
-      <div className="math-answer-grid">
+      <div className={`math-answer-grid ${question.options.length === 3 ? "has-three-options" : ""}`}>
         {question.options.map((option) => (
           <button
             key={option}
