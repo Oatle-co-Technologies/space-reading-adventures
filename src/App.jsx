@@ -670,7 +670,7 @@ function App() {
       </main>
     );
   } else if (screen === "counting-coming-soon") {
-    content = <MathSection onHome={() => setScreen("home")} />;
+    content = <MathSection onHome={() => setScreen("home")} soundOn={soundOn} />;
   } else if (screen === "launch") {
     content = (
       <main className="launch-panel">

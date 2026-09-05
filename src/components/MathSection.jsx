@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import "./MathSection.css";
 import { colors, mathMissions, shapes } from "../data/mathMissions";
+import correctSound from "../sounds/correct.mp3";
+import wrongSound from "../sounds/wrong.mp3";
+import victorySound from "../sounds/victory.mp3";
+import blastoffSound from "../sounds/blastoff.mp3";
 
 const defaultProgress = {
   unlocked: 1,
@@ -166,7 +170,7 @@ function MissionCard({ mission, locked, onSelect }) {
   );
 }
 
-export default function MathSection({ onHome }) {
+export default function MathSection({ onHome, soundOn }) {
   const [progress, setProgress] = useState(readProgress);
   const [screen, setScreen] = useState("map");
   const [feedback, setFeedback] = useState("");
@@ -188,7 +192,16 @@ export default function MathSection({ onHome }) {
     return { total, correct };
   }, [assessmentAnswers]);
 
+  const playSound = (sound) => {
+    if (!soundOn) return;
+
+    const effect = new Audio(sound);
+    effect.volume = 0.55;
+    effect.play().catch(() => {});
+  };
+
   const startMission = (id) => {
+    playSound(blastoffSound);
     setProgress((current) => ({ ...current, activeMission: id, question: 0 }));
     setFeedback("");
     setIsProcessing(false);
@@ -198,10 +211,12 @@ export default function MathSection({ onHome }) {
 
   const finishMission = () => {
     if (isAssessment) {
+      playSound(victorySound);
       setScreen("assessment-results");
       return;
     }
 
+    playSound(victorySound);
     setProgress((current) => ({
       ...current,
       unlocked: Math.max(current.unlocked, Math.min(current.activeMission + 1, mathMissions.length)),
@@ -213,6 +228,7 @@ export default function MathSection({ onHome }) {
     if (isProcessing) return;
 
     const correct = selectedAnswer === question.answer;
+    playSound(correct ? correctSound : wrongSound);
     setFeedback(correct ? "Great exploring!" : "Almost! Try another answer.");
 
     const nextAssessmentAnswers = isAssessment
@@ -269,8 +285,8 @@ export default function MathSection({ onHome }) {
         <h1>{mission.title} complete!</h1>
         <p>You collected every star in this maths mission.</p>
         <div className="math-action-row">
-          <button className="math-primary-button" onClick={() => setScreen("map")}>Next mission</button>
-          <button className="math-secondary-button" onClick={onHome}>Back to home</button>
+          <button className="primary-button" onClick={() => setScreen("map")}>Next mission</button>
+          <button className="secondary-button" onClick={onHome}>Back to home</button>
         </div>
       </main>
     );
@@ -284,8 +300,8 @@ export default function MathSection({ onHome }) {
         <h1>Wonderful space work!</h1>
         <p>You answered {assessmentSummary.correct} of {assessmentSummary.total} questions correctly.</p>
         <div className="math-action-row">
-          <button className="math-primary-button" onClick={() => setScreen("map")}>View missions</button>
-          <button className="math-secondary-button" onClick={onHome}>Back to home</button>
+          <button className="primary-button" onClick={() => setScreen("map")}>View missions</button>
+          <button className="secondary-button" onClick={onHome}>Back to home</button>
         </div>
       </main>
     );
@@ -307,7 +323,7 @@ export default function MathSection({ onHome }) {
         {question.options.map((option) => (
           <button
             key={option}
-            className="math-answer-button"
+            className="word-button math-answer-button"
             onClick={() => answerQuestion(option)}
             disabled={isProcessing}
           >
