@@ -30,6 +30,8 @@ const colorLabels = {
   redPurple: "red-purple",
 };
 
+const countColors = [colors.red, colors.yellow, colors.blue, colors.green, colors.orange, colors.purple];
+
 function shapeLabel(shape) {
   return Object.entries(shapes).find(([, value]) => value === shape)?.[0] || shape;
 }
@@ -47,7 +49,7 @@ function QuestionVisual({ question }) {
     return (
       <div className="math-count-display" aria-label={`${question.count} ${shapeLabel(question.shape)}s`}>
         {Array.from({ length: question.count }, (_, index) => (
-          <Shape key={index} name={question.shape} color="#ffd45c" />
+          <Shape key={index} name={question.shape} color={countColors[index % countColors.length]} />
         ))}
       </div>
     );

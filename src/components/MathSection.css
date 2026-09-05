@@ -278,6 +278,32 @@
   border-radius: 50%;
 }
 
+.math-shape-pentagon {
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+
+.math-shape-hexagon {
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+}
+
+.math-shape-octagon {
+  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+}
+
+.math-shape-nonagon {
+  clip-path: polygon(50% 0%, 82% 12%, 100% 42%, 94% 76%, 68% 100%, 32% 100%, 6% 76%, 0% 42%, 18% 12%);
+}
+
+.math-shape-diamond {
+  width: 49px;
+  height: 49px;
+  transform: rotate(45deg) scale(.78);
+}
+
+.math-shape-rhombus {
+  clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
+}
+
 .math-shape.is-taken {
   opacity: .35;
 }
