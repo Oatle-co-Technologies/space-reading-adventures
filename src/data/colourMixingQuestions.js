@@ -9,8 +9,6 @@ export const colourMixingQuestions = [
     type: "colour-mixing",
     teaching: true,
     prompt: "Red and yellow make orange.",
-    teachingText:
-      "When we mix red and yellow, we make orange.",
     answer: "orange",
     options: [],
     mix: [colors.red, colors.yellow],
@@ -21,8 +19,6 @@ export const colourMixingQuestions = [
     type: "colour-mixing",
     teaching: true,
     prompt: "Yellow and blue make green.",
-    teachingText:
-      "When we mix yellow and blue, we make green.",
     answer: "green",
     options: [],
     mix: [colors.yellow, colors.blue],
@@ -33,8 +29,6 @@ export const colourMixingQuestions = [
     type: "colour-mixing",
     teaching: true,
     prompt: "Blue and red make purple.",
-    teachingText:
-      "When we mix blue and red, we make purple.",
     answer: "purple",
     options: [],
     mix: [colors.blue, colors.red],
@@ -47,7 +41,7 @@ export const colourMixingQuestions = [
 
   {
     type: "colour-mixing",
-    prompt: "Red and yellow make what colour?",
+    prompt: "Red + yellow = ?",
     answer: "orange",
     options: ["orange", "green", "purple"],
     mix: [colors.red, colors.yellow],
@@ -56,7 +50,7 @@ export const colourMixingQuestions = [
 
   {
     type: "colour-mixing",
-    prompt: "Yellow and blue make what colour?",
+    prompt: "Yellow + blue = ?",
     answer: "green",
     options: ["purple", "orange", "green"],
     mix: [colors.yellow, colors.blue],
@@ -65,7 +59,7 @@ export const colourMixingQuestions = [
 
   {
     type: "colour-mixing",
-    prompt: "Blue and red make what colour?",
+    prompt: "Blue + red = ?",
     answer: "purple",
     options: ["green", "purple", "orange"],
     mix: [colors.blue, colors.red],
@@ -73,15 +67,13 @@ export const colourMixingQuestions = [
   },
 
   // -------------------------------------------------------
-  // NEW COLOURS — TEACH THROUGH MIXING
+  // NEW COLOURS — TEACH
   // -------------------------------------------------------
 
   {
     type: "colour-mixing",
     teaching: true,
-    prompt: "Red and orange make vermilion.",
-    teachingText:
-      "When we mix red and orange, we make vermilion.",
+    prompt: "Red + orange = vermilion.",
     answer: "vermilion",
     options: [],
     mix: [colors.red, colors.orange],
@@ -91,9 +83,7 @@ export const colourMixingQuestions = [
   {
     type: "colour-mixing",
     teaching: true,
-    prompt: "Yellow and orange make gold.",
-    teachingText:
-      "When we mix yellow and orange, we make gold.",
+    prompt: "Yellow + orange = gold.",
     answer: "gold",
     options: [],
     mix: [colors.yellow, colors.orange],
@@ -103,9 +93,7 @@ export const colourMixingQuestions = [
   {
     type: "colour-mixing",
     teaching: true,
-    prompt: "Yellow and green make lime.",
-    teachingText:
-      "When we mix yellow and green, we make lime.",
+    prompt: "Yellow + green = lime.",
     answer: "lime",
     options: [],
     mix: [colors.yellow, colors.green],
@@ -115,9 +103,7 @@ export const colourMixingQuestions = [
   {
     type: "colour-mixing",
     teaching: true,
-    prompt: "Blue and green make turquoise.",
-    teachingText:
-      "When we mix blue and green, we make turquoise.",
+    prompt: "Blue + green = turquoise.",
     answer: "turquoise",
     options: [],
     mix: [colors.blue, colors.green],
@@ -127,9 +113,7 @@ export const colourMixingQuestions = [
   {
     type: "colour-mixing",
     teaching: true,
-    prompt: "Blue and purple make violet.",
-    teachingText:
-      "When we mix blue and purple, we make violet.",
+    prompt: "Blue + purple = violet.",
     answer: "violet",
     options: [],
     mix: [colors.blue, colors.purple],
@@ -139,9 +123,7 @@ export const colourMixingQuestions = [
   {
     type: "colour-mixing",
     teaching: true,
-    prompt: "Red and purple make maroon.",
-    teachingText:
-      "When we mix red and purple, we make maroon.",
+    prompt: "Red + purple = maroon.",
     answer: "maroon",
     options: [],
     mix: [colors.red, colors.purple],
@@ -151,9 +133,7 @@ export const colourMixingQuestions = [
   {
     type: "colour-mixing",
     teaching: true,
-    prompt: "Red and white make pink.",
-    teachingText:
-      "When we mix red and white, we make pink.",
+    prompt: "Red + white = pink.",
     answer: "pink",
     options: [],
     mix: [colors.red, "#ffffff"],
@@ -166,7 +146,7 @@ export const colourMixingQuestions = [
 
   {
     type: "colour-mixing",
-    prompt: "Red and orange make what colour?",
+    prompt: "Red + orange = ?",
     answer: "vermilion",
     options: ["vermilion", "gold", "maroon"],
     mix: [colors.red, colors.orange],
@@ -175,7 +155,7 @@ export const colourMixingQuestions = [
 
   {
     type: "colour-mixing",
-    prompt: "Yellow and orange make what colour?",
+    prompt: "Yellow + orange = ?",
     answer: "gold",
     options: ["lime", "gold", "violet"],
     mix: [colors.yellow, colors.orange],
@@ -184,7 +164,7 @@ export const colourMixingQuestions = [
 
   {
     type: "colour-mixing",
-    prompt: "Yellow and green make what colour?",
+    prompt: "Yellow + green = ?",
     answer: "lime",
     options: ["turquoise", "lime", "gold"],
     mix: [colors.yellow, colors.green],
@@ -193,7 +173,7 @@ export const colourMixingQuestions = [
 
   {
     type: "colour-mixing",
-    prompt: "Blue and green make what colour?",
+    prompt: "Blue + green = ?",
     answer: "turquoise",
     options: ["turquoise", "violet", "lime"],
     mix: [colors.blue, colors.green],
@@ -202,7 +182,7 @@ export const colourMixingQuestions = [
 
   {
     type: "colour-mixing",
-    prompt: "Blue and purple make what colour?",
+    prompt: "Blue + purple = ?",
     answer: "violet",
     options: ["maroon", "violet", "turquoise"],
     mix: [colors.blue, colors.purple],
@@ -211,7 +191,7 @@ export const colourMixingQuestions = [
 
   {
     type: "colour-mixing",
-    prompt: "Red and purple make what colour?",
+    prompt: "Red + purple = ?",
     answer: "maroon",
     options: ["pink", "maroon", "violet"],
     mix: [colors.red, colors.purple],
@@ -220,7 +200,7 @@ export const colourMixingQuestions = [
 
   {
     type: "colour-mixing",
-    prompt: "Red and white make what colour?",
+    prompt: "Red + white = ?",
     answer: "pink",
     options: ["pink", "gold", "lime"],
     mix: [colors.red, "#ffffff"],
