@@ -1,9 +1,9 @@
 import { colors, shapes } from "./mathConstants";
 
 export const mathMatchingQuestions = [
-  // -------------------------------------------------------
+  // =========================================================
   // 1. MATCH BY SHAPE
-  // -------------------------------------------------------
+  // =========================================================
 
   {
     type: "matching",
@@ -60,9 +60,9 @@ export const mathMatchingQuestions = [
     },
   },
 
-  // -------------------------------------------------------
+  // =========================================================
   // 2. MATCH BY COLOUR
-  // -------------------------------------------------------
+  // =========================================================
 
   {
     type: "matching",
@@ -119,9 +119,9 @@ export const mathMatchingQuestions = [
     },
   },
 
-  // -------------------------------------------------------
+  // =========================================================
   // 3. MATCH NUMBER TO QUANTITY
-  // -------------------------------------------------------
+  // =========================================================
 
   {
     type: "matching",
@@ -168,53 +168,138 @@ export const mathMatchingQuestions = [
     matchShape: shapes.square,
   },
 
-  // -------------------------------------------------------
-  // 4. SORT BY SHAPE
-  // -------------------------------------------------------
+  // =========================================================
+  // 4. SORT BY SHAPE — DRAG INTO THE BOX
+  // =========================================================
 
   {
     type: "sorting",
+    mode: "shape",
     prompt: "Put the circles together.",
-    answer: shapes.circle,
-    options: [shapes.square, shapes.circle, shapes.triangle],
     sort: shapes.circle,
+
+    items: [
+      { id: "circle-1", shape: shapes.circle, color: colors.red },
+      { id: "star-1", shape: shapes.star, color: colors.blue },
+      { id: "circle-2", shape: shapes.circle, color: colors.yellow },
+      { id: "triangle-1", shape: shapes.triangle, color: colors.green },
+      { id: "circle-3", shape: shapes.circle, color: colors.purple },
+      { id: "heart-1", shape: shapes.heart, color: colors.pink },
+      { id: "circle-4", shape: shapes.circle, color: colors.orange },
+      { id: "square-1", shape: shapes.square, color: colors.blue },
+    ],
+
+    zones: [
+      {
+        id: "circle-zone",
+        targetShape: shapes.circle,
+      },
+    ],
   },
 
   {
     type: "sorting",
+    mode: "shape",
     prompt: "Put the stars together.",
-    answer: shapes.star,
-    options: [shapes.heart, shapes.star, shapes.diamond],
     sort: shapes.star,
+
+    items: [
+      { id: "star-1", shape: shapes.star, color: colors.yellow },
+      { id: "circle-1", shape: shapes.circle, color: colors.blue },
+      { id: "star-2", shape: shapes.star, color: colors.red },
+      { id: "triangle-1", shape: shapes.triangle, color: colors.green },
+      { id: "star-3", shape: shapes.star, color: colors.purple },
+      { id: "heart-1", shape: shapes.heart, color: colors.pink },
+      { id: "star-4", shape: shapes.star, color: colors.orange },
+      { id: "square-1", shape: shapes.square, color: colors.blue },
+    ],
+
+    zones: [
+      {
+        id: "star-zone",
+        targetShape: shapes.star,
+      },
+    ],
   },
 
   {
     type: "sorting",
+    mode: "shape",
     prompt: "Put the triangles together.",
-    answer: shapes.triangle,
-    options: [shapes.oval, shapes.triangle, shapes.square],
     sort: shapes.triangle,
+
+    items: [
+      { id: "triangle-1", shape: shapes.triangle, color: colors.red },
+      { id: "circle-1", shape: shapes.circle, color: colors.blue },
+      { id: "triangle-2", shape: shapes.triangle, color: colors.yellow },
+      { id: "square-1", shape: shapes.square, color: colors.green },
+      { id: "triangle-3", shape: shapes.triangle, color: colors.purple },
+      { id: "heart-1", shape: shapes.heart, color: colors.pink },
+      { id: "triangle-4", shape: shapes.triangle, color: colors.orange },
+      { id: "star-1", shape: shapes.star, color: colors.blue },
+    ],
+
+    zones: [
+      {
+        id: "triangle-zone",
+        targetShape: shapes.triangle,
+      },
+    ],
   },
 
   {
     type: "sorting",
+    mode: "shape",
     prompt: "Put the hearts together.",
-    answer: shapes.heart,
-    options: [shapes.circle, shapes.heart, shapes.pentagon],
     sort: shapes.heart,
+
+    items: [
+      { id: "heart-1", shape: shapes.heart, color: colors.red },
+      { id: "square-1", shape: shapes.square, color: colors.blue },
+      { id: "heart-2", shape: shapes.heart, color: colors.yellow },
+      { id: "diamond-1", shape: shapes.diamond, color: colors.green },
+      { id: "heart-3", shape: shapes.heart, color: colors.purple },
+      { id: "circle-1", shape: shapes.circle, color: colors.orange },
+      { id: "heart-4", shape: shapes.heart, color: colors.pink },
+      { id: "star-1", shape: shapes.star, color: colors.blue },
+    ],
+
+    zones: [
+      {
+        id: "heart-zone",
+        targetShape: shapes.heart,
+      },
+    ],
   },
 
   {
     type: "sorting",
-    prompt: "Put the hexagons together.",
-    answer: shapes.hexagon,
-    options: [shapes.octagon, shapes.hexagon, shapes.diamond],
-    sort: shapes.hexagon,
+    mode: "shape",
+    prompt: "Put the diamonds together.",
+    sort: shapes.diamond,
+
+    items: [
+      { id: "diamond-1", shape: shapes.diamond, color: colors.red },
+      { id: "star-1", shape: shapes.star, color: colors.blue },
+      { id: "diamond-2", shape: shapes.diamond, color: colors.yellow },
+      { id: "circle-1", shape: shapes.circle, color: colors.green },
+      { id: "diamond-3", shape: shapes.diamond, color: colors.purple },
+      { id: "triangle-1", shape: shapes.triangle, color: colors.orange },
+      { id: "diamond-4", shape: shapes.diamond, color: colors.pink },
+      { id: "heart-1", shape: shapes.heart, color: colors.blue },
+    ],
+
+    zones: [
+      {
+        id: "diamond-zone",
+        targetShape: shapes.diamond,
+      },
+    ],
   },
 
-  // -------------------------------------------------------
+  // =========================================================
   // 5. SORT BY COLOUR
-  // -------------------------------------------------------
+  // =========================================================
 
   {
     type: "sorting",
@@ -266,12 +351,9 @@ export const mathMatchingQuestions = [
     sortColor: "purple",
   },
 
-  // -------------------------------------------------------
-  // 6. SORT USING TWO PROPERTIES
-  // -------------------------------------------------------
-  // These use actual colour + shape combinations.
-  // The child must look for BOTH properties.
-  // -------------------------------------------------------
+  // =========================================================
+  // 6. TWO-PROPERTY SORTING
+  // =========================================================
 
   {
     type: "matching",
