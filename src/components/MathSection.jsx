@@ -47,16 +47,33 @@ const readProgress = () => {
   }
 };
 
-const colorLabels = {
-  gold: "gold",
-  lime: "lime",
-  violet: "violet",
-  pink: "pink",
-  turquoise: "turquoise",
-  coral: "coral",
-  maroon: "maroon",
-  skyBlue: "sky blue",
-  navyBlue: "navy blue",
+/*
+ * Every colour that can appear as a child-facing answer.
+ *
+ * The values are internal only. The child sees the colour
+ * itself, not the written colour name.
+ */
+const optionColors = {
+  red: colors.red,
+  yellow: colors.yellow,
+  blue: colors.blue,
+  green: colors.green,
+  orange: colors.orange,
+  purple: colors.purple,
+  gold: colors.gold,
+  lime: colors.lime,
+  turquoise: colors.turquoise,
+  violet: colors.violet,
+  pink: colors.pink,
+  maroon: colors.maroon,
+
+  /*
+   * Vermilion is not part of mathConstants yet, so it is
+   * defined locally here for the answer visual.
+   */
+  vermilion: "#e34234",
+
+  white: "#ffffff",
 };
 
 const countColors = [
@@ -224,13 +241,6 @@ function ShapeRecognitionVisual({ question }) {
   );
 }
 
-/*
- * Colour teaching and recognition.
- *
- * Teaching questions now explicitly show the teaching text.
- * Recognition questions remain visual-only so the child must
- * identify the colour themselves.
- */
 function ColourVisual({ question }) {
   const isTeaching = question.teaching;
 
@@ -256,14 +266,6 @@ function ColourVisual({ question }) {
   );
 }
 
-/*
- * Colour mixing now supports both:
- * 1. teaching/discovery
- * 2. practice questions
- *
- * During teaching, the resulting colour is shown as a third
- * swatch so the child can visually discover the relationship.
- */
 function ColourMixingVisual({ question }) {
   const isTeaching = question.teaching;
 
@@ -282,22 +284,22 @@ function ColourMixingVisual({ question }) {
             style={{ background: color }}
           />
         ))}
+
+        {isTeaching && question.resultColor ? (
+          <>
+            <span className="math-mix-arrow">
+              →
+            </span>
+
+            <span
+              className="math-mix-swatch math-mix-result"
+              style={{
+                background: question.resultColor,
+              }}
+            />
+          </>
+        ) : null}
       </div>
-
-      {isTeaching && question.resultColor ? (
-        <>
-          <span className="math-mix-arrow">
-            →
-          </span>
-
-          <span
-            className="math-mix-swatch math-mix-result"
-            style={{
-              background: question.resultColor,
-            }}
-          />
-        </>
-      ) : null}
 
       {isTeaching && question.teachingText ? (
         <p className="math-teaching-text">
@@ -610,32 +612,61 @@ function QuestionVisual({ question }) {
   return null;
 }
 
+/*
+ * Render answer choices visually whenever possible.
+ *
+ * Children should not have to read colour names or shape names
+ * when the activity is intended to test visual recognition.
+ */
 function OptionVisual({ option, question }) {
-  const colorKey =
-    Object.keys(colorLabels).find(
-      (key) => colorLabels[key] === option
-    ) || option;
-
-  const color = colors[colorKey];
-  const isColorOption = Boolean(color);
-
-  if (isColorOption) {
+  /*
+   * -------------------------------------------------------
+   * COLOUR MIXING
+   * -------------------------------------------------------
+   *
+   * Colour names are internal answer values.
+   * The child sees only the colour.
+   */
+  if (
+    question?.type === "colour-mixing" &&
+    optionColors[option]
+  ) {
     return (
-      <Shape
-        name={question?.shape || shapes.circle}
-        color={color}
+      <span
+        className="math-colour-answer-swatch"
+        style={{
+          background: optionColors[option],
+        }}
+        aria-label=""
       />
     );
   }
 
-  if (
-    [
-      "shape-recognition",
-      "shape-sides",
-      "shape-corners",
-    ].includes(question?.type) &&
-    shapes[option]
-  ) {
+  /*
+   * -------------------------------------------------------
+   * PURE COLOUR OPTIONS
+   * -------------------------------------------------------
+   */
+  if (optionColors[option]) {
+    return (
+      <span
+        className="math-colour-answer-swatch"
+        style={{
+          background: optionColors[option],
+        }}
+        aria-label=""
+      />
+    );
+  }
+
+  /*
+   * -------------------------------------------------------
+   * PURE SHAPE OPTIONS
+   * -------------------------------------------------------
+   *
+   * This fixes Mission 5 shape matching.
+   */
+  if (shapes[option]) {
     return (
       <Shape
         name={option}
@@ -644,6 +675,46 @@ function OptionVisual({ option, question }) {
     );
   }
 
+  /*
+   * -------------------------------------------------------
+   * COLOUR + SHAPE OPTIONS
+   * -------------------------------------------------------
+   *
+   * Example:
+   * "red triangle"
+   * "blue circle"
+   * "yellow star"
+   *
+   * These become actual coloured shapes.
+   */
+  if (
+    typeof option === "string" &&
+    option.includes(" ")
+  ) {
+    const parts = option.trim().split(/\s+/);
+
+    if (parts.length === 2) {
+      const [optionColor, optionShape] = parts;
+
+      if (
+        optionColors[optionColor] &&
+        shapes[optionShape]
+      ) {
+        return (
+          <Shape
+            name={optionShape}
+            color={optionColors[optionColor]}
+          />
+        );
+      }
+    }
+  }
+
+  /*
+   * -------------------------------------------------------
+   * NUMBER → QUANTITY
+   * -------------------------------------------------------
+   */
   if (
     question?.type === "matching" &&
     question.quantity
@@ -651,29 +722,26 @@ function OptionVisual({ option, question }) {
     return option;
   }
 
+  /*
+   * -------------------------------------------------------
+   * TWO-PROPERTY FALLBACK
+   * -------------------------------------------------------
+   */
   if (question?.twoProperties) {
     return option;
   }
 
-  if (
-    question?.type === "matching" &&
-    question.match
-  ) {
-    const [optionColor, optionShape] =
-      option.split(" ");
-
-    return (
-      <Shape
-        name={optionShape}
-        color={colors[optionColor]}
-      />
-    );
-  }
-
+  /*
+   * -------------------------------------------------------
+   * SORTING BY QUANTITY
+   * -------------------------------------------------------
+   */
   if (
     question?.type === "sorting" &&
     question.groups &&
-    question.groups.every((item) => /^\d+$/.test(item))
+    question.groups.every((item) =>
+      /^\d+$/.test(item)
+    )
   ) {
     return (
       <span className="math-option-group">
@@ -691,6 +759,11 @@ function OptionVisual({ option, question }) {
     );
   }
 
+  /*
+   * -------------------------------------------------------
+   * SORTING BY SHAPE
+   * -------------------------------------------------------
+   */
   if (
     question?.type === "sorting" &&
     question.sort &&
@@ -712,6 +785,11 @@ function OptionVisual({ option, question }) {
     );
   }
 
+  /*
+   * -------------------------------------------------------
+   * ODD ONE OUT
+   * -------------------------------------------------------
+   */
   if (
     question?.type === "sorting" &&
     question.oddOneOut &&
@@ -1111,14 +1189,14 @@ export default function MathSection({
             }
             disabled={isProcessing}
           >
-            {question.teaching
-              ? option
-              : (
-                <OptionVisual
-                  option={option}
-                  question={question}
-                />
-              )}
+            {question.teaching ? (
+              option
+            ) : (
+              <OptionVisual
+                option={option}
+                question={question}
+              />
+            )}
           </button>
         ))}
       </div>
