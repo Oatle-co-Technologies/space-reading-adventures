@@ -1,4 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import "./MathSection.css";
 import { colors, shapes } from "../data/mathConstants";
 import { mathMissions } from "../data/mathMissions";
@@ -40,7 +45,10 @@ const readProgress = () => {
     return {
       ...defaultProgress,
       ...saved,
-      question: Math.min(saved.question || 0, lastQuestion),
+      question: Math.min(
+        saved.question || 0,
+        lastQuestion
+      ),
     };
   } catch {
     return defaultProgress;
@@ -76,15 +84,24 @@ const countColors = [
 function getItemColor(item) {
   if (!item) return "#55c6ff";
 
-  if (item.color && typeof item.color === "string") {
+  if (
+    item.color &&
+    typeof item.color === "string"
+  ) {
     return item.color;
   }
 
-  if (item.colorName && optionColors[item.colorName]) {
+  if (
+    item.colorName &&
+    optionColors[item.colorName]
+  ) {
     return optionColors[item.colorName];
   }
 
-  if (typeof item.color === "string" && optionColors[item.color]) {
+  if (
+    typeof item.color === "string" &&
+    optionColors[item.color]
+  ) {
     return optionColors[item.color];
   }
 
@@ -94,11 +111,17 @@ function getItemColor(item) {
 function getItemShape(item) {
   if (!item) return null;
 
-  if (item.shape && shapes[item.shape]) {
+  if (
+    item.shape &&
+    shapes[item.shape]
+  ) {
     return item.shape;
   }
 
-  if (typeof item.shape === "string" && shapes[item.shape]) {
+  if (
+    typeof item.shape === "string" &&
+    shapes[item.shape]
+  ) {
     return item.shape;
   }
 
@@ -111,7 +134,13 @@ function Shape({
   className = "",
 }) {
   const paths = {
-    circle: <circle cx="50" cy="50" r="42" />,
+    circle: (
+      <circle
+        cx="50"
+        cy="50"
+        r="42"
+      />
+    ),
 
     square: (
       <rect
@@ -183,7 +212,9 @@ function Shape({
     <svg
       className={`math-shape math-shape-${name} ${className}`}
       viewBox="0 0 100 100"
-      style={{ "--shape-color": color }}
+      style={{
+        "--shape-color": color,
+      }}
       aria-hidden="true"
     >
       {paths[name] || paths.circle}
@@ -199,12 +230,16 @@ function NumberVisual({ question }) {
   );
 }
 
-function CountingShapesVisual({ question }) {
+function CountingShapesVisual({
+  question,
+}) {
   const shapesToRender =
     question.targetShape === "all"
       ? question.shapes
       : Array.from(
-          { length: question.count },
+          {
+            length: question.count,
+          },
           () => question.targetShape
         );
 
@@ -213,18 +248,27 @@ function CountingShapesVisual({ question }) {
       className="math-count-display math-counting-shape-display"
       aria-label={`${question.count} shapes`}
     >
-      {shapesToRender.map((shape, index) => (
-        <Shape
-          key={`${shape}-${index}`}
-          name={shape}
-          color={countColors[index % countColors.length]}
-        />
-      ))}
+      {shapesToRender.map(
+        (shape, index) => (
+          <Shape
+            key={`${shape}-${index}`}
+            name={shape}
+            color={
+              countColors[
+                index %
+                  countColors.length
+              ]
+            }
+          />
+        )
+      )}
     </div>
   );
 }
 
-function ShapeIntroductionVisual({ question }) {
+function ShapeIntroductionVisual({
+  question,
+}) {
   return (
     <div className="math-introduction-visual">
       <div className="math-feature-display">
@@ -234,12 +278,16 @@ function ShapeIntroductionVisual({ question }) {
         />
       </div>
 
-      <p>{question.teachingText}</p>
+      <p>
+        {question.teachingText}
+      </p>
     </div>
   );
 }
 
-function ShapeFactVisual({ question }) {
+function ShapeFactVisual({
+  question,
+}) {
   return (
     <div className="math-feature-display">
       <Shape
@@ -250,7 +298,9 @@ function ShapeFactVisual({ question }) {
   );
 }
 
-function ShapeRecognitionVisual({ question }) {
+function ShapeRecognitionVisual({
+  question,
+}) {
   return (
     <div className="math-feature-display">
       <Shape
@@ -261,13 +311,18 @@ function ShapeRecognitionVisual({ question }) {
   );
 }
 
-function ColourVisual({ question }) {
-  const isTeaching = question.teaching;
+function ColourVisual({
+  question,
+}) {
+  const isTeaching =
+    question.teaching;
 
   return (
     <div
       className={`math-colour-visual ${
-        isTeaching ? "is-teaching" : ""
+        isTeaching
+          ? "is-teaching"
+          : ""
       }`}
     >
       <div className="math-feature-display">
@@ -277,7 +332,8 @@ function ColourVisual({ question }) {
         />
       </div>
 
-      {isTeaching && question.teachingText ? (
+      {isTeaching &&
+      question.teachingText ? (
         <p className="math-teaching-text">
           {question.teachingText}
         </p>
@@ -286,35 +342,46 @@ function ColourVisual({ question }) {
   );
 }
 
-function ColourMixingVisual({ question }) {
-  const isTeaching = question.teaching;
+function ColourMixingVisual({
+  question,
+}) {
+  const isTeaching =
+    question.teaching;
 
   return (
     <div
       className={`math-mix-display ${
-        isTeaching ? "is-teaching" : ""
+        isTeaching
+          ? "is-teaching"
+          : ""
       }`}
       aria-label="Two colours to mix"
     >
       <div className="math-mix-colours">
-        {question.mix.map((color, index) => (
-          <span
-            key={`${color}-${index}`}
-            className="math-mix-swatch"
-            style={{
-              backgroundColor: color,
-              width: "82px",
-              height: "82px",
-              display: "block",
-              flex: "0 0 82px",
-              border: "4px solid #fff",
-              borderRadius: "50%",
-              boxShadow: "0 0 18px #ffffff55",
-            }}
-          />
-        ))}
+        {question.mix.map(
+          (color, index) => (
+            <span
+              key={`${color}-${index}`}
+              className="math-mix-swatch"
+              style={{
+                backgroundColor:
+                  color,
+                width: "82px",
+                height: "82px",
+                display: "block",
+                flex: "0 0 82px",
+                border:
+                  "4px solid #fff",
+                borderRadius: "50%",
+                boxShadow:
+                  "0 0 18px #ffffff55",
+              }}
+            />
+          )
+        )}
 
-        {isTeaching && question.resultColor ? (
+        {isTeaching &&
+        question.resultColor ? (
           <>
             <span className="math-mix-arrow">
               →
@@ -323,21 +390,25 @@ function ColourMixingVisual({ question }) {
             <span
               className="math-mix-swatch math-mix-result"
               style={{
-                backgroundColor: question.resultColor,
+                backgroundColor:
+                  question.resultColor,
                 width: "82px",
                 height: "82px",
                 display: "block",
                 flex: "0 0 82px",
-                border: "4px solid #fff",
+                border:
+                  "4px solid #fff",
                 borderRadius: "50%",
-                boxShadow: "0 0 18px #ffffff55",
+                boxShadow:
+                  "0 0 18px #ffffff55",
               }}
             />
           </>
         ) : null}
       </div>
 
-      {isTeaching && question.teachingText ? (
+      {isTeaching &&
+      question.teachingText ? (
         <p className="math-teaching-text">
           {question.teachingText}
         </p>
@@ -346,56 +417,46 @@ function ColourMixingVisual({ question }) {
   );
 }
 
-/*
- * ---------------------------------------------------------
- * INTERACTIVE MATCHING / SORTING
- * ---------------------------------------------------------
- *
- * Mission 5 can provide:
- *
- * items: [
- *   { id: "star-1", shape: "star", color: colors.yellow },
- *   { id: "circle-1", shape: "circle", color: colors.blue },
- * ]
- *
- * zones: [
- *   {
- *     id: "stars",
- *     label: "Stars",
- *     targetShape: "star"
- *   }
- * ]
- *
- * The child physically moves each item into a zone.
- */
+/* ---------------------------------------------------------
+   INTERACTIVE MATCHING / SORTING
+--------------------------------------------------------- */
 
-function itemMatchesZone(item, zone) {
-  if (!item || !zone) return false;
+function itemMatchesZone(
+  item,
+  zone
+) {
+  if (!item || !zone) {
+    return false;
+  }
 
   if (
     zone.targetShape &&
-    item.shape !== zone.targetShape
+    item.shape !==
+      zone.targetShape
   ) {
     return false;
   }
 
   const itemColor =
     item.colorName ||
-    (typeof item.color === "string" &&
+    (typeof item.color ===
+      "string" &&
     optionColors[item.color]
       ? item.color
       : null);
 
   if (
     zone.targetColor &&
-    itemColor !== zone.targetColor
+    itemColor !==
+      zone.targetColor
   ) {
     return false;
   }
 
   if (
     zone.targetType &&
-    item.type !== zone.targetType
+    item.type !==
+      zone.targetType
   ) {
     return false;
   }
@@ -407,19 +468,38 @@ function itemMatchesZone(item, zone) {
   );
 }
 
+function getTargetItems(
+  question,
+  zone
+) {
+  return (question.items || []).filter(
+    (item) =>
+      itemMatchesZone(item, zone)
+  );
+}
+
 function DraggableItem({
   item,
   position,
   dragging,
   onPointerDown,
 }) {
-  const shape = getItemShape(item);
-  const color = getItemColor(item);
+  if (!position) {
+    return null;
+  }
+
+  const shape =
+    getItemShape(item);
+
+  const color =
+    getItemColor(item);
 
   return (
     <div
       className={`math-draggable-item ${
-        dragging ? "is-dragging" : ""
+        dragging
+          ? "is-dragging"
+          : ""
       }`}
       style={{
         position: "absolute",
@@ -429,17 +509,25 @@ function DraggableItem({
         height: "76px",
         display: "grid",
         placeItems: "center",
-        transform: "translate(-50%, -50%)",
+        transform:
+          "translate(-50%, -50%)",
         touchAction: "none",
         userSelect: "none",
-        cursor: "grab",
-        zIndex: dragging ? 100 : 2,
+        cursor: dragging
+          ? "grabbing"
+          : "grab",
+        zIndex: dragging
+          ? 100
+          : 2,
         transition: dragging
           ? "none"
-          : "left 0.25s ease, top 0.25s ease",
+          : "left 0.22s ease, top 0.22s ease",
       }}
       onPointerDown={(event) =>
-        onPointerDown(event, item.id)
+        onPointerDown(
+          event,
+          item.id
+        )
       }
     >
       {shape ? (
@@ -462,9 +550,12 @@ function DraggableItem({
             width: "58px",
             height: "58px",
             borderRadius: "50%",
-            backgroundColor: color,
-            border: "3px solid #fff",
-            boxShadow: "0 0 18px #ffffff66",
+            backgroundColor:
+              color,
+            border:
+              "3px solid #fff",
+            boxShadow:
+              "0 0 18px #ffffff66",
           }}
         />
       )}
@@ -477,103 +568,198 @@ function InteractiveSortVisual({
   onComplete,
   onWrong,
 }) {
-  const containerRef = useRef(null);
+  const containerRef =
+    useRef(null);
 
-  const [positions, setPositions] = useState(() => {
-    const items = question.items || [];
+  const [positions, setPositions] =
+    useState({});
 
-    return items.reduce((result, item, index) => {
-      result[item.id] = {
-        x: 90 + (index % 5) * 125,
-        y: 90 + Math.floor(index / 5) * 105,
-      };
+  const [placed, setPlaced] =
+    useState({});
 
-      return result;
-    }, {});
-  });
+  const [draggingId, setDraggingId] =
+    useState(null);
 
-  const [placed, setPlaced] = useState({});
-  const [draggingId, setDraggingId] = useState(null);
-
-  const dragOffset = useRef({
-    x: 0,
-    y: 0,
-  });
-
-  const originalPositions = useRef(positions);
-
-  useEffect(() => {
-    const nextPositions = {};
-    const items = question.items || [];
-
-    items.forEach((item, index) => {
-      nextPositions[item.id] = {
-        x: 90 + (index % 5) * 125,
-        y: 90 + Math.floor(index / 5) * 105,
-      };
+  const dragOffset =
+    useRef({
+      x: 0,
+      y: 0,
     });
 
-    setPositions(nextPositions);
-    originalPositions.current = nextPositions;
+  const originalPositions =
+    useRef({});
+
+  const currentPointerId =
+    useRef(null);
+
+  const items =
+    question.items || [];
+
+  const zones =
+    question.zones || [];
+
+  const zone =
+    zones[0];
+
+  const targetItems = zone
+    ? getTargetItems(
+        question,
+        zone
+      )
+    : [];
+
+  const targetItemIds =
+    useMemo(
+      () =>
+        new Set(
+          targetItems.map(
+            (item) => item.id
+          )
+        ),
+      [question, targetItems.length]
+    );
+
+  useEffect(() => {
+    const nextPositions =
+      {};
+
+    items.forEach(
+      (item, index) => {
+        const column =
+          index % 5;
+
+        const row =
+          Math.floor(index / 5);
+
+        nextPositions[
+          item.id
+        ] = {
+          x:
+            72 +
+            column * 135,
+          y:
+            82 +
+            row * 88,
+        };
+      }
+    );
+
+    setPositions(
+      nextPositions
+    );
+
+    originalPositions.current =
+      nextPositions;
+
     setPlaced({});
     setDraggingId(null);
-  }, [question]);
+    currentPointerId.current =
+      null;
+  }, [question, items]);
 
-  const getContainerPoint = (event) => {
-    const rect =
-      containerRef.current?.getBoundingClientRect();
+  const getContainerPoint =
+    (event) => {
+      const rect =
+        containerRef.current?.getBoundingClientRect();
 
-    if (!rect) {
-      return { x: 0, y: 0 };
+      if (!rect) {
+        return {
+          x: 0,
+          y: 0,
+        };
+      }
+
+      return {
+        x:
+          event.clientX -
+          rect.left,
+        y:
+          event.clientY -
+          rect.top,
+      };
+    };
+
+  const getZoneAtPoint = (
+    x,
+    y
+  ) => {
+    const container =
+      containerRef.current;
+
+    if (!container) {
+      return null;
     }
 
-    return {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
-    };
-  };
+    const containerRect =
+      container.getBoundingClientRect();
 
-  const getZoneAtPoint = (x, y) => {
-    const zones =
-      containerRef.current?.querySelectorAll(
+    const absoluteX =
+      containerRect.left + x;
+
+    const absoluteY =
+      containerRect.top + y;
+
+    const zoneElements =
+      container.querySelectorAll(
         "[data-sort-zone]"
       );
 
-    if (!zones) return null;
-
-    for (const zoneElement of zones) {
+    for (
+      const zoneElement of zoneElements
+    ) {
       const rect =
         zoneElement.getBoundingClientRect();
 
       if (
-        x + containerRef.current.getBoundingClientRect()
-          .left >= rect.left &&
-        x + containerRef.current.getBoundingClientRect()
-          .left <= rect.right &&
-        y + containerRef.current.getBoundingClientRect()
-          .top >= rect.top &&
-        y + containerRef.current.getBoundingClientRect()
-          .top <= rect.bottom
+        absoluteX >= rect.left &&
+        absoluteX <= rect.right &&
+        absoluteY >= rect.top &&
+        absoluteY <= rect.bottom
       ) {
-        return zoneElement.dataset.sortZone;
+        return (
+          zoneElement.dataset
+            .sortZone
+        );
       }
     }
 
     return null;
   };
 
-  const startDrag = (event, itemId) => {
+  const startDrag = (
+    event,
+    itemId
+  ) => {
+    if (
+      placed[itemId] ||
+      draggingId
+    ) {
+      return;
+    }
+
     event.preventDefault();
 
-    const point = getContainerPoint(event);
-    const currentPosition = positions[itemId];
+    const point =
+      getContainerPoint(event);
 
-    if (!currentPosition) return;
+    const currentPosition =
+      positions[itemId];
+
+    if (!currentPosition) {
+      return;
+    }
 
     dragOffset.current = {
-      x: point.x - currentPosition.x,
-      y: point.y - currentPosition.y,
+      x:
+        point.x -
+        currentPosition.x,
+      y:
+        point.y -
+        currentPosition.y,
     };
+
+    currentPointerId.current =
+      event.pointerId;
 
     setDraggingId(itemId);
 
@@ -582,94 +768,133 @@ function InteractiveSortVisual({
     );
   };
 
-  const moveDrag = (event) => {
-    if (!draggingId) return;
-
-    event.preventDefault();
-
-    const point = getContainerPoint(event);
-
-    setPositions((current) => ({
-      ...current,
-      [draggingId]: {
-        x: point.x - dragOffset.current.x,
-        y: point.y - dragOffset.current.y,
-      },
-    }));
-  };
-
-  const finishDrag = (event) => {
-    if (!draggingId) return;
-
-    const itemId = draggingId;
-    const item = question.items.find(
-      (entry) => entry.id === itemId
-    );
-
-    const point = getContainerPoint(event);
-    const zoneId = getZoneAtPoint(
-      point.x,
-      point.y
-    );
-
-    setDraggingId(null);
-
-    if (!zoneId) {
-      setPositions((current) => ({
-        ...current,
-        [itemId]:
-          originalPositions.current[itemId],
-      }));
-
+  const moveDrag = (
+    event
+  ) => {
+    if (
+      !draggingId ||
+      event.pointerId !==
+        currentPointerId.current
+    ) {
       return;
     }
 
-    const zone = question.zones.find(
-      (entry) => entry.id === zoneId
-    );
+    event.preventDefault();
 
-    if (!itemMatchesZone(item, zone)) {
-      setPositions((current) => ({
+    const point =
+      getContainerPoint(event);
+
+    setPositions(
+      (current) => ({
+        ...current,
+        [draggingId]: {
+          x:
+            point.x -
+            dragOffset.current
+              .x,
+          y:
+            point.y -
+            dragOffset.current
+              .y,
+        },
+      })
+    );
+  };
+
+  const resetItem = (
+    itemId
+  ) => {
+    setPositions(
+      (current) => ({
         ...current,
         [itemId]:
-          originalPositions.current[itemId],
-      }));
+          originalPositions
+            .current[itemId],
+      })
+    );
+  };
 
+  const finishDrag = (
+    event
+  ) => {
+    if (
+      !draggingId ||
+      event.pointerId !==
+        currentPointerId.current
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const itemId =
+      draggingId;
+
+    const item =
+      items.find(
+        (entry) =>
+          entry.id === itemId
+      );
+
+    const point =
+      getContainerPoint(event);
+
+    const zoneId =
+      getZoneAtPoint(
+        point.x,
+        point.y
+      );
+
+    setDraggingId(null);
+    currentPointerId.current =
+      null;
+
+    if (!item || !zoneId) {
+      resetItem(itemId);
+      return;
+    }
+
+    const targetZone =
+      zones.find(
+        (entry) =>
+          entry.id === zoneId
+      );
+
+    if (
+      !itemMatchesZone(
+        item,
+        targetZone
+      )
+    ) {
+      resetItem(itemId);
       onWrong?.();
       return;
     }
 
-    setPlaced((current) => ({
-      ...current,
+    const nextPlaced = {
+      ...placed,
       [itemId]: zoneId,
-    }));
+    };
 
-    const zoneItems = question.items.filter(
-      (entry) =>
-        itemMatchesZone(entry, zone) &&
-        (
-          placed[entry.id] === zoneId ||
-          entry.id === itemId
-        )
+    setPlaced(
+      nextPlaced
     );
 
-    const allItemsPlaced =
-      question.items.length ===
-      Object.keys({
-        ...placed,
-        [itemId]: zoneId,
-      }).length;
-
-    if (allItemsPlaced) {
-      window.setTimeout(() => {
-        onComplete?.();
-      }, 450);
-      return;
-    }
+    /*
+     * Only target objects count
+     * toward completion.
+     */
+    const placedTargetCount =
+      targetItems.filter(
+        (targetItem) =>
+          nextPlaced[
+            targetItem.id
+          ] === zoneId
+      ).length;
 
     /*
-     * Snap the item into a pleasant position
-     * inside its sorting zone.
+     * Snap the object into the
+     * sorting box.
      */
     const zoneElement =
       containerRef.current?.querySelector(
@@ -683,43 +908,66 @@ function InteractiveSortVisual({
       const zoneRect =
         zoneElement.getBoundingClientRect();
 
-      const alreadyPlacedInZone =
-        zoneItems.length - 1;
+      const alreadyPlaced =
+        placedTargetCount - 1;
 
       const columns = 4;
+
       const column =
-        alreadyPlacedInZone % columns;
+        alreadyPlaced %
+        columns;
+
       const row =
         Math.floor(
-          alreadyPlacedInZone / columns
+          alreadyPlaced /
+            columns
         );
 
-      setPositions((current) => ({
-        ...current,
-        [itemId]: {
-          x:
-            zoneRect.left -
-            containerRect.left +
-            55 +
-            column * 62,
-          y:
-            zoneRect.top -
-            containerRect.top +
-            70 +
-            row * 62,
+      setPositions(
+        (current) => ({
+          ...current,
+          [itemId]: {
+            x:
+              zoneRect.left -
+              containerRect.left +
+              72 +
+              column * 78,
+
+            y:
+              zoneRect.top -
+              containerRect.top +
+              82 +
+              row * 70,
+          },
+        })
+      );
+    }
+
+    if (
+      placedTargetCount ===
+      targetItems.length
+    ) {
+      window.setTimeout(
+        () => {
+          onComplete?.();
         },
-      }));
+        450
+      );
     }
   };
 
-  const zones = question.zones || [];
-  const items = question.items || [];
-
-  const placedCount = Object.keys(placed).length;
-
-  if (!items.length || !zones.length) {
+  if (
+    !items.length ||
+    !zones.length
+  ) {
     return null;
   }
+
+  const placedTargetCount =
+    targetItems.filter(
+      (item) =>
+        placed[item.id]
+    ).length;
 
   return (
     <div
@@ -730,14 +978,22 @@ function InteractiveSortVisual({
         width: "100%",
         maxWidth: "760px",
         minHeight: "470px",
-        margin: "20px auto 0",
+        margin:
+          "20px auto 0",
         touchAction: "none",
         userSelect: "none",
       }}
-      onPointerMove={moveDrag}
-      onPointerUp={finishDrag}
-      onPointerCancel={finishDrag}
+      onPointerMove={
+        moveDrag
+      }
+      onPointerUp={
+        finishDrag
+      }
+      onPointerCancel={
+        finishDrag
+      }
     >
+      {/* MIXED OBJECT AREA */}
       <div
         className="math-sort-object-area"
         style={{
@@ -745,120 +1001,193 @@ function InteractiveSortVisual({
           top: 0,
           left: 0,
           right: 0,
-          height: "230px",
-          border: "2px dashed #8fe7ff55",
-          borderRadius: "18px",
-          background: "#ffffff08",
+          height: "250px",
+          border:
+            "2px dashed #8fe7ff55",
+          borderRadius:
+            "18px",
+          background:
+            "#ffffff08",
+          overflow: "hidden",
         }}
       >
-        <p
-          style={{
-            margin: "12px 0 0",
-            color: "#8fe7ff",
-            fontWeight: 900,
-            fontSize: "0.85rem",
-            letterSpacing: "0.08em",
-          }}
-        >
-          MOVE THE SHAPES
-        </p>
+        {items.map(
+          (item) => {
+            if (
+              placed[item.id]
+            ) {
+              return null;
+            }
 
-        {items.map((item) => {
-          if (placed[item.id]) {
-            return null;
+            return (
+              <DraggableItem
+                key={item.id}
+                item={item}
+                position={
+                  positions[
+                    item.id
+                  ]
+                }
+                dragging={
+                  draggingId ===
+                  item.id
+                }
+                onPointerDown={
+                  startDrag
+                }
+              />
+            );
           }
-
-          return (
-            <DraggableItem
-              key={item.id}
-              item={item}
-              position={positions[item.id]}
-              dragging={draggingId === item.id}
-              onPointerDown={startDrag}
-            />
-          );
-        })}
+        )}
       </div>
 
+      {/* ONE OPEN SORTING BOX */}
       <div
         className="math-sort-zones"
         style={{
-          position: "absolute",
+          position:
+            "absolute",
           left: 0,
           right: 0,
           bottom: 0,
-          display: "grid",
-          gridTemplateColumns:
-            zones.length === 1
-              ? "1fr"
-              : `repeat(${Math.min(
-                  zones.length,
-                  2
-                )}, 1fr)`,
-          gap: "16px",
         }}
       >
-        {zones.map((zone) => {
-          const zoneItems = items.filter(
-            (item) =>
-              placed[item.id] === zone.id
-          );
+        <div
+          data-sort-zone={
+            zone.id
+          }
+          className="math-sort-zone"
+          style={{
+            position:
+              "relative",
+            minHeight:
+              "190px",
+            border:
+              "3px dashed #8fe7ff",
+            borderRadius:
+              "18px",
+            background:
+              "#ffffff0d",
+            overflow:
+              "hidden",
+          }}
+        >
+          {/* Visual target — no
+              required reading */}
+          <div
+            style={{
+              position:
+                "absolute",
+              top: "8px",
+              left: 0,
+              right: 0,
+              height: "54px",
+              display:
+                "flex",
+              alignItems:
+                "center",
+              justifyContent:
+                "center",
+              pointerEvents:
+                "none",
+              zIndex: 3,
+            }}
+          >
+            <Shape
+              name={
+                zone.targetShape ||
+                "circle"
+              }
+              color="#8fe7ff"
+            />
+          </div>
 
-          return (
-            <div
-              key={zone.id}
-              data-sort-zone={zone.id}
-              className="math-sort-zone"
-              style={{
-                position: "relative",
-                minHeight: "190px",
-                border: "3px dashed #8fe7ff",
-                borderRadius: "18px",
-                background: "#ffffff0d",
-                overflow: "hidden",
-              }}
-            >
-              <div
-                style={{
-                  position: "relative",
-                  zIndex: 3,
-                  padding: "10px 12px",
-                  color: "#fff",
-                  fontWeight: 900,
-                  fontSize: "1rem",
-                  pointerEvents: "none",
-                }}
-              >
-                {zone.label}
-              </div>
+          {targetItems.map(
+            (item) => {
+              if (
+                !placed[
+                  item.id
+                ]
+              ) {
+                return null;
+              }
 
-              {zoneItems.map((item) => (
-                <DraggableItem
-                  key={item.id}
-                  item={item}
-                  position={positions[item.id]}
-                  dragging={false}
-                  onPointerDown={startDrag}
-                />
-              ))}
-            </div>
-          );
-        })}
+              const position =
+                positions[
+                  item.id
+                ];
+
+              if (
+                !position
+              ) {
+                return null;
+              }
+
+              return (
+                <div
+                  key={
+                    item.id
+                  }
+                  style={{
+                    position:
+                      "absolute",
+                    left: `${position.x -
+                      (containerRef.current?.getBoundingClientRect()
+                        ?.left || 0)}px`,
+                    top: `${position.y -
+                      (containerRef.current?.getBoundingClientRect()
+                        ?.top || 0)}px`,
+                    width:
+                      "60px",
+                    height:
+                      "60px",
+                    transform:
+                      "translate(-50%, -50%)",
+                    display:
+                      "grid",
+                    placeItems:
+                      "center",
+                    pointerEvents:
+                      "none",
+                  }}
+                >
+                  <Shape
+                    name={
+                      getItemShape(
+                        item
+                      )
+                    }
+                    color={getItemColor(
+                      item
+                    )}
+                  />
+                </div>
+              );
+            }
+          )}
+        </div>
       </div>
 
+      {/* PROGRESS */}
       <div
         style={{
-          position: "absolute",
-          bottom: "-34px",
+          position:
+            "absolute",
+          bottom:
+            "-34px",
           left: 0,
           right: 0,
-          textAlign: "center",
-          color: "#c7d2f6",
-          fontSize: "0.85rem",
+          textAlign:
+            "center",
+          color:
+            "#c7d2f6",
+          fontSize:
+            "0.85rem",
           fontWeight: 800,
         }}
       >
-        {placedCount} of {items.length}
+        {placedTargetCount} of{" "}
+        {targetItems.length}
       </div>
     </div>
   );
@@ -869,9 +1198,6 @@ function MatchingVisual({
   onInteractiveComplete,
   onInteractiveWrong,
 }) {
-  /*
-   * New interactive Mission 5 questions.
-   */
   if (
     question.items &&
     question.zones
@@ -879,8 +1205,12 @@ function MatchingVisual({
     return (
       <InteractiveSortVisual
         question={question}
-        onComplete={onInteractiveComplete}
-        onWrong={onInteractiveWrong}
+        onComplete={
+          onInteractiveComplete
+        }
+        onWrong={
+          onInteractiveWrong
+        }
       />
     );
   }
@@ -892,11 +1222,16 @@ function MatchingVisual({
         aria-label={`${question.quantity} shapes`}
       >
         {Array.from(
-          { length: question.quantity },
+          {
+            length:
+              question.quantity,
+          },
           (_, index) => (
             <Shape
               key={index}
-              name={question.matchShape}
+              name={
+                question.matchShape
+              }
               color="#ffd45c"
             />
           )
@@ -909,31 +1244,46 @@ function MatchingVisual({
     return (
       <div className="math-feature-display">
         <Shape
-          name={question.match.shape}
-          color={question.match.color}
+          name={
+            question.match.shape
+          }
+          color={
+            question.match.color
+          }
         />
       </div>
     );
   }
 
-  if (question.twoProperties) {
+  if (
+    question.twoProperties
+  ) {
     return (
       <div className="math-feature-row">
-        {question.groups.map((item, index) => {
-          const [color, shape] =
-            item.split(" ");
+        {question.groups.map(
+          (item, index) => {
+            const [
+              color,
+              shape,
+            ] =
+              item.split(
+                " "
+              );
 
-          return (
-            <Shape
-              key={`${item}-${index}`}
-              name={shape}
-              color={
-                optionColors[color] ||
-                "#55c6ff"
-              }
-            />
-          );
-        })}
+            return (
+              <Shape
+                key={`${item}-${index}`}
+                name={shape}
+                color={
+                  optionColors[
+                    color
+                  ] ||
+                  "#55c6ff"
+                }
+              />
+            );
+          }
+        )}
       </div>
     );
   }
@@ -946,7 +1296,9 @@ function MatchingVisual({
           (_, index) => (
             <Shape
               key={index}
-              name={question.sort}
+              name={
+                question.sort
+              }
               color="#66d17a"
             />
           )
@@ -955,7 +1307,9 @@ function MatchingVisual({
     );
   }
 
-  if (question.oddOneOut) {
+  if (
+    question.oddOneOut
+  ) {
     return (
       <div className="math-feature-row">
         {question.oddOneOut.map(
@@ -971,7 +1325,11 @@ function MatchingVisual({
     );
   }
 
-  return <ColourVisual question={question} />;
+  return (
+    <ColourVisual
+      question={question}
+    />
+  );
 }
 
 function SortingVisual({
@@ -986,8 +1344,12 @@ function SortingVisual({
     return (
       <InteractiveSortVisual
         question={question}
-        onComplete={onInteractiveComplete}
-        onWrong={onInteractiveWrong}
+        onComplete={
+          onInteractiveComplete
+        }
+        onWrong={
+          onInteractiveWrong
+        }
       />
     );
   }
@@ -1000,7 +1362,9 @@ function SortingVisual({
           (_, index) => (
             <Shape
               key={index}
-              name={question.sort}
+              name={
+                question.sort
+              }
               color="#66d17a"
             />
           )
@@ -1009,7 +1373,9 @@ function SortingVisual({
     );
   }
 
-  if (question.oddOneOut) {
+  if (
+    question.oddOneOut
+  ) {
     return (
       <div className="math-feature-row">
         {question.oddOneOut.map(
@@ -1025,19 +1391,34 @@ function SortingVisual({
     );
   }
 
-  return <ColourVisual question={question} />;
+  return (
+    <ColourVisual
+      question={question}
+    />
+  );
 }
 
-function ArithmeticVisual({ question }) {
-  const [first, second] = question.values;
-  const removedStart = first - second;
+function ArithmeticVisual({
+  question,
+}) {
+  const [
+    first,
+    second,
+  ] = question.values;
+
+  const removedStart =
+    first - second;
+
   const isSubtraction =
-    question.operation === "-";
+    question.operation ===
+    "-";
 
   const objectSymbol =
-    question.object === "apple"
+    question.object ===
+    "apple"
       ? "🍎"
-      : question.object === "planet"
+      : question.object ===
+          "planet"
         ? "🪐"
         : "⭐";
 
@@ -1048,13 +1429,16 @@ function ArithmeticVisual({ question }) {
     >
       <div className="math-arithmetic-group">
         {Array.from(
-          { length: first },
+          {
+            length: first,
+          },
           (_, index) => (
             <span
               key={index}
               className={`math-object ${
                 isSubtraction &&
-                index >= removedStart
+                index >=
+                  removedStart
                   ? "is-taken"
                   : ""
               }`}
@@ -1073,7 +1457,10 @@ function ArithmeticVisual({ question }) {
         {isSubtraction
           ? null
           : Array.from(
-              { length: second },
+              {
+                length:
+                  second,
+              },
               (_, index) => (
                 <span
                   key={index}
@@ -1096,7 +1483,9 @@ function ArithmeticVisual({ question }) {
   );
 }
 
-function NumberEquationVisual({ question }) {
+function NumberEquationVisual({
+  question,
+}) {
   const first =
     question.values?.[0] ??
     question.dividend;
@@ -1106,30 +1495,44 @@ function NumberEquationVisual({ question }) {
     question.divisor;
 
   const operation =
-    question.operation || "÷";
+    question.operation ||
+    "÷";
 
   return (
     <div className="math-number-equation">
-      {first} {operation} {second} = ?
+      {first} {operation}{" "}
+      {second} = ?
     </div>
   );
 }
 
-function GroupingVisual({ question }) {
+function GroupingVisual({
+  question,
+}) {
   return (
     <div className="math-equal-groups">
       {question.groups.map(
-        (group, groupIndex) => (
+        (
+          group,
+          groupIndex
+        ) => (
           <div
             className="math-small-group"
             key={groupIndex}
           >
             {Array.from(
-              { length: group },
-              (_, itemIndex) => (
+              {
+                length: group,
+              },
+              (
+                _,
+                itemIndex
+              ) => (
                 <span
                   className="math-object"
-                  key={itemIndex}
+                  key={
+                    itemIndex
+                  }
                 >
                   🍎
                 </span>
@@ -1142,8 +1545,11 @@ function GroupingVisual({ question }) {
   );
 }
 
-function SharingVisual({ question }) {
-  const groups = question.groups;
+function SharingVisual({
+  question,
+}) {
+  const groups =
+    question.groups;
 
   return (
     <div
@@ -1156,43 +1562,71 @@ function SharingVisual({ question }) {
           aria-hidden="true"
         >
           {Array.from(
-            { length: question.friends },
+            {
+              length:
+                question.friends,
+            },
             (_, index) => (
-              <span key={index}>🧒</span>
+              <span
+                key={index}
+              >
+                🧒
+              </span>
             )
           )}
         </div>
       ) : null}
 
-      {groups.map((count, groupIndex) => (
-        <div
-          className="math-small-group"
-          key={groupIndex}
-        >
-          {Array.from(
-            { length: count },
-            (_, itemIndex) => (
-              <span
-                className="math-object"
-                key={itemIndex}
-              >
-                🍎
-              </span>
-            )
-          )}
-        </div>
-      ))}
+      {groups.map(
+        (
+          count,
+          groupIndex
+        ) => (
+          <div
+            className="math-small-group"
+            key={
+              groupIndex
+            }
+          >
+            {Array.from(
+              {
+                length:
+                  count,
+              },
+              (
+                _,
+                itemIndex
+              ) => (
+                <span
+                  className="math-object"
+                  key={
+                    itemIndex
+                  }
+                >
+                  🍎
+                </span>
+              )
+            )}
+          </div>
+        )
+      )}
     </div>
   );
 }
 
 const visualRenderers = {
-  number: NumberVisual,
+  number:
+    NumberVisual,
 
   "shape-introduction":
     ShapeIntroductionVisual,
-  "shape-sides": ShapeFactVisual,
-  "shape-corners": ShapeFactVisual,
+
+  "shape-sides":
+    ShapeFactVisual,
+
+  "shape-corners":
+    ShapeFactVisual,
+
   "shape-recognition":
     ShapeRecognitionVisual,
 
@@ -1201,33 +1635,46 @@ const visualRenderers = {
 
   "colour-introduction":
     ColourVisual,
+
   "colour-recognition":
     ColourVisual,
+
   "colour-mixing":
     ColourMixingVisual,
 
-  matching: MatchingVisual,
-  sorting: SortingVisual,
+  matching:
+    MatchingVisual,
+
+  sorting:
+    SortingVisual,
 
   "addition-introduction":
     ArithmeticVisual,
+
   "addition-objects":
     ArithmeticVisual,
+
   "addition-numbers":
     NumberEquationVisual,
 
   "subtraction-introduction":
     ArithmeticVisual,
+
   "subtraction-objects":
     ArithmeticVisual,
+
   "subtraction-numbers":
     NumberEquationVisual,
 
   "equal-groups":
     GroupingVisual,
-  sharing: SharingVisual,
+
+  sharing:
+    SharingVisual,
+
   "division-introduction":
     SharingVisual,
+
   "division-numbers":
     NumberEquationVisual,
 };
@@ -1238,9 +1685,13 @@ function QuestionVisual({
   onInteractiveWrong,
 }) {
   const Renderer =
-    visualRenderers[question.type];
+    visualRenderers[
+      question.type
+    ];
 
-  if (!Renderer) return null;
+  if (!Renderer) {
+    return null;
+  }
 
   return (
     <Renderer
@@ -1260,14 +1711,12 @@ function OptionVisual({
   question,
 }) {
   /*
-   * COLOUR MIXING
+   * COLOUR OPTIONS
    *
-   * The child sees the actual colour,
-   * never the written colour name.
+   * Always show the actual colour.
+   * Never show the colour name.
    */
   if (
-    question?.type ===
-      "colour-mixing" &&
     optionColors[option]
   ) {
     return (
@@ -1281,33 +1730,9 @@ function OptionVisual({
           display: "block",
           borderRadius: "50%",
           backgroundColor:
-            optionColors[option],
-          border:
-            "3px solid #ffffff",
-          boxShadow:
-            "0 0 14px #ffffff66",
-        }}
-        aria-hidden="true"
-      />
-    );
-  }
-
-  /*
-   * PURE COLOUR
-   */
-  if (optionColors[option]) {
-    return (
-      <span
-        className="math-colour-swatch"
-        style={{
-          width: "42px",
-          height: "42px",
-          minWidth: "42px",
-          minHeight: "42px",
-          display: "block",
-          borderRadius: "50%",
-          backgroundColor:
-            optionColors[option],
+            optionColors[
+              option
+            ],
           border:
             "3px solid #ffffff",
           boxShadow:
@@ -1332,34 +1757,42 @@ function OptionVisual({
 
   /*
    * COLOUR + SHAPE
-   *
-   * Example:
-   * red triangle
-   * blue circle
-   * yellow star
    */
   if (
-    typeof option === "string" &&
+    typeof option ===
+      "string" &&
     option.includes(" ")
   ) {
     const parts =
-      option.trim().split(/\s+/);
+      option
+        .trim()
+        .split(/\s+/);
 
-    if (parts.length === 2) {
+    if (
+      parts.length === 2
+    ) {
       const [
         optionColor,
         optionShape,
       ] = parts;
 
       if (
-        optionColors[optionColor] &&
-        shapes[optionShape]
+        optionColors[
+          optionColor
+        ] &&
+        shapes[
+          optionShape
+        ]
       ) {
         return (
           <Shape
-            name={optionShape}
+            name={
+              optionShape
+            }
             color={
-              optionColors[optionColor]
+              optionColors[
+                optionColor
+              ]
             }
           />
         );
@@ -1371,16 +1804,19 @@ function OptionVisual({
    * NUMBER → QUANTITY
    */
   if (
-    question?.type === "matching" &&
+    question?.type ===
+      "matching" &&
     question.quantity
   ) {
     return option;
   }
 
   /*
-   * TWO-PROPERTY FALLBACK
+   * TWO PROPERTY FALLBACK
    */
-  if (question?.twoProperties) {
+  if (
+    question?.twoProperties
+  ) {
     return option;
   }
 
@@ -1388,20 +1824,29 @@ function OptionVisual({
    * SORTING BY QUANTITY
    */
   if (
-    question?.type === "sorting" &&
+    question?.type ===
+      "sorting" &&
     question.groups &&
-    question.groups.every((item) =>
-      /^\d+$/.test(item)
+    question.groups.every(
+      (item) =>
+        /^\d+$/.test(item)
     )
   ) {
     return (
       <span className="math-option-group">
         {Array.from(
-          { length: Number(option) },
+          {
+            length:
+              Number(
+                option
+              ),
+          },
           (_, index) => (
             <Shape
               key={index}
-              name={shapes.circle}
+              name={
+                shapes.circle
+              }
               color="#55c6ff"
             />
           )
@@ -1414,7 +1859,8 @@ function OptionVisual({
    * SORTING BY SHAPE
    */
   if (
-    question?.type === "sorting" &&
+    question?.type ===
+      "sorting" &&
     question.sort &&
     shapes[option]
   ) {
@@ -1438,7 +1884,8 @@ function OptionVisual({
    * ODD ONE OUT
    */
   if (
-    question?.type === "sorting" &&
+    question?.type ===
+      "sorting" &&
     question.oddOneOut &&
     shapes[option]
   ) {
@@ -1461,7 +1908,9 @@ function MissionCard({
   return (
     <button
       className={`planet-card math-mission-card ${
-        locked ? "locked" : ""
+        locked
+          ? "locked"
+          : ""
       }`}
       style={{
         "--mission-color":
@@ -1482,7 +1931,9 @@ function MissionCard({
         />
       )}
 
-      <strong>{mission.title}</strong>
+      <strong>
+        {mission.title}
+      </strong>
 
       <small>
         {locked
@@ -1493,12 +1944,56 @@ function MissionCard({
   );
 }
 
+/*
+ * Shuffle answer choices once
+ * for each question.
+ *
+ * This deliberately does NOT
+ * shuffle the question order.
+ */
+function shuffleOptions(
+  options
+) {
+  if (!Array.isArray(options)) {
+    return [];
+  }
+
+  const shuffled = [
+    ...options,
+  ];
+
+  for (
+    let index =
+      shuffled.length - 1;
+    index > 0;
+    index -= 1
+  ) {
+    const randomIndex =
+      Math.floor(
+        Math.random() *
+          (index + 1)
+      );
+
+    [
+      shuffled[index],
+      shuffled[randomIndex],
+    ] = [
+      shuffled[randomIndex],
+      shuffled[index],
+    ];
+  }
+
+  return shuffled;
+}
+
 export default function MathSection({
   onHome,
   soundOn,
 }) {
   const [progress, setProgress] =
-    useState(readProgress);
+    useState(
+      readProgress
+    );
 
   const [screen, setScreen] =
     useState("map");
@@ -1509,24 +2004,63 @@ export default function MathSection({
   const [isProcessing, setIsProcessing] =
     useState(false);
 
-  const [assessmentAnswers, setAssessmentAnswers] =
-    useState([]);
+  const [
+    assessmentAnswers,
+    setAssessmentAnswers,
+  ] = useState([]);
 
   const mission =
     mathMissions.find(
       (item) =>
         item.id ===
         progress.activeMission
-    ) || mathMissions[0];
+    ) ||
+    mathMissions[0];
 
-  const questions = useMemo(
-    () => getMissionQuestions(mission),
-    [mission]
-  );
+  const questions =
+    useMemo(
+      () =>
+        getMissionQuestions(
+          mission
+        ),
+      [mission]
+    );
 
   const question =
-    questions[progress.question] ||
+    questions[
+      progress.question
+    ] ||
     questions[0];
+
+  /*
+   * Shuffle answer choices
+   * once whenever the actual
+   * question changes.
+   *
+   * Teaching questions and
+   * interactive questions do
+   * not need this.
+   */
+  const shuffledOptions =
+    useMemo(() => {
+      if (
+        !question ||
+        question.teaching ||
+        question.items ||
+        question.zones
+      ) {
+        return [];
+      }
+
+      return shuffleOptions(
+        question.options ||
+          []
+      );
+    }, [
+      mission.id,
+      progress.question,
+      question,
+    ]);
 
   const isAssessment =
     mission.assessment;
@@ -1540,161 +2074,192 @@ export default function MathSection({
   const journeyPercent =
     questions.length > 1
       ? (progress.question /
-          (questions.length - 1)) *
+          (questions.length -
+            1)) *
         100
       : 100;
 
   useEffect(() => {
     localStorage.setItem(
       "oatle-maths-progress",
-      JSON.stringify(progress)
+      JSON.stringify(
+        progress
+      )
     );
   }, [progress]);
 
-  const assessmentSummary = useMemo(() => {
-    const total =
-      assessmentAnswers.length;
+  const assessmentSummary =
+    useMemo(() => {
+      const total =
+        assessmentAnswers.length;
 
-    const correct =
-      assessmentAnswers.filter(
-        (answer) => answer.correct
-      ).length;
+      const correct =
+        assessmentAnswers.filter(
+          (answer) =>
+            answer.correct
+        ).length;
 
-    return {
-      total,
-      correct,
-    };
-  }, [assessmentAnswers]);
+      return {
+        total,
+        correct,
+      };
+    }, [
+      assessmentAnswers,
+    ]);
 
-  const playSound = (sound) => {
+  const playSound = (
+    sound
+  ) => {
     if (!soundOn) return;
 
-    const effect = new Audio(sound);
+    const effect =
+      new Audio(sound);
 
     effect.volume = 0.55;
 
-    effect.play().catch(() => {});
+    effect
+      .play()
+      .catch(() => {});
   };
 
-  const startMission = (id) => {
-    playSound(blastoffSound);
+  const startMission = (
+    id
+  ) => {
+    playSound(
+      blastoffSound
+    );
 
-    setProgress((current) => ({
-      ...current,
-      activeMission: id,
-      question: 0,
-    }));
+    setProgress(
+      (current) => ({
+        ...current,
+        activeMission:
+          id,
+        question: 0,
+      })
+    );
 
     setFeedback("");
     setIsProcessing(false);
-    setAssessmentAnswers([]);
+    setAssessmentAnswers(
+      []
+    );
     setScreen("mission");
   };
 
-  const finishMission = () => {
-    if (isAssessment) {
-      playSound(victorySound);
-      setScreen("assessment-results");
-      return;
-    }
-
-    playSound(victorySound);
-
-    setProgress((current) => ({
-      ...current,
-      unlocked: Math.max(
-        current.unlocked,
-        Math.min(
-          current.activeMission + 1,
-          mathMissions.length
-        )
-      ),
-    }));
-
-    setScreen("complete");
-  };
-
-  const advanceQuestion = () => {
-    if (
-      progress.question <
-      questions.length - 1
-    ) {
-      setProgress((current) => ({
-        ...current,
-        question:
-          current.question + 1,
-      }));
-
-      setFeedback("");
-      setIsProcessing(false);
-    } else {
-      finishMission();
-      setIsProcessing(false);
-    }
-  };
-
-  const answerQuestion = (
-    selectedAnswer
-  ) => {
-    if (isProcessing) return;
-
-    const correct =
-      question.teaching ||
-      selectedAnswer ===
-        question.answer;
-
-    playSound(
-      correct
-        ? correctSound
-        : wrongSound
-    );
-
-    setFeedback(
-      correct
-        ? "Great exploring!"
-        : "Almost! Try another answer."
-    );
-
-    const nextAssessmentAnswers =
-      isAssessment
-        ? [
-            ...assessmentAnswers,
-            {
-              skill: question.skill,
-              correct,
-            },
-          ]
-        : assessmentAnswers;
-
-    if (isAssessment) {
-      setAssessmentAnswers(
-        nextAssessmentAnswers
-      );
-    }
-
-    if (!correct && !isAssessment) {
-      return;
-    }
-
-    setIsProcessing(true);
-
-    window.setTimeout(
-      advanceQuestion,
-      700
-    );
-  };
-
-  const handleInteractiveComplete =
+  const finishMission =
     () => {
-      if (isProcessing) return;
+      if (isAssessment) {
+        playSound(
+          victorySound
+        );
+        setScreen(
+          "assessment-results"
+        );
+        return;
+      }
 
-      playSound(correctSound);
+      playSound(
+        victorySound
+      );
+
+      setProgress(
+        (current) => ({
+          ...current,
+          unlocked:
+            Math.max(
+              current.unlocked,
+              Math.min(
+                current.activeMission +
+                  1,
+                mathMissions.length
+              )
+            ),
+        })
+      );
+
+      setScreen(
+        "complete"
+      );
+    };
+
+  const advanceQuestion =
+    () => {
+      if (
+        progress.question <
+        questions.length - 1
+      ) {
+        setProgress(
+          (current) => ({
+            ...current,
+            question:
+              current.question +
+              1,
+          })
+        );
+
+        setFeedback("");
+        setIsProcessing(
+          false
+        );
+      } else {
+        finishMission();
+        setIsProcessing(
+          false
+        );
+      }
+    };
+
+  const answerQuestion =
+    (selectedAnswer) => {
+      if (isProcessing) {
+        return;
+      }
+
+      const correct =
+        question.teaching ||
+        selectedAnswer ===
+          question.answer;
+
+      playSound(
+        correct
+          ? correctSound
+          : wrongSound
+      );
 
       setFeedback(
-        "Great sorting!"
+        correct
+          ? "Great exploring!"
+          : "Almost! Try another answer."
       );
 
-      setIsProcessing(true);
+      const nextAssessmentAnswers =
+        isAssessment
+          ? [
+              ...assessmentAnswers,
+              {
+                skill:
+                  question.skill,
+                correct,
+              },
+            ]
+          : assessmentAnswers;
+
+      if (isAssessment) {
+        setAssessmentAnswers(
+          nextAssessmentAnswers
+        );
+      }
+
+      if (
+        !correct &&
+        !isAssessment
+      ) {
+        return;
+      }
+
+      setIsProcessing(
+        true
+      );
 
       window.setTimeout(
         advanceQuestion,
@@ -1702,17 +2267,51 @@ export default function MathSection({
       );
     };
 
-  const handleInteractiveWrong = () => {
-    playSound(wrongSound);
+  const handleInteractiveComplete =
+    () => {
+      if (isProcessing) {
+        return;
+      }
 
-    setFeedback(
-      "Almost! Try another place."
-    );
+      playSound(
+        correctSound
+      );
 
-    window.setTimeout(() => {
-      setFeedback("");
-    }, 900);
-  };
+      setFeedback(
+        "Great sorting!"
+      );
+
+      setIsProcessing(
+        true
+      );
+
+      window.setTimeout(
+        advanceQuestion,
+        700
+      );
+    };
+
+  const handleInteractiveWrong =
+    () => {
+      if (isProcessing) {
+        return;
+      }
+
+      playSound(
+        wrongSound
+      );
+
+      setFeedback(
+        "Almost! Try another place."
+      );
+
+      window.setTimeout(
+        () => {
+          setFeedback("");
+        },
+        900
+      );
+    };
 
   if (screen === "map") {
     return (
@@ -1721,11 +2320,14 @@ export default function MathSection({
           YOUR JOURNEY
         </p>
 
-        <h1>Maths Map</h1>
+        <h1>
+          Maths Map
+        </h1>
 
         <p className="page-intro">
-          Complete each mission to
-          unlock the next destination.
+          Complete each mission
+          to unlock the next
+          destination.
         </p>
 
         <div className="planet-map">
@@ -1763,12 +2365,14 @@ export default function MathSection({
         </p>
 
         <h1>
-          {mission.title} complete!
+          {mission.title}{" "}
+          complete!
         </h1>
 
         <p>
-          You collected every star in
-          this maths mission.
+          You collected every
+          star in this maths
+          mission.
         </p>
 
         <div className="math-action-row">
@@ -1807,14 +2411,19 @@ export default function MathSection({
         </p>
 
         <h1>
-          Wonderful space work!
+          Wonderful space
+          work!
         </h1>
 
         <p>
           You answered{" "}
-          {assessmentSummary.correct}{" "}
+          {
+            assessmentSummary.correct
+          }{" "}
           of{" "}
-          {assessmentSummary.total}{" "}
+          {
+            assessmentSummary.total
+          }{" "}
           questions correctly.
         </p>
 
@@ -1853,8 +2462,10 @@ export default function MathSection({
 
         <span>
           {mission.title} ·{" "}
-          {progress.question + 1}{" "}
-          of {questions.length}
+          {progress.question +
+            1}{" "}
+          of{" "}
+          {questions.length}
         </span>
       </div>
 
@@ -1886,7 +2497,9 @@ export default function MathSection({
           : mission.title.toUpperCase()}
       </p>
 
-      <h1>{question.prompt}</h1>
+      <h1>
+        {question.prompt}
+      </h1>
 
       <QuestionVisual
         question={question}
@@ -1901,7 +2514,7 @@ export default function MathSection({
       {!isInteractive ? (
         <div
           className={`math-answer-grid ${
-            question.options.length ===
+            shuffledOptions.length ===
             3
               ? "has-three-options"
               : ""
@@ -1909,30 +2522,38 @@ export default function MathSection({
         >
           {(question.teaching
             ? ["Continue"]
-            : question.options
-          ).map((option) => (
-            <button
-              key={option}
-              className="word-button math-answer-button"
-              onClick={() =>
-                answerQuestion(
-                  question.teaching
-                    ? "__continue__"
-                    : option
-                )
-              }
-              disabled={isProcessing}
-            >
-              {question.teaching ? (
-                option
-              ) : (
-                <OptionVisual
-                  option={option}
-                  question={question}
-                />
-              )}
-            </button>
-          ))}
+            : shuffledOptions
+          ).map(
+            (option, index) => (
+              <button
+                key={`${option}-${index}`}
+                className="word-button math-answer-button"
+                onClick={() =>
+                  answerQuestion(
+                    question.teaching
+                      ? "__continue__"
+                      : option
+                  )
+                }
+                disabled={
+                  isProcessing
+                }
+              >
+                {question.teaching ? (
+                  option
+                ) : (
+                  <OptionVisual
+                    option={
+                      option
+                    }
+                    question={
+                      question
+                    }
+                  />
+                )}
+              </button>
+            )
+          )}
         </div>
       ) : null}
 
