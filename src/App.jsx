@@ -7,15 +7,10 @@ import { phonicsQuestions } from "./data/phonicsQuestions";
 import { readingQuestions } from "./data/readingQuestions";
 import { sentenceQuestions } from "./data/sentenceQuestions";
 import { missingLettersQuestions } from "./data/missingLettersQuestions";
-import {
-  assessmentQuestions,
-  assessmentSkills,
-} from "./data/assessmentQuestions";
 import { generateOptions } from "./utils/generateOptions";
 import { generateReadingOptions } from "./utils/generateReadingOptions";
 import { generateSentenceOptions } from "./utils/generateSentenceOptions";
 import { generateMissingLettersOptions } from "./utils/generateMissingLettersOptions";
-import MathSection from "./components/MathSection";
 
 import mercuryImage from "./assets/images/planets/mercury.png";
 import venusImage from "./assets/images/planets/venus.png";
@@ -176,13 +171,33 @@ const planets = [
     image: plutoImage,
     color: "#D9C5A4",
     description: "Complete the final skills assessment",
-    questions: assessmentQuestions,
+    questions: "pluto-assessment",
   },
+];
+
+const plutoSkills = [
+  { id: "capital", name: "Capital letters" },
+  { id: "lowercase", name: "Lowercase letters" },
+  { id: "matching", name: "Upper/lowercase matching" },
+  { id: "phonics", name: "Letter sounds / phonics" },
+  { id: "reading", name: "Reading simple words" },
+  { id: "missing", name: "Missing letters" },
+  { id: "sentences", name: "Building simple sentences" },
+];
+
+const plutoQuestions = [
+  ...questions.slice(0, 4).map((question) => ({ ...question, skill: "capital", type: "letters" })),
+  ...lowercaseQuestions.slice(0, 4).map((question) => ({ ...question, skill: "lowercase", type: "letters" })),
+  ...matchingQuestions.slice(0, 4).map((question) => ({ ...question, skill: "matching", type: "letters" })),
+  ...phonicsQuestions.slice(0, 4).map((question) => ({ ...question, skill: "phonics", type: "phonics" })),
+  ...readingQuestions.slice(0, 4).map((question) => ({ ...question, skill: "reading", type: "reading" })),
+  ...missingLettersQuestions.slice(0, 4).map((question) => ({ ...question, skill: "missing", type: "missing" })),
+  ...sentenceQuestions.slice(0, 4).map((question) => ({ ...question, skill: "sentences", type: "sentences" })),
 ];
 
 const emptyPlutoResults = () =>
   Object.fromEntries(
-    assessmentSkills.map((skill) => [skill.id, { correct: 0, total: 4 }])
+    plutoSkills.map((skill) => [skill.id, { correct: 0, total: 4 }])
   );
 
 const savedAssessmentResults = () => {
@@ -230,7 +245,7 @@ function AppNav({ onHome, onMap, onSettings }) {
   return (
     <header className="topbar">
       <button className="brand" onClick={onHome} aria-label="Go home">
-        🚀 Oatle Kids
+        🚀 Atli's Space Game
       </button>
 
       <nav>
@@ -279,6 +294,8 @@ function App() {
     () =>
       planet.id === 8
         ? planet.questions
+        : planet.id === 9
+          ? shuffleArray(plutoQuestions)
         : shuffleArray(planet.questions),
     [planet.id, planet.questions]
   );
@@ -640,23 +657,24 @@ function App() {
       <main className="hero-panel">
         <span className="hero-rocket">🚀</span>
 
-        <p className="eyebrow">WELCOME TO OATLE KIDS</p>
+        <p className="eyebrow">WELCOME, CAPTAIN</p>
 
-        <h1>Choose your space adventure</h1>
+        <h1>Ready for a stellar adventure?</h1>
 
         <p>
-          Explore reading and counting missions across the solar system.
+          Learn letters, sounds, and matching while visiting every planet
+          in our solar system.
         </p>
 
         <div className="button-row">
-          {action("Space Reading Adventures", () => {
+          {action("Start", () => {
             playSound(blastoffSound);
             setScreen("launch");
           })}
 
           {action(
-            "Space Counting Adventures",
-            () => setScreen("counting-coming-soon"),
+            "Keep Playing",
+            () => setScreen("mission"),
             "secondary-button"
           )}
 
@@ -669,8 +687,6 @@ function App() {
         </div>
       </main>
     );
-  } else if (screen === "counting-coming-soon") {
-    content = <MathSection onHome={() => setScreen("home")} soundOn={soundOn} />;
   } else if (screen === "launch") {
     content = (
       <main className="launch-panel">
@@ -1052,7 +1068,7 @@ function App() {
       </main>
     );
   } else if (screen === "results") {
-    const resultEntries = assessmentSkills.map((skill) => {
+    const resultEntries = plutoSkills.map((skill) => {
       const result = assessmentResults?.[skill.id] || { correct: 0, total: 4 };
       const percentage = Math.round((result.correct / result.total) * 100);
       const status =

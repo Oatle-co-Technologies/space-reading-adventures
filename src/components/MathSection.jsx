@@ -71,7 +71,7 @@ function Shape({ name, color = "currentColor", className = "" }) {
     hexagon: <polygon points="25,7 75,7 94,50 75,93 25,93 6,50" />,
     octagon: <polygon points="29,6 71,6 94,29 94,71 71,94 29,94 6,71 6,29" />,
     crescent: <path d="M72 9C51 17 39 34 39 54c0 20 12 37 33 45-7 3-14 4-22 2C25 97 8 77 8 53 8 28 25 8 48 4c8-1 16 1 24 5Z" />,
-    semicircle: <path d="M7 55a43 43 0 0 1 86 0v38H7Z" />,
+    semicircle: <path d="M7 55a43 43 0 0 0 86 0v40H7Z" />,
   };
 
   return (
@@ -86,9 +86,13 @@ function NumberVisual({ question }) {
 }
 
 function CountingShapesVisual({ question }) {
+  const shapesToRender = question.targetShape === "all"
+    ? question.shapes
+    : Array.from({ length: question.count }, () => question.targetShape);
+
   return (
-    <div className="math-count-display" aria-label={`${question.count} shapes`}>
-      {question.shapes.map((shape, index) => (
+    <div className="math-count-display math-counting-shape-display" aria-label={`${question.count} shapes`}>
+      {shapesToRender.map((shape, index) => (
         <Shape key={`${shape}-${index}`} name={shape} color={countColors[index % countColors.length]} />
       ))}
     </div>

@@ -233,6 +233,19 @@
   margin: auto;
 }
 
+.math-counting-shape-display {
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  margin: 0 auto;
+}
+
+.math-counting-shape-display .math-shape {
+  flex: 0 0 72px;
+  width: 72px;
+  height: 72px;
+}
+
 .math-feature-row,
 .math-group-display {
   gap: 18px;
@@ -464,5 +477,11 @@
   .math-shape {
     width: 34px;
     height: 34px;
+  }
+
+  .math-counting-shape-display .math-shape {
+    flex-basis: 60px;
+    width: 60px;
+    height: 60px;
   }
 }

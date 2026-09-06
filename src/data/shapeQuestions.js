@@ -65,7 +65,7 @@ export const shapeFactQuestions = [
   property("shape-sides", "How many sides does an octagon have?", shapes.octagon, 8, [7, 8, 9]),
   property("shape-corners", "How many corners does an octagon have?", shapes.octagon, 8, [7, 8, 9]),
   property("shape-sides", "How many sides does a crescent have?", shapes.crescent, 1, [0, 1, 2]),
-  property("shape-corners", "How many corners does a crescent have?", shapes.crescent, 0, [0, 1, 2]),
+  property("shape-corners", "How many corners does a crescent have?", shapes.crescent, 2, [1, 2, 3]),
   property("shape-sides", "How many sides does a semicircle have?", shapes.semicircle, 2, [1, 2, 3]),
   property("shape-corners", "How many corners does a semicircle have?", shapes.semicircle, 2, [1, 2, 3]),
 ];
