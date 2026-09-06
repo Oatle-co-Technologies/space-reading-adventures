@@ -218,13 +218,6 @@ export const mathMatchingQuestions = [
    * ------------------------------------------------------
    * SORT BY SHAPE — PHYSICAL DRAG AND DROP
    * ------------------------------------------------------
-   *
-   * The child sees a mixed pile.
-   *
-   * Only the requested shapes are
-   * dragged into the empty box.
-   *
-   * Other shapes stay in the pile.
    */
 
   {
@@ -516,18 +509,6 @@ export const mathMatchingQuestions = [
    * ------------------------------------------------------
    * SORT BY COLOUR — PHYSICAL DRAG AND DROP
    * ------------------------------------------------------
-   *
-   * SAME PRINCIPLE AS SHAPE SORTING.
-   *
-   * The target colour is represented
-   * visually by the large coloured
-   * shape above the pile.
-   *
-   * The child drags every object of
-   * that colour into the EMPTY BOX.
-   *
-   * The other colours remain in the
-   * mixed pile.
    */
 
   {
@@ -797,8 +778,23 @@ export const mathMatchingQuestions = [
 
   /*
    * ------------------------------------------------------
-   * TWO-PROPERTY CLASSIFICATION
+   * TWO-PROPERTY VISUAL CLASSIFICATION
    * ------------------------------------------------------
+   *
+   * These remain CLICK questions.
+   *
+   * The child sees:
+   *
+   *       TARGET
+   *          ❤️
+   *
+   *      ❤️❤️❤️
+   *      💜💜💜
+   *      💛💛💛
+   *
+   * They choose the group that
+   * matches BOTH the colour AND
+   * the shape.
    */
 
   {
@@ -806,18 +802,37 @@ export const mathMatchingQuestions = [
     mode: "two-properties",
     prompt: "Find the red triangles.",
     answer: "red triangle",
+
+    target: {
+      shape: shapes.triangle,
+      color: colors.red,
+    },
+
     options: [
-      "red triangle",
-      "blue triangle",
-      "red star",
+      {
+        id: "red-triangles",
+        answer: "red triangle",
+        shape: shapes.triangle,
+        color: colors.red,
+        count: 3,
+      },
+      {
+        id: "blue-triangles",
+        answer: "blue triangle",
+        shape: shapes.triangle,
+        color: colors.blue,
+        count: 3,
+      },
+      {
+        id: "red-stars",
+        answer: "red star",
+        shape: shapes.star,
+        color: colors.red,
+        count: 3,
+      },
     ],
+
     twoProperties: true,
-    groups: [
-      "red triangle",
-      "blue triangle",
-      "red star",
-      "yellow triangle",
-    ],
   },
 
   {
@@ -825,18 +840,37 @@ export const mathMatchingQuestions = [
     mode: "two-properties",
     prompt: "Find the blue circles.",
     answer: "blue circle",
+
+    target: {
+      shape: shapes.circle,
+      color: colors.blue,
+    },
+
     options: [
-      "blue circle",
-      "red circle",
-      "blue star",
+      {
+        id: "blue-circles",
+        answer: "blue circle",
+        shape: shapes.circle,
+        color: colors.blue,
+        count: 3,
+      },
+      {
+        id: "red-circles",
+        answer: "red circle",
+        shape: shapes.circle,
+        color: colors.red,
+        count: 3,
+      },
+      {
+        id: "blue-stars",
+        answer: "blue star",
+        shape: shapes.star,
+        color: colors.blue,
+        count: 3,
+      },
     ],
+
     twoProperties: true,
-    groups: [
-      "blue circle",
-      "red circle",
-      "blue star",
-      "yellow circle",
-    ],
   },
 
   {
@@ -844,18 +878,37 @@ export const mathMatchingQuestions = [
     mode: "two-properties",
     prompt: "Find the yellow stars.",
     answer: "yellow star",
+
+    target: {
+      shape: shapes.star,
+      color: colors.yellow,
+    },
+
     options: [
-      "yellow star",
-      "blue star",
-      "yellow heart",
+      {
+        id: "yellow-stars",
+        answer: "yellow star",
+        shape: shapes.star,
+        color: colors.yellow,
+        count: 3,
+      },
+      {
+        id: "blue-stars",
+        answer: "blue star",
+        shape: shapes.star,
+        color: colors.blue,
+        count: 3,
+      },
+      {
+        id: "yellow-hearts",
+        answer: "yellow heart",
+        shape: shapes.heart,
+        color: colors.yellow,
+        count: 3,
+      },
     ],
+
     twoProperties: true,
-    groups: [
-      "yellow star",
-      "blue star",
-      "yellow heart",
-      "red star",
-    ],
   },
 
   {
@@ -863,18 +916,37 @@ export const mathMatchingQuestions = [
     mode: "two-properties",
     prompt: "Find the green squares.",
     answer: "green square",
+
+    target: {
+      shape: shapes.square,
+      color: colors.green,
+    },
+
     options: [
-      "green square",
-      "green circle",
-      "blue square",
+      {
+        id: "green-squares",
+        answer: "green square",
+        shape: shapes.square,
+        color: colors.green,
+        count: 3,
+      },
+      {
+        id: "green-circles",
+        answer: "green circle",
+        shape: shapes.circle,
+        color: colors.green,
+        count: 3,
+      },
+      {
+        id: "blue-squares",
+        answer: "blue square",
+        shape: shapes.square,
+        color: colors.blue,
+        count: 3,
+      },
     ],
+
     twoProperties: true,
-    groups: [
-      "green square",
-      "green circle",
-      "blue square",
-      "yellow square",
-    ],
   },
 
   {
@@ -882,17 +954,36 @@ export const mathMatchingQuestions = [
     mode: "two-properties",
     prompt: "Find the purple hearts.",
     answer: "purple heart",
+
+    target: {
+      shape: shapes.heart,
+      color: colors.purple,
+    },
+
     options: [
-      "purple heart",
-      "red heart",
-      "purple star",
+      {
+        id: "purple-hearts",
+        answer: "purple heart",
+        shape: shapes.heart,
+        color: colors.purple,
+        count: 3,
+      },
+      {
+        id: "red-hearts",
+        answer: "red heart",
+        shape: shapes.heart,
+        color: colors.red,
+        count: 3,
+      },
+      {
+        id: "purple-stars",
+        answer: "purple star",
+        shape: shapes.star,
+        color: colors.purple,
+        count: 3,
+      },
     ],
+
     twoProperties: true,
-    groups: [
-      "purple heart",
-      "red heart",
-      "purple star",
-      "blue heart",
-    ],
   },
 ];

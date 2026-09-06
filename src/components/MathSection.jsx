@@ -418,6 +418,35 @@ function ColourMixingVisual({
 }
 
 /* ---------------------------------------------------------
+   TWO-PROPERTY VISUAL CLASSIFICATION
+--------------------------------------------------------- */
+
+function TwoPropertyVisual({
+  question,
+}) {
+  const target =
+    question.target;
+
+  if (!target) {
+    return null;
+  }
+
+  return (
+    <div
+      className="math-two-property-visual"
+      aria-label="Target shape"
+    >
+      <div className="math-feature-display">
+        <Shape
+          name={target.shape}
+          color={target.color}
+        />
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------
    INTERACTIVE MATCHING / SORTING
 --------------------------------------------------------- */
 
@@ -577,14 +606,6 @@ function InteractiveSortVisual({
   const [positions, setPositions] =
     useState({});
 
-  /*
-   * IMPORTANT:
-   * These positions are relative
-   * to the sorting box itself.
-   *
-   * This is separate from the
-   * mixed-pile positions.
-   */
   const [placedPositions, setPlacedPositions] =
     useState({});
 
@@ -883,9 +904,6 @@ function InteractiveSortVisual({
       return;
     }
 
-    /*
-     * Mark the item as placed.
-     */
     const nextPlaced = {
       ...placed,
       [itemId]: zoneId,
@@ -895,9 +913,6 @@ function InteractiveSortVisual({
       nextPlaced
     );
 
-    /*
-     * Find the sorting box.
-     */
     const zoneElement =
       containerRef.current?.querySelector(
         `[data-sort-zone="${zoneId}"]`
@@ -906,17 +921,6 @@ function InteractiveSortVisual({
     if (!zoneElement) {
       return;
     }
-
-    /*
-     * THIS IS THE IMPORTANT FIX.
-     *
-     * The placed position is now
-     * calculated relative to the
-     * sorting box, NOT relative
-     * to the entire game area.
-     */
-    const zoneRect =
-      zoneElement.getBoundingClientRect();
 
     const alreadyPlaced =
       targetItems.filter(
@@ -956,10 +960,6 @@ function InteractiveSortVisual({
       })
     );
 
-    /*
-     * Completion is based ONLY
-     * on target objects.
-     */
     const placedTargetCount =
       targetItems.filter(
         (targetItem) =>
@@ -1018,7 +1018,6 @@ function InteractiveSortVisual({
         finishDrag
       }
     >
-      {/* MIXED SHAPE AREA */}
       <div
         className="math-sort-object-area"
         style={{
@@ -1067,7 +1066,6 @@ function InteractiveSortVisual({
         )}
       </div>
 
-      {/* EMPTY SORTING BOX */}
       <div
         className="math-sort-zones"
         style={{
@@ -1098,15 +1096,6 @@ function InteractiveSortVisual({
               "hidden",
           }}
         >
-          {/*
-           * Only the shapes that
-           * have actually been
-           * dragged into the box
-           * are rendered here.
-           *
-           * There is deliberately
-           * NO target clue.
-           */}
           {targetItems.map(
             (item) => {
               if (
@@ -1172,7 +1161,6 @@ function InteractiveSortVisual({
         </div>
       </div>
 
-      {/* SORTING PROGRESS */}
       <div
         style={{
           position:
@@ -1259,76 +1247,6 @@ function MatchingVisual({
     );
   }
 
-  if (
-    question.twoProperties
-  ) {
-    return (
-      <div className="math-feature-row">
-        {question.groups.map(
-          (item, index) => {
-            const [
-              color,
-              shape,
-            ] =
-              item.split(
-                " "
-              );
-
-            return (
-              <Shape
-                key={`${item}-${index}`}
-                name={shape}
-                color={
-                  optionColors[
-                    color
-                  ] ||
-                  "#55c6ff"
-                }
-              />
-            );
-          }
-        )}
-      </div>
-    );
-  }
-
-  if (question.sort) {
-    return (
-      <div className="math-group-display">
-        {Array.from(
-          { length: 4 },
-          (_, index) => (
-            <Shape
-              key={index}
-              name={
-                question.sort
-              }
-              color="#66d17a"
-            />
-          )
-        )}
-      </div>
-    );
-  }
-
-  if (
-    question.oddOneOut
-  ) {
-    return (
-      <div className="math-feature-row">
-        {question.oddOneOut.map(
-          (shape, index) => (
-            <Shape
-              key={`${shape}-${index}`}
-              name={shape}
-              color="#55c6ff"
-            />
-          )
-        )}
-      </div>
-    );
-  }
-
   return (
     <ColourVisual
       question={question}
@@ -1354,6 +1272,22 @@ function SortingVisual({
         onWrong={
           onInteractiveWrong
         }
+      />
+    );
+  }
+
+  /*
+   * TWO-PROPERTY QUESTIONS
+   *
+   * These are click questions,
+   * not drag questions.
+   */
+  if (
+    question.twoProperties
+  ) {
+    return (
+      <TwoPropertyVisual
+        question={question}
       />
     );
   }
@@ -1715,6 +1649,56 @@ function OptionVisual({
   question,
 }) {
   /*
+   * TWO-PROPERTY GROUP
+   *
+   * Each answer is now a group
+   * of three matching shapes.
+   */
+  if (
+    question?.twoProperties &&
+    option &&
+    typeof option ===
+      "object"
+  ) {
+    const count =
+      option.count || 3;
+
+    return (
+      <span
+        className="math-two-property-option"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent:
+            "center",
+          gap: "6px",
+          width: "100%",
+          minHeight:
+            "72px",
+        }}
+      >
+        {Array.from(
+          {
+            length: count,
+          },
+          (_, index) => (
+            <Shape
+              key={`${option.id}-${index}`}
+              name={
+                option.shape
+              }
+              color={
+                option.color
+              }
+              className="math-two-property-option-shape"
+            />
+          )
+        )}
+      </span>
+    );
+  }
+
+  /*
    * COLOURS
    */
   if (
@@ -1808,15 +1792,6 @@ function OptionVisual({
     question?.type ===
       "matching" &&
     question.quantity
-  ) {
-    return option;
-  }
-
-  /*
-   * TWO PROPERTY FALLBACK
-   */
-  if (
-    question?.twoProperties
   ) {
     return option;
   }
@@ -2509,35 +2484,54 @@ export default function MathSection({
             ? ["Continue"]
             : shuffledOptions
           ).map(
-            (option, index) => (
-              <button
-                key={`${option}-${index}`}
-                className="word-button math-answer-button"
-                onClick={() =>
-                  answerQuestion(
-                    question.teaching
-                      ? "__continue__"
-                      : option
-                  )
-                }
-                disabled={
-                  isProcessing
-                }
-              >
-                {question.teaching ? (
-                  option
-                ) : (
-                  <OptionVisual
-                    option={
-                      option
-                    }
-                    question={
-                      question
-                    }
-                  />
-                )}
-              </button>
-            )
+            (option, index) => {
+              const optionKey =
+                option &&
+                typeof option ===
+                  "object"
+                  ? option.id ||
+                    `${option.answer}-${index}`
+                  : `${option}-${index}`;
+
+              const selectedAnswer =
+                option &&
+                typeof option ===
+                  "object"
+                  ? option.answer
+                  : option;
+
+              return (
+                <button
+                  key={
+                    optionKey
+                  }
+                  className="word-button math-answer-button"
+                  onClick={() =>
+                    answerQuestion(
+                      question.teaching
+                        ? "__continue__"
+                        : selectedAnswer
+                    )
+                  }
+                  disabled={
+                    isProcessing
+                  }
+                >
+                  {question.teaching ? (
+                    option
+                  ) : (
+                    <OptionVisual
+                      option={
+                        option
+                      }
+                      question={
+                        question
+                      }
+                    />
+                  )}
+                </button>
+              );
+            }
           )}
         </div>
       ) : null}
