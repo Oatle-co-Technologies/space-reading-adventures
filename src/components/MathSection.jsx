@@ -1380,10 +1380,6 @@ function ArithmeticVisual({
     second,
   ] = question.values || [];
 
-  const isSubtraction =
-    question.operation ===
-    "-";
-
   if (
     first == null ||
     second == null
@@ -1395,83 +1391,75 @@ function ArithmeticVisual({
     );
   }
 
+  const isSubtraction =
+    question.operation ===
+    "-";
+
   const objectShape =
     question.object &&
-    shapes[question.object]
+    Object.values(shapes).includes(
+      question.object
+    )
       ? question.object
-      : shapes.circle;
+      : "circle";
 
   const objectColor =
     question.color ||
     colors.blue;
 
-  const remaining =
-    Math.max(
-      first - second,
-      0
-    );
-
-  return (
-    <div
-      className="math-arithmetic-display"
-      aria-label={`${first} ${question.operation} ${second}`}
-    >
-      <div className="math-arithmetic-group">
-        {Array.from(
-          {
-            length: first,
-          },
-          (_, index) => (
-            <span
-              key={index}
-              className={`math-object ${
-                isSubtraction &&
-                index >= remaining
-                  ? "is-taken"
-                  : ""
-              }`}
-              style={{
-                display: "inline-flex",
-                width: "62px",
-                height: "62px",
-                alignItems:
-                  "center",
-                justifyContent:
-                  "center",
-              }}
-            >
-              <Shape
-                name={
-                  objectShape
-                }
-                color={
-                  objectColor
-                }
-              />
-            </span>
-          )
-        )}
-      </div>
-
-      <strong className="math-operation-symbol">
-        {question.operation}
-      </strong>
-
-      {!isSubtraction ? (
-        <div className="math-arithmetic-group">
+  /*
+   * SUBTRACTION
+   *
+   * The concrete visual teaches:
+   *
+   * starting group
+   *       −
+   * group being taken away
+   *
+   * There is deliberately NO
+   * "= ?" here. The child answers
+   * the question separately.
+   */
+  if (isSubtraction) {
+    return (
+      <div
+        className="math-arithmetic-display"
+        aria-label={`Take ${second} shapes away from ${first} shapes`}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "10px",
+          width: "100%",
+          margin: "20px auto",
+        }}
+      >
+        <div
+          className="math-arithmetic-group"
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(5, 62px)",
+            justifyContent:
+              "center",
+            gap: "6px",
+            width: "100%",
+            maxWidth: "360px",
+          }}
+        >
           {Array.from(
             {
-              length: second,
+              length: first,
             },
             (_, index) => (
               <span
                 key={index}
                 className="math-object"
                 style={{
-                  display:
-                    "inline-flex",
                   width: "62px",
                   height: "62px",
+                  display: "inline-flex",
                   alignItems:
                     "center",
                   justifyContent:
@@ -1490,15 +1478,173 @@ function ArithmeticVisual({
             )
           )}
         </div>
-      ) : null}
 
-      <strong className="math-operation-symbol">
-        =
+        <strong
+          className="math-operation-symbol"
+          style={{
+            fontSize: "2.4rem",
+            lineHeight: 1,
+            margin: "2px 0",
+          }}
+        >
+          −
+        </strong>
+
+        <div
+          className="math-arithmetic-group"
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(5, 62px)",
+            justifyContent:
+              "center",
+            gap: "6px",
+            width: "100%",
+            maxWidth: "360px",
+          }}
+        >
+          {Array.from(
+            {
+              length: second,
+            },
+            (_, index) => (
+              <span
+                key={index}
+                className="math-object"
+                style={{
+                  width: "62px",
+                  height: "62px",
+                  display: "inline-flex",
+                  alignItems:
+                    "center",
+                  justifyContent:
+                    "center",
+                }}
+              >
+                <Shape
+                  name={
+                    objectShape
+                  }
+                  color={
+                    objectColor
+                  }
+                />
+              </span>
+            )
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  /*
+   * ADDITION
+   *
+   * The concrete visual shows
+   * two groups with a plus sign
+   * between them.
+   */
+  return (
+    <div
+      className="math-arithmetic-display"
+      aria-label={`${first} ${question.operation} ${second}`}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "14px",
+        flexWrap: "wrap",
+        width: "100%",
+        margin: "20px auto",
+      }}
+    >
+      <div
+        className="math-arithmetic-group"
+        style={{
+          display: "grid",
+          gridTemplateColumns:
+            "repeat(5, 62px)",
+          justifyContent:
+            "center",
+          gap: "6px",
+          maxWidth: "360px",
+        }}
+      >
+        {Array.from(
+          {
+            length: first,
+          },
+          (_, index) => (
+            <span
+              key={index}
+              className="math-object"
+              style={{
+                width: "62px",
+                height: "62px",
+                display: "inline-flex",
+                alignItems:
+                  "center",
+                justifyContent:
+                  "center",
+              }}
+            >
+              <Shape
+                name={objectShape}
+                color={objectColor}
+              />
+            </span>
+          )
+        )}
+      </div>
+
+      <strong
+        className="math-operation-symbol"
+        style={{
+          fontSize: "2.4rem",
+          lineHeight: 1,
+        }}
+      >
+        +
       </strong>
 
-      <span className="math-operation-answer">
-        ?
-      </span>
+      <div
+        className="math-arithmetic-group"
+        style={{
+          display: "grid",
+          gridTemplateColumns:
+            "repeat(5, 62px)",
+          justifyContent:
+            "center",
+          gap: "6px",
+          maxWidth: "360px",
+        }}
+      >
+        {Array.from(
+          {
+            length: second,
+          },
+          (_, index) => (
+            <span
+              key={index}
+              className="math-object"
+              style={{
+                width: "62px",
+                height: "62px",
+                display: "inline-flex",
+                alignItems:
+                  "center",
+                justifyContent:
+                  "center",
+              }}
+            >
+              <Shape
+                name={objectShape}
+                color={objectColor}
+              />
+            </span>
+          )
+        )}
+      </div>
     </div>
   );
 }
@@ -1548,9 +1694,11 @@ function GroupingVisual({
 
   const objectShape =
     question.object &&
-    shapes[question.object]
+    Object.values(shapes).includes(
+      question.object
+    )
       ? question.object
-      : shapes.circle;
+      : "circle";
 
   const objectColor =
     question.color ||
@@ -1686,9 +1834,11 @@ function SharingVisual({
 
   const objectShape =
     question.object &&
-    shapes[question.object]
+    Object.values(shapes).includes(
+      question.object
+    )
       ? question.object
-      : shapes.circle;
+      : "circle";
 
   const objectColor =
     question.color ||
@@ -1882,9 +2032,6 @@ function OptionVisual({
 }) {
   /*
    * TWO-PROPERTY GROUP
-   *
-   * Each answer is a group
-   * of three matching shapes.
    */
   if (
     question?.twoProperties &&

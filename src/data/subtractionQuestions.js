@@ -22,7 +22,7 @@ export const subtractionQuestions = [
   {
     type: "subtraction-objects",
     teaching: true,
-    prompt: "When you take circles away from a group, you are subtracting them.",
+    prompt: "We can take some shapes away from a group.",
     teachingText: "Subtracting means taking something away from a group.",
     answer: null,
     options: [],
@@ -35,7 +35,7 @@ export const subtractionQuestions = [
   {
     type: "subtraction-objects",
     teaching: true,
-    prompt: "Four circles take away two circles leaves two circles.",
+    prompt: "Four circles take away two circles.",
     teachingText: "When we take two circles away from four circles, two circles are left.",
     answer: null,
     options: [],
