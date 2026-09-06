@@ -20,14 +20,20 @@ function getMissionQuestions(mission) {
 
 const readProgress = () => {
   try {
-    const saved = JSON.parse(localStorage.getItem("oatle-maths-progress"));
+    const saved = JSON.parse(
+      localStorage.getItem("oatle-maths-progress")
+    );
+
     if (!saved) return defaultProgress;
 
     const savedMission = mathMissions.find(
       (item) => item.id === saved.activeMission
     );
+
     const lastQuestion = Math.max(
-      (savedMission ? getMissionQuestions(savedMission).length : 1) - 1,
+      (savedMission
+        ? getMissionQuestions(savedMission).length
+        : 1) - 1,
       0
     );
 
@@ -62,7 +68,11 @@ const countColors = [
   colors.purple,
 ];
 
-function Shape({ name, color = "currentColor", className = "" }) {
+function Shape({
+  name,
+  color = "currentColor",
+  className = "",
+}) {
   const paths = {
     circle: <circle cx="50" cy="50" r="42" />,
 
@@ -127,7 +137,6 @@ function Shape({ name, color = "currentColor", className = "" }) {
       <path d="M72 9C51 17 39 34 39 54c0 20 12 37 33 45-7 3-14 4-22 2C25 97 8 77 8 53 8 28 25 8 48 4c8-1 16 1 24 5Z" />
     ),
 
-    // Upper semicircle: curved edge on top, flat edge on bottom.
     semicircle: (
       <path d="M10 50 C10 27.9 27.9 10 50 10 C72.1 10 90 27.9 90 50 L10 50 Z" />
     ),
@@ -187,6 +196,7 @@ function ShapeIntroductionVisual({ question }) {
           color="#55c6ff"
         />
       </div>
+
       <p>{question.teachingText}</p>
     </div>
   );
@@ -214,30 +224,86 @@ function ShapeRecognitionVisual({ question }) {
   );
 }
 
+/*
+ * Colour teaching and recognition.
+ *
+ * Teaching questions now explicitly show the teaching text.
+ * Recognition questions remain visual-only so the child must
+ * identify the colour themselves.
+ */
 function ColourVisual({ question }) {
+  const isTeaching = question.teaching;
+
   return (
-    <div className="math-feature-display">
-      <Shape
-        name={question.shape}
-        color={question.color}
-      />
+    <div
+      className={`math-colour-visual ${
+        isTeaching ? "is-teaching" : ""
+      }`}
+    >
+      <div className="math-feature-display">
+        <Shape
+          name={question.shape}
+          color={question.color}
+        />
+      </div>
+
+      {isTeaching && question.teachingText ? (
+        <p className="math-teaching-text">
+          {question.teachingText}
+        </p>
+      ) : null}
     </div>
   );
 }
 
+/*
+ * Colour mixing now supports both:
+ * 1. teaching/discovery
+ * 2. practice questions
+ *
+ * During teaching, the resulting colour is shown as a third
+ * swatch so the child can visually discover the relationship.
+ */
 function ColourMixingVisual({ question }) {
+  const isTeaching = question.teaching;
+
   return (
     <div
-      className="math-mix-display"
+      className={`math-mix-display ${
+        isTeaching ? "is-teaching" : ""
+      }`}
       aria-label="Two colours to mix"
     >
-      {question.mix.map((color) => (
-        <span
-          key={color}
-          className="math-mix-swatch"
-          style={{ background: color }}
-        />
-      ))}
+      <div className="math-mix-colours">
+        {question.mix.map((color, index) => (
+          <span
+            key={`${color}-${index}`}
+            className="math-mix-swatch"
+            style={{ background: color }}
+          />
+        ))}
+      </div>
+
+      {isTeaching && question.resultColor ? (
+        <>
+          <span className="math-mix-arrow">
+            →
+          </span>
+
+          <span
+            className="math-mix-swatch math-mix-result"
+            style={{
+              background: question.resultColor,
+            }}
+          />
+        </>
+      ) : null}
+
+      {isTeaching && question.teachingText ? (
+        <p className="math-teaching-text">
+          {question.teachingText}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -421,8 +487,10 @@ function ArithmeticVisual({ question }) {
 function NumberEquationVisual({ question }) {
   const first =
     question.values?.[0] ?? question.dividend;
+
   const second =
     question.values?.[1] ?? question.divisor;
+
   const operation = question.operation || "÷";
 
   return (
@@ -660,7 +728,11 @@ function OptionVisual({ option, question }) {
   return option;
 }
 
-function MissionCard({ mission, locked, onSelect }) {
+function MissionCard({
+  mission,
+  locked,
+  onSelect,
+}) {
   return (
     <button
       className={`planet-card math-mission-card ${
@@ -728,7 +800,11 @@ export default function MathSection({
   const isAssessment = mission.assessment;
 
   const journeyPercent =
-    (progress.question / questions.length) * 100;
+    questions.length > 1
+      ? (progress.question /
+          (questions.length - 1)) *
+        100
+      : 100;
 
   useEffect(() => {
     localStorage.setItem(
@@ -811,15 +887,16 @@ export default function MathSection({
         : "Almost! Try another answer."
     );
 
-    const nextAssessmentAnswers = isAssessment
-      ? [
-          ...assessmentAnswers,
-          {
-            skill: question.skill,
-            correct,
-          },
-        ]
-      : assessmentAnswers;
+    const nextAssessmentAnswers =
+      isAssessment
+        ? [
+            ...assessmentAnswers,
+            {
+              skill: question.skill,
+              correct,
+            },
+          ]
+        : assessmentAnswers;
 
     if (isAssessment) {
       setAssessmentAnswers(
