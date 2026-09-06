@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import "./MathSection.css";
-import { colors, mathMissions, shapes } from "../data/mathMissions";
+import { colors, shapes } from "../data/mathConstants";
+import { mathMissions } from "../data/mathMissions";
 import correctSound from "../sounds/correct.mp3";
 import wrongSound from "../sounds/wrong.mp3";
 import victorySound from "../sounds/victory.mp3";
@@ -13,9 +14,23 @@ const defaultProgress = {
   assessmentResults: {},
 };
 
+function getMissionQuestions(mission) {
+  return mission.questionBanks.flat();
+}
+
 const readProgress = () => {
   try {
-    return JSON.parse(localStorage.getItem("oatle-maths-progress")) || defaultProgress;
+    const saved = JSON.parse(localStorage.getItem("oatle-maths-progress"));
+    if (!saved) return defaultProgress;
+
+    const savedMission = mathMissions.find((item) => item.id === saved.activeMission);
+    const lastQuestion = Math.max((savedMission ? getMissionQuestions(savedMission).length : 1) - 1, 0);
+
+    return {
+      ...defaultProgress,
+      ...saved,
+      question: Math.min(saved.question || 0, lastQuestion),
+    };
   } catch {
     return defaultProgress;
   }
@@ -33,45 +48,66 @@ const colorLabels = {
   navyBlue: "navy blue",
 };
 
-const countColors = [colors.red, colors.yellow, colors.blue, colors.green, colors.orange, colors.purple];
-
-function shapeLabel(shape) {
-  return Object.entries(shapes).find(([, value]) => value === shape)?.[0] || shape;
-}
+const countColors = [
+  colors.red,
+  colors.yellow,
+  colors.blue,
+  colors.green,
+  colors.orange,
+  colors.purple,
+];
 
 function Shape({ name, color = "currentColor", className = "" }) {
   return <span className={`math-shape math-shape-${name} ${className}`} style={{ "--shape-color": color }} aria-hidden="true" />;
 }
 
-function QuestionVisual({ question }) {
-  if (question.display) {
-    return <div className="math-number-display">{question.display}</div>;
-  }
+function NumberVisual({ question }) {
+  return <div className="math-number-display">{question.display}</div>;
+}
 
-  if (question.mix) {
+function CountingShapesVisual({ question }) {
+  return (
+    <div className="math-count-display" aria-label={`${question.count} shapes`}>
+      {question.shapes.map((shape, index) => (
+        <Shape key={`${shape}-${index}`} name={shape} color={countColors[index % countColors.length]} />
+      ))}
+    </div>
+  );
+}
+
+function ShapeFactVisual({ question }) {
+  return <div className="math-feature-display"><Shape name={question.shape} color="#55c6ff" /></div>;
+}
+
+function ShapeRecognitionVisual({ question }) {
+  return <div className="math-feature-display"><Shape name={question.shape} color="#ffd45c" /></div>;
+}
+
+function ColourVisual({ question }) {
+  return (
+    <div className="math-feature-display">
+      <Shape name={question.shape} color={question.color} />
+    </div>
+  );
+}
+
+function ColourMixingVisual({ question }) {
+  return (
+    <div className="math-mix-display" aria-label="Two colours to mix">
+      {question.mix.map((color) => (
+        <span key={color} className="math-mix-swatch" style={{ background: color }} />
+      ))}
+    </div>
+  );
+}
+
+function MatchingVisual({ question }) {
+  if (question.quantity) {
     return (
-      <div className="math-mix-display" aria-label="Two colours to mix">
-        {question.mix.map((color) => (
-          <span key={color} className="math-mix-swatch" style={{ background: color }} />
+      <div className="math-count-display" aria-label={`${question.quantity} shapes`}>
+        {Array.from({ length: question.quantity }, (_, index) => (
+          <Shape key={index} name={question.matchShape} color="#ffd45c" />
         ))}
-      </div>
-    );
-  }
-
-  if (question.count) {
-    return (
-      <div className="math-count-display" aria-label={`${question.count} ${shapeLabel(question.shape)}s`}>
-        {Array.from({ length: question.count }, (_, index) => (
-          <Shape key={index} name={question.shape} color={countColors[index % countColors.length]} />
-        ))}
-      </div>
-    );
-  }
-
-  if (question.color && question.shape) {
-    return (
-      <div className="math-feature-display">
-        <Shape name={question.shape} color={question.color} />
       </div>
     );
   }
@@ -80,6 +116,17 @@ function QuestionVisual({ question }) {
     return (
       <div className="math-feature-display">
         <Shape name={question.match.shape} color={question.match.color} />
+      </div>
+    );
+  }
+
+  if (question.twoProperties) {
+    return (
+      <div className="math-feature-row">
+        {question.groups.map((item, index) => {
+          const [color, shape] = item.split(" ");
+          return <Shape key={`${item}-${index}`} name={shape} color={colors[color]} />;
+        })}
       </div>
     );
   }
@@ -104,47 +151,122 @@ function QuestionVisual({ question }) {
     );
   }
 
-  if (question.groups) {
+  return <ColourVisual question={question} />;
+}
+
+function SortingVisual({ question }) {
+  if (question.sort) {
     return (
-      <div className="math-bars" aria-label={`Groups of ${question.groups.join(", ")}`}>
-        {question.groups.map((group, index) => (
-          <span key={index} style={{ "--bar-size": group }} />
+      <div className="math-group-display">
+        {Array.from({ length: 4 }, (_, index) => (
+          <Shape key={index} name={question.sort} color="#66d17a" />
         ))}
       </div>
     );
   }
 
-  if (question.values) {
-    if (question.operation === "x") {
-      return (
-        <div className="math-equal-groups">
-          {Array.from({ length: question.values[0] }, (_, groupIndex) => (
-            <div className="math-small-group" key={groupIndex}>
-              {Array.from({ length: question.values[1] }, (_, itemIndex) => (
-                <Shape key={itemIndex} name={shapes.star} color="#ffd45c" />
-              ))}
-            </div>
+  if (question.oddOneOut) {
+    return (
+      <div className="math-feature-row">
+        {question.oddOneOut.map((shape, index) => (
+          <Shape key={`${shape}-${index}`} name={shape} color="#55c6ff" />
+        ))}
+      </div>
+    );
+  }
+
+  return <ColourVisual question={question} />;
+}
+
+function ArithmeticVisual({ question }) {
+  const [first, second] = question.values;
+  const removedStart = first - second;
+  const isSubtraction = question.operation === "-";
+  const objectSymbol = question.object === "apple" ? "🍎" : question.object === "planet" ? "🪐" : "⭐";
+
+  return (
+    <div className="math-arithmetic-display" aria-label={`${first} ${question.operation} ${second}`}>
+      <div className="math-arithmetic-group">
+        {Array.from({ length: first }, (_, index) => (
+          <span key={index} className={`math-object ${isSubtraction && index >= removedStart ? "is-taken" : ""}`}>{objectSymbol}</span>
+        ))}
+      </div>
+      <strong className="math-operation-symbol">{question.operation}</strong>
+      <div className="math-arithmetic-group">
+        {isSubtraction ? null : Array.from({ length: second }, (_, index) => <span key={index} className="math-object">{objectSymbol}</span>)}
+      </div>
+      <strong className="math-operation-symbol">=</strong>
+      <span className="math-operation-answer">?</span>
+    </div>
+  );
+}
+
+function NumberEquationVisual({ question }) {
+  const first = question.values?.[0] ?? question.dividend;
+  const second = question.values?.[1] ?? question.divisor;
+  const operation = question.operation || "÷";
+  return <div className="math-number-equation">{first} {operation} {second} = ?</div>;
+}
+
+function GroupingVisual({ question }) {
+  return (
+    <div className="math-equal-groups">
+      {question.groups.map((group, groupIndex) => (
+        <div className="math-small-group" key={groupIndex}>
+          {Array.from({ length: group }, (_, itemIndex) => (
+            <span className="math-object" key={itemIndex}>🍎</span>
           ))}
         </div>
-      );
-    }
+      ))}
+    </div>
+  );
+}
 
-    const [first, second] = question.values;
-    const visibleCount = question.operation === "+" ? first + second : first;
+function SharingVisual({ question }) {
+  const groups = question.groups;
 
-    return (
-      <div className="math-count-display" aria-label={`${first} ${question.operation} ${second}`}>
-        {Array.from({ length: visibleCount }, (_, index) => (
-          <Shape
-            key={index}
-            name={shapes.star}
-            color={question.operation === "-" && index >= first - second ? "#ef5b5b" : "#ffd45c"}
-            className={question.operation === "-" && index >= first - second ? "is-taken" : ""}
-          />
-        ))}
-      </div>
-    );
-  }
+  return (
+    <div className="math-sharing-display" aria-label="Objects shared into equal groups">
+      {question.friends ? <div className="math-friends" aria-hidden="true">{Array.from({ length: question.friends }, (_, index) => <span key={index}>🧒</span>)}</div> : null}
+      {groups.map((count, groupIndex) => (
+        <div className="math-small-group" key={groupIndex}>
+          {Array.from({ length: count }, (_, itemIndex) => (
+            <span className="math-object" key={itemIndex}>🍎</span>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const visualRenderers = {
+  number: NumberVisual,
+  "shape-introduction": ShapeFactVisual,
+  "shape-sides": ShapeFactVisual,
+  "shape-corners": ShapeFactVisual,
+  "shape-recognition": ShapeRecognitionVisual,
+  "counting-shapes": CountingShapesVisual,
+  "colour-introduction": ColourVisual,
+  "colour-recognition": ColourVisual,
+  "colour-mixing": ColourMixingVisual,
+  matching: MatchingVisual,
+  sorting: SortingVisual,
+  "addition-introduction": ArithmeticVisual,
+  "addition-objects": ArithmeticVisual,
+  "addition-numbers": NumberEquationVisual,
+  "subtraction-introduction": ArithmeticVisual,
+  "subtraction-objects": ArithmeticVisual,
+  "subtraction-numbers": NumberEquationVisual,
+  "equal-groups": GroupingVisual,
+  sharing: SharingVisual,
+  "division-introduction": SharingVisual,
+  "division-numbers": NumberEquationVisual,
+};
+
+function QuestionVisual({ question }) {
+  const Renderer = visualRenderers[question.type];
+
+  if (Renderer) return <Renderer question={question} />;
 
   return null;
 }
@@ -158,12 +280,24 @@ function OptionVisual({ option, question }) {
     return <Shape name={question?.shape || shapes.circle} color={color} />;
   }
 
-  if (question?.match) {
+  if (["shape-recognition", "shape-sides", "shape-corners"].includes(question?.type) && shapes[option]) {
+    return <Shape name={option} color="#55c6ff" />;
+  }
+
+  if (question?.type === "matching" && question.quantity) {
+    return option;
+  }
+
+  if (question?.twoProperties) {
+    return option;
+  }
+
+  if (question?.type === "matching" && question.match) {
     const [optionColor, optionShape] = option.split(" ");
     return <Shape name={optionShape} color={colors[optionColor]} />;
   }
 
-  if (question?.groups) {
+  if (question?.type === "sorting" && question.groups && question.groups.every((item) => /^\d+$/.test(item))) {
     return (
       <span className="math-option-group">
         {Array.from({ length: Number(option) }, (_, index) => (
@@ -173,7 +307,7 @@ function OptionVisual({ option, question }) {
     );
   }
 
-  if (question?.sort && shapes[option]) {
+  if (question?.type === "sorting" && question.sort && shapes[option]) {
     return (
       <span className="math-option-group">
         {Array.from({ length: 4 }, (_, index) => (
@@ -183,7 +317,7 @@ function OptionVisual({ option, question }) {
     );
   }
 
-  if (question?.oddOneOut && shapes[option]) {
+  if (question?.type === "sorting" && question.oddOneOut && shapes[option]) {
     return <Shape name={option} color="#55c6ff" />;
   }
 
@@ -217,9 +351,10 @@ export default function MathSection({ onHome, soundOn }) {
   const [assessmentAnswers, setAssessmentAnswers] = useState([]);
 
   const mission = mathMissions.find((item) => item.id === progress.activeMission) || mathMissions[0];
-  const question = mission.questions[progress.question] || mission.questions[0];
+  const questions = useMemo(() => getMissionQuestions(mission), [mission]);
+  const question = questions[progress.question] || questions[0];
   const isAssessment = mission.assessment;
-  const journeyPercent = (progress.question / mission.questions.length) * 100;
+  const journeyPercent = (progress.question / questions.length) * 100;
 
   useEffect(() => {
     localStorage.setItem("oatle-maths-progress", JSON.stringify(progress));
@@ -266,7 +401,7 @@ export default function MathSection({ onHome, soundOn }) {
   const answerQuestion = (selectedAnswer) => {
     if (isProcessing) return;
 
-    const correct = selectedAnswer === question.answer;
+    const correct = question.teaching || selectedAnswer === question.answer;
     playSound(correct ? correctSound : wrongSound);
     setFeedback(correct ? "Great exploring!" : "Almost! Try another answer.");
 
@@ -282,7 +417,7 @@ export default function MathSection({ onHome, soundOn }) {
 
     setIsProcessing(true);
     window.setTimeout(() => {
-      if (progress.question < mission.questions.length - 1) {
+      if (progress.question < questions.length - 1) {
         setProgress((current) => ({ ...current, question: current.question + 1 }));
         setFeedback("");
         setIsProcessing(false);
@@ -349,7 +484,7 @@ export default function MathSection({ onHome, soundOn }) {
     <main className="math-page math-mission-page">
       <div className="math-status-row">
         <button className="math-back-button" onClick={() => setScreen("map")}>← Missions</button>
-        <span>{mission.title} · {progress.question + 1} of {mission.questions.length}</span>
+        <span>{mission.title} · {progress.question + 1} of {questions.length}</span>
       </div>
       <div className="math-journey-track" aria-label={`${progress.question} questions completed`}>
         <img className="math-journey-planet" src={mission.image} alt="" />
@@ -361,14 +496,14 @@ export default function MathSection({ onHome, soundOn }) {
       <h1>{question.prompt}</h1>
       <QuestionVisual question={question} />
       <div className={`math-answer-grid ${question.options.length === 3 ? "has-three-options" : ""}`}>
-        {question.options.map((option) => (
+        {(question.teaching ? ["Continue"] : question.options).map((option) => (
           <button
             key={option}
             className="word-button math-answer-button"
-            onClick={() => answerQuestion(option)}
+            onClick={() => answerQuestion(question.teaching ? "__continue__" : option)}
             disabled={isProcessing}
           >
-            <OptionVisual option={option} question={question} />
+            {question.teaching ? option : <OptionVisual option={option} question={question} />}
           </button>
         ))}
       </div>

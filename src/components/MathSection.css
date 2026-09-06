@@ -174,10 +174,20 @@
 .math-group-display,
 .math-feature-row,
 .math-bars,
-.math-equal-groups {
+.math-equal-groups,
+.math-arithmetic-display,
+.math-sharing-display {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.math-friends {
+  flex-basis: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  font-size: 2.1rem;
 }
 
 .math-number-display {
@@ -242,6 +252,45 @@
   flex-wrap: wrap;
   gap: 18px;
   min-height: 150px;
+}
+
+.math-arithmetic-display,
+.math-sharing-display {
+  flex-wrap: wrap;
+  gap: 16px;
+  min-height: 150px;
+}
+
+.math-arithmetic-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  max-width: 220px;
+}
+
+.math-operation-symbol,
+.math-operation-answer {
+  color: #f8fbff;
+  font-size: 2.2rem;
+}
+
+.math-operation-answer {
+  min-width: 36px;
+}
+
+.math-number-equation {
+  min-height: 150px;
+  display: grid;
+  place-items: center;
+  color: #f8fbff;
+  font: 900 3.8rem/1 Nunito, sans-serif;
+}
+
+.math-object {
+  display: inline-block;
+  font-size: 2.6rem;
+  line-height: 1;
 }
 
 .math-small-group {
@@ -312,6 +361,39 @@
   width: 49px;
   height: 49px;
   transform: rotate(45deg) scale(.78);
+}
+
+.math-shape-heart {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  background: transparent;
+  transform: rotate(-45deg) scale(.8);
+}
+
+.math-shape-heart::before,
+.math-shape-heart::after {
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--shape-color);
+  content: "";
+}
+
+.math-shape-heart::before { top: -19px; left: 0; }
+.math-shape-heart::after { top: 0; left: 19px; }
+
+.math-shape-crescent {
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: 10px 0 0 0 var(--shape-color);
+}
+
+.math-shape-semicircle {
+  height: 22px;
+  margin-top: 20px;
+  border-radius: 42px 42px 0 0;
 }
 
 .math-shape-rhombus {
