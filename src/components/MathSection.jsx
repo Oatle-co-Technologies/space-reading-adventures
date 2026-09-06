@@ -47,12 +47,6 @@ const readProgress = () => {
   }
 };
 
-/*
- * Every colour that can appear as a child-facing answer.
- *
- * The values are internal only. The child sees the colour
- * itself, not the written colour name.
- */
 const optionColors = {
   red: colors.red,
   yellow: colors.yellow,
@@ -66,13 +60,7 @@ const optionColors = {
   violet: colors.violet,
   pink: colors.pink,
   maroon: colors.maroon,
-
-  /*
-   * Vermilion is not part of mathConstants yet, so it is
-   * defined locally here for the answer visual.
-   */
   vermilion: "#e34234",
-
   white: "#ffffff",
 };
 
@@ -281,7 +269,13 @@ function ColourMixingVisual({ question }) {
           <span
             key={`${color}-${index}`}
             className="math-mix-swatch"
-            style={{ background: color }}
+            style={{
+              backgroundColor: color,
+              width: "82px",
+              height: "82px",
+              display: "block",
+              flex: "0 0 82px",
+            }}
           />
         ))}
 
@@ -294,7 +288,11 @@ function ColourMixingVisual({ question }) {
             <span
               className="math-mix-swatch math-mix-result"
               style={{
-                background: question.resultColor,
+                backgroundColor: question.resultColor,
+                width: "82px",
+                height: "82px",
+                display: "block",
+                flex: "0 0 82px",
               }}
             />
           </>
@@ -612,20 +610,12 @@ function QuestionVisual({ question }) {
   return null;
 }
 
-/*
- * Render answer choices visually whenever possible.
- *
- * Children should not have to read colour names or shape names
- * when the activity is intended to test visual recognition.
- */
 function OptionVisual({ option, question }) {
   /*
-   * -------------------------------------------------------
    * COLOUR MIXING
-   * -------------------------------------------------------
    *
-   * Colour names are internal answer values.
-   * The child sees only the colour.
+   * The option value is the colour's internal name,
+   * but the child sees only the actual colour.
    */
   if (
     question?.type === "colour-mixing" &&
@@ -633,38 +623,48 @@ function OptionVisual({ option, question }) {
   ) {
     return (
       <span
-        className="math-colour-answer-swatch"
+        className="math-colour-swatch"
         style={{
-          background: optionColors[option],
+          width: "42px",
+          height: "42px",
+          minWidth: "42px",
+          minHeight: "42px",
+          display: "block",
+          borderRadius: "50%",
+          backgroundColor: optionColors[option],
+          border: "3px solid #ffffff",
+          boxShadow: "0 0 14px #ffffff66",
         }}
-        aria-label=""
+        aria-hidden="true"
       />
     );
   }
 
   /*
-   * -------------------------------------------------------
    * PURE COLOUR OPTIONS
-   * -------------------------------------------------------
    */
   if (optionColors[option]) {
     return (
       <span
-        className="math-colour-answer-swatch"
+        className="math-colour-swatch"
         style={{
-          background: optionColors[option],
+          width: "42px",
+          height: "42px",
+          minWidth: "42px",
+          minHeight: "42px",
+          display: "block",
+          borderRadius: "50%",
+          backgroundColor: optionColors[option],
+          border: "3px solid #ffffff",
+          boxShadow: "0 0 14px #ffffff66",
         }}
-        aria-label=""
+        aria-hidden="true"
       />
     );
   }
 
   /*
-   * -------------------------------------------------------
    * PURE SHAPE OPTIONS
-   * -------------------------------------------------------
-   *
-   * This fixes Mission 5 shape matching.
    */
   if (shapes[option]) {
     return (
@@ -676,16 +676,12 @@ function OptionVisual({ option, question }) {
   }
 
   /*
-   * -------------------------------------------------------
    * COLOUR + SHAPE OPTIONS
-   * -------------------------------------------------------
    *
    * Example:
-   * "red triangle"
-   * "blue circle"
-   * "yellow star"
-   *
-   * These become actual coloured shapes.
+   * red triangle
+   * blue circle
+   * yellow star
    */
   if (
     typeof option === "string" &&
@@ -711,9 +707,7 @@ function OptionVisual({ option, question }) {
   }
 
   /*
-   * -------------------------------------------------------
    * NUMBER → QUANTITY
-   * -------------------------------------------------------
    */
   if (
     question?.type === "matching" &&
@@ -723,18 +717,14 @@ function OptionVisual({ option, question }) {
   }
 
   /*
-   * -------------------------------------------------------
    * TWO-PROPERTY FALLBACK
-   * -------------------------------------------------------
    */
   if (question?.twoProperties) {
     return option;
   }
 
   /*
-   * -------------------------------------------------------
    * SORTING BY QUANTITY
-   * -------------------------------------------------------
    */
   if (
     question?.type === "sorting" &&
@@ -760,9 +750,7 @@ function OptionVisual({ option, question }) {
   }
 
   /*
-   * -------------------------------------------------------
    * SORTING BY SHAPE
-   * -------------------------------------------------------
    */
   if (
     question?.type === "sorting" &&
@@ -786,9 +774,7 @@ function OptionVisual({ option, question }) {
   }
 
   /*
-   * -------------------------------------------------------
    * ODD ONE OUT
-   * -------------------------------------------------------
    */
   if (
     question?.type === "sorting" &&
