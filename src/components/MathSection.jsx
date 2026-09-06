@@ -82,7 +82,7 @@ const countColors = [
 ];
 
 function getItemColor(item) {
-  if (!item) return "#55c6ff";
+  if (!item) return colors.blue;
 
   if (
     item.color &&
@@ -105,7 +105,7 @@ function getItemColor(item) {
     return optionColors[item.color];
   }
 
-  return "#55c6ff";
+  return colors.blue;
 }
 
 function getItemShape(item) {
@@ -442,6 +442,44 @@ function TwoPropertyVisual({
           color={target.color}
         />
       </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------
+   OPERATION INTRODUCTION
+--------------------------------------------------------- */
+
+function OperationIntroductionVisual({
+  question,
+}) {
+  return (
+    <div
+      className="math-operation-introduction"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "18px",
+        minHeight: "180px",
+      }}
+    >
+      <div
+        style={{
+          fontSize: "5rem",
+          fontWeight: 900,
+          lineHeight: 1,
+        }}
+      >
+        {question.operation}
+      </div>
+
+      {question.teachingText ? (
+        <p className="math-teaching-text">
+          {question.teachingText}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -1276,12 +1314,6 @@ function SortingVisual({
     );
   }
 
-  /*
-   * TWO-PROPERTY QUESTIONS
-   *
-   * These are click questions,
-   * not drag questions.
-   */
   if (
     question.twoProperties
   ) {
@@ -1336,29 +1368,48 @@ function SortingVisual({
   );
 }
 
+/* ---------------------------------------------------------
+   ADDITION / SUBTRACTION VISUAL
+--------------------------------------------------------- */
+
 function ArithmeticVisual({
   question,
 }) {
   const [
     first,
     second,
-  ] = question.values;
-
-  const removedStart =
-    first - second;
+  ] = question.values || [];
 
   const isSubtraction =
     question.operation ===
     "-";
 
-  const objectSymbol =
-    question.object ===
-    "apple"
-      ? "🍎"
-      : question.object ===
-          "planet"
-        ? "🪐"
-        : "⭐";
+  if (
+    first == null ||
+    second == null
+  ) {
+    return (
+      <OperationIntroductionVisual
+        question={question}
+      />
+    );
+  }
+
+  const objectShape =
+    question.object &&
+    shapes[question.object]
+      ? question.object
+      : shapes.circle;
+
+  const objectColor =
+    question.color ||
+    colors.blue;
+
+  const remaining =
+    Math.max(
+      first - second,
+      0
+    );
 
   return (
     <div
@@ -1375,13 +1426,28 @@ function ArithmeticVisual({
               key={index}
               className={`math-object ${
                 isSubtraction &&
-                index >=
-                  removedStart
+                index >= remaining
                   ? "is-taken"
                   : ""
               }`}
+              style={{
+                display: "inline-flex",
+                width: "62px",
+                height: "62px",
+                alignItems:
+                  "center",
+                justifyContent:
+                  "center",
+              }}
             >
-              {objectSymbol}
+              <Shape
+                name={
+                  objectShape
+                }
+                color={
+                  objectColor
+                }
+              />
             </span>
           )
         )}
@@ -1391,24 +1457,40 @@ function ArithmeticVisual({
         {question.operation}
       </strong>
 
-      <div className="math-arithmetic-group">
-        {isSubtraction
-          ? null
-          : Array.from(
-              {
-                length:
-                  second,
-              },
-              (_, index) => (
-                <span
-                  key={index}
-                  className="math-object"
-                >
-                  {objectSymbol}
-                </span>
-              )
-            )}
-      </div>
+      {!isSubtraction ? (
+        <div className="math-arithmetic-group">
+          {Array.from(
+            {
+              length: second,
+            },
+            (_, index) => (
+              <span
+                key={index}
+                className="math-object"
+                style={{
+                  display:
+                    "inline-flex",
+                  width: "62px",
+                  height: "62px",
+                  alignItems:
+                    "center",
+                  justifyContent:
+                    "center",
+                }}
+              >
+                <Shape
+                  name={
+                    objectShape
+                  }
+                  color={
+                    objectColor
+                  }
+                />
+              </span>
+            )
+          )}
+        </div>
+      ) : null}
 
       <strong className="math-operation-symbol">
         =
@@ -1420,6 +1502,10 @@ function ArithmeticVisual({
     </div>
   );
 }
+
+/* ---------------------------------------------------------
+   NUMBER EQUATION
+--------------------------------------------------------- */
 
 function NumberEquationVisual({
   question,
@@ -1434,7 +1520,13 @@ function NumberEquationVisual({
 
   const operation =
     question.operation ||
-    "÷";
+    (question.type ===
+    "division-numbers"
+      ? "÷"
+      : question.type ===
+          "multiplication-numbers"
+        ? "×"
+        : "");
 
   return (
     <div className="math-number-equation">
@@ -1444,12 +1536,51 @@ function NumberEquationVisual({
   );
 }
 
+/* ---------------------------------------------------------
+   EQUAL GROUPS / MULTIPLICATION
+--------------------------------------------------------- */
+
 function GroupingVisual({
   question,
 }) {
+  const groups =
+    question.groups || [];
+
+  const objectShape =
+    question.object &&
+    shapes[question.object]
+      ? question.object
+      : shapes.circle;
+
+  const objectColor =
+    question.color ||
+    colors.blue;
+
+  const isMultiplication =
+    question.multiplication ||
+    question.operation ===
+      "×";
+
   return (
-    <div className="math-equal-groups">
-      {question.groups.map(
+    <div
+      className="math-equal-groups"
+      aria-label={
+        isMultiplication
+          ? `${question.groupsCount} groups of ${groups[0]}`
+          : "Equal groups"
+      }
+      style={{
+        display: "flex",
+        alignItems:
+          "center",
+        justifyContent:
+          "center",
+        gap: "22px",
+        flexWrap: "wrap",
+        width: "100%",
+      }}
+    >
+      {groups.map(
         (
           group,
           groupIndex
@@ -1457,6 +1588,27 @@ function GroupingVisual({
           <div
             className="math-small-group"
             key={groupIndex}
+            style={{
+              display:
+                "flex",
+              alignItems:
+                "center",
+              justifyContent:
+                "center",
+              flexWrap:
+                "wrap",
+              gap: "8px",
+              padding:
+                "14px",
+              minWidth:
+                "105px",
+              minHeight:
+                "90px",
+              border:
+                "2px solid #8fe7ff55",
+              borderRadius:
+                "16px",
+            }}
           >
             {Array.from(
               {
@@ -1467,54 +1619,96 @@ function GroupingVisual({
                 itemIndex
               ) => (
                 <span
-                  className="math-object"
                   key={
                     itemIndex
                   }
+                  style={{
+                    display:
+                      "inline-flex",
+                    width: "48px",
+                    height: "48px",
+                  }}
                 >
-                  🍎
+                  <Shape
+                    name={
+                      objectShape
+                    }
+                    color={
+                      objectColor
+                    }
+                  />
                 </span>
               )
             )}
           </div>
         )
       )}
+
+      {isMultiplication ? (
+        <>
+          <strong
+            className="math-operation-symbol"
+            style={{
+              fontSize:
+                "2rem",
+            }}
+          >
+            ×
+          </strong>
+
+          <span
+            style={{
+              fontSize:
+                "1.1rem",
+              fontWeight:
+                800,
+              color:
+                "#c7d2f6",
+            }}
+          >
+            {question.groupsCount} groups
+          </span>
+        </>
+      ) : null}
     </div>
   );
 }
+
+/* ---------------------------------------------------------
+   SHARING / DIVISION
+--------------------------------------------------------- */
 
 function SharingVisual({
   question,
 }) {
   const groups =
-    question.groups;
+    question.groups || [];
+
+  const objectShape =
+    question.object &&
+    shapes[question.object]
+      ? question.object
+      : shapes.circle;
+
+  const objectColor =
+    question.color ||
+    colors.blue;
 
   return (
     <div
       className="math-sharing-display"
-      aria-label="Objects shared into equal groups"
+      aria-label="Shapes shared into equal groups"
+      style={{
+        display: "flex",
+        alignItems:
+          "center",
+        justifyContent:
+          "center",
+        gap: "22px",
+        flexWrap: "wrap",
+        width: "100%",
+      }}
     >
-      {question.friends ? (
-        <div
-          className="math-friends"
-          aria-hidden="true"
-        >
-          {Array.from(
-            {
-              length:
-                question.friends,
-            },
-            (_, index) => (
-              <span
-                key={index}
-              >
-                🧒
-              </span>
-            )
-          )}
-        </div>
-      ) : null}
-
       {groups.map(
         (
           count,
@@ -1522,9 +1716,28 @@ function SharingVisual({
         ) => (
           <div
             className="math-small-group"
-            key={
-              groupIndex
-            }
+            key={groupIndex}
+            style={{
+              display:
+                "flex",
+              alignItems:
+                "center",
+              justifyContent:
+                "center",
+              flexWrap:
+                "wrap",
+              gap: "8px",
+              padding:
+                "14px",
+              minWidth:
+                "105px",
+              minHeight:
+                "90px",
+              border:
+                "2px solid #8fe7ff55",
+              borderRadius:
+                "16px",
+            }}
           >
             {Array.from(
               {
@@ -1540,8 +1753,21 @@ function SharingVisual({
                   key={
                     itemIndex
                   }
+                  style={{
+                    display:
+                      "inline-flex",
+                    width: "48px",
+                    height: "48px",
+                  }}
                 >
-                  🍎
+                  <Shape
+                    name={
+                      objectShape
+                    }
+                    color={
+                      objectColor
+                    }
+                  />
                 </span>
               )
             )}
@@ -1587,7 +1813,7 @@ const visualRenderers = {
     SortingVisual,
 
   "addition-introduction":
-    ArithmeticVisual,
+    OperationIntroductionVisual,
 
   "addition-objects":
     ArithmeticVisual,
@@ -1596,12 +1822,18 @@ const visualRenderers = {
     NumberEquationVisual,
 
   "subtraction-introduction":
-    ArithmeticVisual,
+    OperationIntroductionVisual,
 
   "subtraction-objects":
     ArithmeticVisual,
 
   "subtraction-numbers":
+    NumberEquationVisual,
+
+  "multiplication-introduction":
+    OperationIntroductionVisual,
+
+  "multiplication-numbers":
     NumberEquationVisual,
 
   "equal-groups":
@@ -1611,7 +1843,7 @@ const visualRenderers = {
     SharingVisual,
 
   "division-introduction":
-    SharingVisual,
+    OperationIntroductionVisual,
 
   "division-numbers":
     NumberEquationVisual,
@@ -1651,7 +1883,7 @@ function OptionVisual({
   /*
    * TWO-PROPERTY GROUP
    *
-   * Each answer is now a group
+   * Each answer is a group
    * of three matching shapes.
    */
   if (
@@ -1702,6 +1934,8 @@ function OptionVisual({
    * COLOURS
    */
   if (
+    typeof option ===
+      "string" &&
     optionColors[option]
   ) {
     return (
@@ -1731,7 +1965,11 @@ function OptionVisual({
   /*
    * PURE SHAPE
    */
-  if (shapes[option]) {
+  if (
+    typeof option ===
+      "string" &&
+    shapes[option]
+  ) {
     return (
       <Shape
         name={option}
@@ -1820,9 +2058,7 @@ function OptionVisual({
           (_, index) => (
             <Shape
               key={index}
-              name={
-                shapes.circle
-              }
+              name="circle"
               color="#55c6ff"
             />
           )
