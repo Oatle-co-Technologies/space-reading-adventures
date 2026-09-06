@@ -73,136 +73,157 @@ export const colourMixingQuestions = [
   },
 
   // -------------------------------------------------------
-  // TERTIARY COLOURS — TEACH
+  // NEW COLOURS — TEACH THROUGH MIXING
   // -------------------------------------------------------
 
   {
     type: "colour-mixing",
     teaching: true,
-    prompt: "Red and orange make red-orange.",
+    prompt: "Red and orange make vermilion.",
     teachingText:
-      "When we mix red and orange, we make red-orange.",
-    answer: "red-orange",
+      "When we mix red and orange, we make vermilion.",
+    answer: "vermilion",
     options: [],
     mix: [colors.red, colors.orange],
-    resultColor: colors.redOrange,
+    resultColor: "#e34234",
   },
 
   {
     type: "colour-mixing",
     teaching: true,
-    prompt: "Yellow and orange make yellow-orange.",
+    prompt: "Yellow and orange make gold.",
     teachingText:
-      "When we mix yellow and orange, we make yellow-orange.",
-    answer: "yellow-orange",
+      "When we mix yellow and orange, we make gold.",
+    answer: "gold",
     options: [],
     mix: [colors.yellow, colors.orange],
-    resultColor: colors.yellowOrange,
+    resultColor: colors.gold,
   },
 
   {
     type: "colour-mixing",
     teaching: true,
-    prompt: "Yellow and green make yellow-green.",
+    prompt: "Yellow and green make lime.",
     teachingText:
-      "When we mix yellow and green, we make yellow-green.",
-    answer: "yellow-green",
+      "When we mix yellow and green, we make lime.",
+    answer: "lime",
     options: [],
     mix: [colors.yellow, colors.green],
-    resultColor: colors.yellowGreen,
+    resultColor: colors.lime,
   },
 
   {
     type: "colour-mixing",
     teaching: true,
-    prompt: "Blue and green make blue-green.",
+    prompt: "Blue and green make turquoise.",
     teachingText:
-      "When we mix blue and green, we make blue-green.",
-    answer: "blue-green",
+      "When we mix blue and green, we make turquoise.",
+    answer: "turquoise",
     options: [],
     mix: [colors.blue, colors.green],
-    resultColor: colors.blueGreen,
+    resultColor: colors.turquoise,
   },
 
   {
     type: "colour-mixing",
     teaching: true,
-    prompt: "Blue and purple make blue-purple.",
+    prompt: "Blue and purple make violet.",
     teachingText:
-      "When we mix blue and purple, we make blue-purple.",
-    answer: "blue-purple",
+      "When we mix blue and purple, we make violet.",
+    answer: "violet",
     options: [],
     mix: [colors.blue, colors.purple],
-    resultColor: colors.bluePurple,
+    resultColor: colors.violet,
   },
 
   {
     type: "colour-mixing",
     teaching: true,
-    prompt: "Red and purple make red-purple.",
+    prompt: "Red and purple make maroon.",
     teachingText:
-      "When we mix red and purple, we make red-purple.",
-    answer: "red-purple",
+      "When we mix red and purple, we make maroon.",
+    answer: "maroon",
     options: [],
     mix: [colors.red, colors.purple],
-    resultColor: colors.redPurple,
+    resultColor: colors.maroon,
+  },
+
+  {
+    type: "colour-mixing",
+    teaching: true,
+    prompt: "Red and white make pink.",
+    teachingText:
+      "When we mix red and white, we make pink.",
+    answer: "pink",
+    options: [],
+    mix: [colors.red, "#ffffff"],
+    resultColor: colors.pink,
   },
 
   // -------------------------------------------------------
-  // TERTIARY COLOURS — PRACTICE
+  // NEW COLOURS — PRACTICE
   // -------------------------------------------------------
 
   {
     type: "colour-mixing",
     prompt: "Red and orange make what colour?",
-    answer: "red-orange",
-    options: ["red-orange", "yellow-orange", "red-purple"],
+    answer: "vermilion",
+    options: ["vermilion", "gold", "maroon"],
     mix: [colors.red, colors.orange],
-    resultColor: colors.redOrange,
+    resultColor: "#e34234",
   },
 
   {
     type: "colour-mixing",
     prompt: "Yellow and orange make what colour?",
-    answer: "yellow-orange",
-    options: ["yellow-green", "yellow-orange", "red-orange"],
+    answer: "gold",
+    options: ["lime", "gold", "violet"],
     mix: [colors.yellow, colors.orange],
-    resultColor: colors.yellowOrange,
+    resultColor: colors.gold,
   },
 
   {
     type: "colour-mixing",
     prompt: "Yellow and green make what colour?",
-    answer: "yellow-green",
-    options: ["blue-green", "yellow-orange", "yellow-green"],
+    answer: "lime",
+    options: ["turquoise", "lime", "gold"],
     mix: [colors.yellow, colors.green],
-    resultColor: colors.yellowGreen,
+    resultColor: colors.lime,
   },
 
   {
     type: "colour-mixing",
     prompt: "Blue and green make what colour?",
-    answer: "blue-green",
-    options: ["blue-green", "blue-purple", "yellow-green"],
+    answer: "turquoise",
+    options: ["turquoise", "violet", "lime"],
     mix: [colors.blue, colors.green],
-    resultColor: colors.blueGreen,
+    resultColor: colors.turquoise,
   },
 
   {
     type: "colour-mixing",
     prompt: "Blue and purple make what colour?",
-    answer: "blue-purple",
-    options: ["red-purple", "blue-green", "blue-purple"],
+    answer: "violet",
+    options: ["maroon", "violet", "turquoise"],
     mix: [colors.blue, colors.purple],
-    resultColor: colors.bluePurple,
+    resultColor: colors.violet,
   },
 
   {
     type: "colour-mixing",
     prompt: "Red and purple make what colour?",
-    answer: "red-purple",
-    options: ["red-orange", "red-purple", "blue-purple"],
+    answer: "maroon",
+    options: ["pink", "maroon", "violet"],
     mix: [colors.red, colors.purple],
-    resultColor: colors.redPurple,
+    resultColor: colors.maroon,
+  },
+
+  {
+    type: "colour-mixing",
+    prompt: "Red and white make what colour?",
+    answer: "pink",
+    options: ["pink", "gold", "lime"],
+    mix: [colors.red, "#ffffff"],
+    resultColor: colors.pink,
   },
 ];
