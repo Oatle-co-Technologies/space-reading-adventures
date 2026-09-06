@@ -1,7 +1,10 @@
 import { colors, shapes } from "./mathConstants";
 
 export const colourQuestions = [
-  // Primary colour reinforcement
+  // ---------------------------------------------------------
+  // PRIMARY COLOUR PRACTICE
+  // ---------------------------------------------------------
+
   {
     type: "colour-recognition",
     prompt: "What colour is this shape?",
@@ -29,12 +32,16 @@ export const colourQuestions = [
     shape: shapes.triangle,
   },
 
-  // Extra colour vocabulary — teach first
+  // ---------------------------------------------------------
+  // EXTRA COLOUR VOCABULARY — TEACH FIRST
+  // ---------------------------------------------------------
+
   {
     type: "colour-recognition",
     teaching: true,
     prompt: "This is pink.",
-    teachingText: "Pink is a light colour that looks like a soft flower.",
+    teachingText:
+      "Pink is a light colour that looks like a soft flower.",
     answer: "pink",
     options: [],
     color: colors.pink,
@@ -45,7 +52,8 @@ export const colourQuestions = [
     type: "colour-recognition",
     teaching: true,
     prompt: "This is maroon.",
-    teachingText: "Maroon is a deep red colour.",
+    teachingText:
+      "Maroon is a deep red colour.",
     answer: "maroon",
     options: [],
     color: colors.maroon,
@@ -56,7 +64,8 @@ export const colourQuestions = [
     type: "colour-recognition",
     teaching: true,
     prompt: "This is lime.",
-    teachingText: "Lime is a bright green colour.",
+    teachingText:
+      "Lime is a bright green colour.",
     answer: "lime",
     options: [],
     color: colors.lime,
@@ -67,7 +76,8 @@ export const colourQuestions = [
     type: "colour-recognition",
     teaching: true,
     prompt: "This is turquoise.",
-    teachingText: "Turquoise is a blue-green colour.",
+    teachingText:
+      "Turquoise is a blue-green colour.",
     answer: "turquoise",
     options: [],
     color: colors.turquoise,
@@ -78,17 +88,21 @@ export const colourQuestions = [
     type: "colour-recognition",
     teaching: true,
     prompt: "This is gold.",
-    teachingText: "Gold is a warm yellow colour, like a treasure.",
+    teachingText:
+      "Gold is a warm yellow colour, like a treasure.",
     answer: "gold",
     options: [],
     color: colors.gold,
     shape: shapes.pentagon,
   },
 
-  // Extra colour practice
+  // ---------------------------------------------------------
+  // EXTRA COLOUR PRACTICE
+  // ---------------------------------------------------------
+
   {
     type: "colour-recognition",
-    prompt: "What colour is this shape?",
+    prompt: "What colour is this star?",
     answer: "pink",
     options: ["pink", "lime", "gold"],
     color: colors.pink,
@@ -97,7 +111,7 @@ export const colourQuestions = [
 
   {
     type: "colour-recognition",
-    prompt: "What colour is this shape?",
+    prompt: "What colour is this oval?",
     answer: "maroon",
     options: ["gold", "maroon", "turquoise"],
     color: colors.maroon,
@@ -106,7 +120,7 @@ export const colourQuestions = [
 
   {
     type: "colour-recognition",
-    prompt: "What colour is this shape?",
+    prompt: "What colour is this diamond?",
     answer: "lime",
     options: ["lime", "pink", "green"],
     color: colors.lime,
@@ -115,7 +129,7 @@ export const colourQuestions = [
 
   {
     type: "colour-recognition",
-    prompt: "What colour is this shape?",
+    prompt: "What colour is this heart?",
     answer: "turquoise",
     options: ["blue", "turquoise", "gold"],
     color: colors.turquoise,
@@ -124,10 +138,10 @@ export const colourQuestions = [
 
   {
     type: "colour-recognition",
-    prompt: "What colour is this shape?",
+    prompt: "What colour is this pentagon?",
     answer: "gold",
     options: ["pink", "maroon", "gold"],
     color: colors.gold,
     shape: shapes.pentagon,
   },
-];      
+];

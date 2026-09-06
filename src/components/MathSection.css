@@ -88,17 +88,14 @@
   font-size: 2rem;
 }
 
-.math-mission-card strong {
-  margin-top: 5px;
-  color: var(--mission-color);
-}
-
 .math-mission-card strong,
 .math-mission-card small {
   display: block;
 }
 
 .math-mission-card strong {
+  margin-top: 5px;
+  color: var(--mission-color);
   font-size: 1.1rem;
 }
 
@@ -213,20 +210,77 @@
   font-size: 1.05rem;
 }
 
+/* -------------------------------------------------------
+   COLOUR EXPLORERS
+------------------------------------------------------- */
+
 .math-mix-display {
-  min-height: 150px;
+  min-height: 180px;
   gap: 28px;
+  width: 100%;
+}
+
+/* The complete mixing lesson visual */
+.math-mix-colours {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  width: 100%;
+  min-height: 180px;
 }
 
 .math-mix-swatch {
-  width: 82px;
-  height: 82px;
-  border: 4px solid #fff;
+  flex: 0 0 auto;
+  width: 92px;
+  height: 92px;
+  border: 5px solid #ffffff;
   border-radius: 50%;
-  box-shadow: 0 0 18px #ffffff55;
+  box-sizing: border-box;
+  box-shadow:
+    0 0 20px #ffffff55,
+    inset 0 0 12px #ffffff22;
 }
 
-/* Counting Shapes */
+.math-mix-arrow {
+  flex: 0 0 auto;
+  color: #f8fbff;
+  font-size: 2.8rem;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 0 12px #8fe7ff88;
+}
+
+.math-mix-result {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.math-mix-result .math-mix-swatch {
+  width: 112px;
+  height: 112px;
+  border-width: 6px;
+  box-shadow:
+    0 0 28px #ffffff77,
+    0 0 55px var(--mix-result-glow, #ffffff33),
+    inset 0 0 15px #ffffff22;
+}
+
+.math-teaching-text {
+  max-width: 620px;
+  margin: 12px auto 0;
+  color: #d9e1ff;
+  font-size: 1.08rem;
+  line-height: 1.55;
+  text-align: center;
+}
+
+/* -------------------------------------------------------
+   COUNTING SHAPES
+------------------------------------------------------- */
+
 .math-count-display {
   flex-wrap: wrap;
   gap: 18px;
@@ -331,7 +385,10 @@
   border-radius: 10px;
 }
 
-/* SVG math shapes */
+/* -------------------------------------------------------
+   SVG MATH SHAPES
+------------------------------------------------------- */
+
 .math-shape {
   display: inline-block;
   flex: 0 0 auto;
@@ -344,6 +401,10 @@
 .math-shape.is-taken {
   opacity: 0.35;
 }
+
+/* -------------------------------------------------------
+   ANSWERS
+------------------------------------------------------- */
 
 .math-answer-grid {
   display: grid;
@@ -419,6 +480,10 @@
   color: #ffb6b6;
 }
 
+/* -------------------------------------------------------
+   COMPLETION
+------------------------------------------------------- */
+
 .math-center-panel {
   min-height: calc(100vh - 120px);
   display: flex;
@@ -462,6 +527,10 @@
   background: #ffffff18;
 }
 
+/* -------------------------------------------------------
+   RESPONSIVE
+------------------------------------------------------- */
+
 @media (max-width: 700px) {
   .math-mission-map {
     grid-template-columns: 1fr 1fr;
@@ -480,6 +549,25 @@
   .math-counting-shape-display .math-shape {
     width: 60px;
     height: 60px;
+  }
+
+  .math-mix-colours {
+    gap: 14px;
+  }
+
+  .math-mix-swatch {
+    width: 72px;
+    height: 72px;
+    border-width: 4px;
+  }
+
+  .math-mix-result .math-mix-swatch {
+    width: 88px;
+    height: 88px;
+  }
+
+  .math-mix-arrow {
+    font-size: 2.2rem;
   }
 }
 
@@ -521,5 +609,29 @@
   .math-option-group .math-shape {
     width: 18px;
     height: 18px;
+  }
+
+  .math-mix-colours {
+    gap: 8px;
+  }
+
+  .math-mix-swatch {
+    width: 58px;
+    height: 58px;
+    border-width: 3px;
+  }
+
+  .math-mix-result .math-mix-swatch {
+    width: 70px;
+    height: 70px;
+  }
+
+  .math-mix-arrow {
+    font-size: 1.7rem;
+  }
+
+  .math-teaching-text {
+    padding: 0 10px;
+    font-size: 1rem;
   }
 }
