@@ -474,7 +474,10 @@ function getTargetItems(
 ) {
   return (question.items || []).filter(
     (item) =>
-      itemMatchesZone(item, zone)
+      itemMatchesZone(
+        item,
+        zone
+      )
   );
 }
 
@@ -601,23 +604,13 @@ function InteractiveSortVisual({
   const zone =
     zones[0];
 
-  const targetItems = zone
-    ? getTargetItems(
-        question,
-        zone
-      )
-    : [];
-
-  const targetItemIds =
-    useMemo(
-      () =>
-        new Set(
-          targetItems.map(
-            (item) => item.id
-          )
-        ),
-      [question, targetItems.length]
-    );
+  const targetItems =
+    zone
+      ? getTargetItems(
+          question,
+          zone
+        )
+      : [];
 
   useEffect(() => {
     const nextPositions =
@@ -629,7 +622,9 @@ function InteractiveSortVisual({
           index % 5;
 
         const row =
-          Math.floor(index / 5);
+          Math.floor(
+            index / 5
+          );
 
         nextPositions[
           item.id
@@ -638,7 +633,7 @@ function InteractiveSortVisual({
             72 +
             column * 135,
           y:
-            82 +
+            78 +
             row * 88,
         };
       }
@@ -804,12 +799,18 @@ function InteractiveSortVisual({
   const resetItem = (
     itemId
   ) => {
+    const original =
+      originalPositions
+        .current[itemId];
+
+    if (!original) {
+      return;
+    }
+
     setPositions(
       (current) => ({
         ...current,
-        [itemId]:
-          originalPositions
-            .current[itemId],
+        [itemId]: original,
       })
     );
   };
@@ -846,6 +847,7 @@ function InteractiveSortVisual({
       );
 
     setDraggingId(null);
+
     currentPointerId.current =
       null;
 
@@ -880,48 +882,57 @@ function InteractiveSortVisual({
       nextPlaced
     );
 
-    /*
-     * Only target objects count
-     * toward completion.
-     */
-    const placedTargetCount =
+    const placedTargetItems =
       targetItems.filter(
         (targetItem) =>
           nextPlaced[
             targetItem.id
           ] === zoneId
-      ).length;
+      );
 
-    /*
-     * Snap the object into the
-     * sorting box.
-     */
     const zoneElement =
       containerRef.current?.querySelector(
         `[data-sort-zone="${zoneId}"]`
       );
 
+    /*
+     * Place the successfully
+     * sorted object INSIDE the
+     * box using coordinates
+     * relative to the box.
+     */
     if (zoneElement) {
-      const containerRect =
-        containerRef.current.getBoundingClientRect();
-
       const zoneRect =
         zoneElement.getBoundingClientRect();
 
-      const alreadyPlaced =
-        placedTargetCount - 1;
+      const columnCount = 4;
 
-      const columns = 4;
+      const placedIndex =
+        placedTargetItems.length -
+        1;
 
       const column =
-        alreadyPlaced %
-        columns;
+        placedIndex %
+        columnCount;
 
       const row =
         Math.floor(
-          alreadyPlaced /
-            columns
+          placedIndex /
+            columnCount
         );
+
+      /*
+       * We store the item position
+       * as a point relative to the
+       * whole interactive container.
+       *
+       * This makes the placed item
+       * render in exactly the same
+       * coordinate system as the
+       * rest of the interaction.
+       */
+      const containerRect =
+        containerRef.current.getBoundingClientRect();
 
       setPositions(
         (current) => ({
@@ -936,15 +947,22 @@ function InteractiveSortVisual({
             y:
               zoneRect.top -
               containerRect.top +
-              82 +
+              88 +
               row * 70,
           },
         })
       );
     }
 
+    /*
+     * Completion is based ONLY
+     * on the target objects.
+     *
+     * Distractors do not need
+     * to be moved.
+     */
     if (
-      placedTargetCount ===
+      placedTargetItems.length ===
       targetItems.length
     ) {
       window.setTimeout(
@@ -993,7 +1011,7 @@ function InteractiveSortVisual({
         finishDrag
       }
     >
-      {/* MIXED OBJECT AREA */}
+      {/* MIXED PILE */}
       <div
         className="math-sort-object-area"
         style={{
@@ -1008,11 +1026,17 @@ function InteractiveSortVisual({
             "18px",
           background:
             "#ffffff08",
-          overflow: "hidden",
+          overflow:
+            "hidden",
         }}
       >
         {items.map(
           (item) => {
+            /*
+             * Once an object is
+             * correctly sorted, it
+             * leaves the mixed pile.
+             */
             if (
               placed[item.id]
             ) {
@@ -1041,7 +1065,7 @@ function InteractiveSortVisual({
         )}
       </div>
 
-      {/* ONE OPEN SORTING BOX */}
+      {/* EMPTY SORTING BOX */}
       <div
         className="math-sort-zones"
         style={{
@@ -1072,36 +1096,6 @@ function InteractiveSortVisual({
               "hidden",
           }}
         >
-          {/* Visual target — no
-              required reading */}
-          <div
-            style={{
-              position:
-                "absolute",
-              top: "8px",
-              left: 0,
-              right: 0,
-              height: "54px",
-              display:
-                "flex",
-              alignItems:
-                "center",
-              justifyContent:
-                "center",
-              pointerEvents:
-                "none",
-              zIndex: 3,
-            }}
-          >
-            <Shape
-              name={
-                zone.targetShape ||
-                "circle"
-              }
-              color="#8fe7ff"
-            />
-          </div>
-
           {targetItems.map(
             (item) => {
               if (
@@ -1123,6 +1117,18 @@ function InteractiveSortVisual({
                 return null;
               }
 
+              /*
+               * IMPORTANT:
+               *
+               * The item position is
+               * already relative to the
+               * interactive container.
+               *
+               * Therefore we simply use
+               * it here. We DO NOT subtract
+               * the container position
+               * again.
+               */
               return (
                 <div
                   key={
@@ -1131,12 +1137,8 @@ function InteractiveSortVisual({
                   style={{
                     position:
                       "absolute",
-                    left: `${position.x -
-                      (containerRef.current?.getBoundingClientRect()
-                        ?.left || 0)}px`,
-                    top: `${position.y -
-                      (containerRef.current?.getBoundingClientRect()
-                        ?.top || 0)}px`,
+                    left: `${position.x}px`,
+                    top: `${position.y}px`,
                     width:
                       "60px",
                     height:
@@ -1149,6 +1151,7 @@ function InteractiveSortVisual({
                       "center",
                     pointerEvents:
                       "none",
+                    zIndex: 2,
                   }}
                 >
                   <Shape
@@ -1157,9 +1160,11 @@ function InteractiveSortVisual({
                         item
                       )
                     }
-                    color={getItemColor(
-                      item
-                    )}
+                    color={
+                      getItemColor(
+                        item
+                      )
+                    }
                   />
                 </div>
               );
@@ -1168,7 +1173,7 @@ function InteractiveSortVisual({
         </div>
       </div>
 
-      {/* PROGRESS */}
+      {/* SORTING PROGRESS */}
       <div
         style={{
           position:
@@ -1711,10 +1716,11 @@ function OptionVisual({
   question,
 }) {
   /*
-   * COLOUR OPTIONS
+   * COLOURS
    *
-   * Always show the actual colour.
-   * Never show the colour name.
+   * Always display the actual
+   * colour, never the written
+   * colour name.
    */
   if (
     optionColors[option]
@@ -1946,10 +1952,7 @@ function MissionCard({
 
 /*
  * Shuffle answer choices once
- * for each question.
- *
- * This deliberately does NOT
- * shuffle the question order.
+ * whenever the question changes.
  */
 function shuffleOptions(
   options
@@ -2033,13 +2036,8 @@ export default function MathSection({
     questions[0];
 
   /*
-   * Shuffle answer choices
-   * once whenever the actual
-   * question changes.
-   *
-   * Teaching questions and
-   * interactive questions do
-   * not need this.
+   * Answer choices are shuffled
+   * without changing question order.
    */
   const shuffledOptions =
     useMemo(() => {
