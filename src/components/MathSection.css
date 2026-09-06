@@ -22,7 +22,7 @@
 .math-mission-page h1 {
   margin: 10px 0 14px;
   color: var(--game-green);
-  font: 700 clamp(2rem, 6vw, 4.3rem)/1 "Pixelify Sans", sans-serif;
+  font: 700 clamp(2rem, 6vw, 4.3rem) / 1 "Pixelify Sans", sans-serif;
   text-shadow: 0 0 18px #66ff6655;
 }
 
@@ -36,9 +36,9 @@
 .math-eyebrow {
   margin: 12px 0 0;
   color: #8fe7ff;
-  font-size: .77rem;
+  font-size: 0.77rem;
   font-weight: 900;
-  letter-spacing: .18em;
+  letter-spacing: 0.18em;
 }
 
 .math-back-button {
@@ -70,7 +70,7 @@
   height: 72px;
   margin-bottom: 5px;
   color: var(--mission-color);
-  font: 700 2.4rem/72px "Pixelify Sans", sans-serif;
+  font: 700 2.4rem / 72px "Pixelify Sans", sans-serif;
   text-align: center;
 }
 
@@ -114,7 +114,7 @@
   justify-content: space-between;
   gap: 12px;
   color: #c7d2f6;
-  font-size: .9rem;
+  font-size: 0.9rem;
 }
 
 .math-journey-track {
@@ -147,7 +147,7 @@
   font-size: 2rem;
   line-height: 1;
   transform: translate(-50%, -50%);
-  transition: left .45s ease-out;
+  transition: left 0.45s ease-out;
   filter: drop-shadow(0 0 8px #ffffff99);
 }
 
@@ -194,7 +194,7 @@
 .math-number-display {
   min-height: 150px;
   color: var(--game-green);
-  font: 900 8rem/1 Nunito, sans-serif;
+  font: 900 8rem / 1 Nunito, sans-serif;
   text-shadow: 0 0 18px #66ff6655;
 }
 
@@ -202,14 +202,15 @@
   min-height: 150px;
 }
 
+.math-introduction-visual {
+  flex-direction: column;
+  gap: 10px;
+}
+
 .math-introduction-visual p {
   margin: 0;
   color: #c7d2f6;
   font-size: 1.05rem;
-}
-
-.math-introduction-visual {
-  flex-direction: column;
 }
 
 .math-mix-display {
@@ -225,12 +226,30 @@
   box-shadow: 0 0 18px #ffffff55;
 }
 
+/* Counting Shapes */
 .math-count-display {
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 18px;
   min-height: 150px;
-  max-width: 560px;
-  margin: auto;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 12px;
+}
+
+.math-counting-shape-display {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.math-counting-shape-display .math-shape {
+  width: 72px;
+  height: 72px;
 }
 
 .math-feature-row,
@@ -295,7 +314,7 @@
   display: grid;
   place-items: center;
   color: #f8fbff;
-  font: 900 3.8rem/1 Nunito, sans-serif;
+  font: 900 3.8rem / 1 Nunito, sans-serif;
 }
 
 .math-object {
@@ -312,6 +331,7 @@
   border-radius: 10px;
 }
 
+/* SVG math shapes */
 .math-shape {
   display: inline-block;
   flex: 0 0 auto;
@@ -322,7 +342,7 @@
 }
 
 .math-shape.is-taken {
-  opacity: .35;
+  opacity: 0.35;
 }
 
 .math-answer-grid {
@@ -350,7 +370,9 @@
   cursor: pointer;
   font-size: 1.35rem;
   font-weight: 900;
-  transition: transform .2s, background .2s;
+  transition:
+    transform 0.2s,
+    background 0.2s;
 }
 
 .math-answer-button:hover:not(:disabled) {
@@ -449,11 +471,22 @@
     align-items: flex-start;
     flex-direction: column;
   }
+
+  .math-counting-shape-display {
+    gap: 16px;
+    max-width: 520px;
+  }
+
+  .math-counting-shape-display .math-shape {
+    width: 60px;
+    height: 60px;
+  }
 }
 
 @media (max-width: 480px) {
   .math-mission-map,
-  .math-answer-grid {
+  .math-answer-grid,
+  .math-answer-grid.has-three-options {
     grid-template-columns: 1fr;
   }
 
@@ -462,7 +495,31 @@
   }
 
   .math-shape {
-    width: 34px;
-    height: 34px;
+    width: 46px;
+    height: 46px;
+  }
+
+  .math-count-display {
+    gap: 14px;
+    padding: 8px 0;
+  }
+
+  .math-counting-shape-display {
+    gap: 14px;
+  }
+
+  .math-counting-shape-display .math-shape {
+    width: 48px;
+    height: 48px;
+  }
+
+  .math-answer-button .math-shape {
+    width: 30px;
+    height: 30px;
+  }
+
+  .math-option-group .math-shape {
+    width: 18px;
+    height: 18px;
   }
 }

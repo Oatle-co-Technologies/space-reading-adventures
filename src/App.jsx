@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
+
 import { questions } from "./data/questions";
 import { lowercaseQuestions } from "./data/lowercaseQuestions";
 import { matchingQuestions } from "./data/matchingQuestions";
@@ -7,10 +8,12 @@ import { phonicsQuestions } from "./data/phonicsQuestions";
 import { readingQuestions } from "./data/readingQuestions";
 import { sentenceQuestions } from "./data/sentenceQuestions";
 import { missingLettersQuestions } from "./data/missingLettersQuestions";
+
 import { generateOptions } from "./utils/generateOptions";
 import { generateReadingOptions } from "./utils/generateReadingOptions";
 import { generateSentenceOptions } from "./utils/generateSentenceOptions";
 import { generateMissingLettersOptions } from "./utils/generateMissingLettersOptions";
+
 import MathSection from "./components/MathSection";
 
 import mercuryImage from "./assets/images/planets/mercury.png";
@@ -22,7 +25,6 @@ import saturnImage from "./assets/images/planets/saturn.png";
 import uranusImage from "./assets/images/planets/uranus.png";
 import neptuneImage from "./assets/images/planets/neptune.png";
 import plutoImage from "./assets/images/planets/pluto.png";
-
 
 import correctSound from "./sounds/correct.mp3";
 import wrongSound from "./sounds/wrong.mp3";
@@ -47,8 +49,6 @@ const phonicsAudio = import.meta.glob("./sounds/*-sound.mp3", {
   query: "?url",
   import: "default",
 });
-
-console.log(phonicsAudio);
 
 const neptuneStory = [
   {
@@ -99,7 +99,7 @@ const neptuneStory = [
     image: neptunePage12,
     text: ["The stars will guide you home."],
   },
-]
+];
 
 const planets = [
   {
@@ -187,23 +187,67 @@ const plutoSkills = [
 ];
 
 const plutoQuestions = [
-  ...questions.slice(0, 4).map((question) => ({ ...question, skill: "capital", type: "letters" })),
-  ...lowercaseQuestions.slice(0, 4).map((question) => ({ ...question, skill: "lowercase", type: "letters" })),
-  ...matchingQuestions.slice(0, 4).map((question) => ({ ...question, skill: "matching", type: "letters" })),
-  ...phonicsQuestions.slice(0, 4).map((question) => ({ ...question, skill: "phonics", type: "phonics" })),
-  ...readingQuestions.slice(0, 4).map((question) => ({ ...question, skill: "reading", type: "reading" })),
-  ...missingLettersQuestions.slice(0, 4).map((question) => ({ ...question, skill: "missing", type: "missing" })),
-  ...sentenceQuestions.slice(0, 4).map((question) => ({ ...question, skill: "sentences", type: "sentences" })),
+  ...questions.slice(0, 4).map((question) => ({
+    ...question,
+    skill: "capital",
+    type: "letters",
+  })),
+
+  ...lowercaseQuestions.slice(0, 4).map((question) => ({
+    ...question,
+    skill: "lowercase",
+    type: "letters",
+  })),
+
+  ...matchingQuestions.slice(0, 4).map((question) => ({
+    ...question,
+    skill: "matching",
+    type: "letters",
+  })),
+
+  ...phonicsQuestions.slice(0, 4).map((question) => ({
+    ...question,
+    skill: "phonics",
+    type: "phonics",
+  })),
+
+  ...readingQuestions.slice(0, 4).map((question) => ({
+    ...question,
+    skill: "reading",
+    type: "reading",
+  })),
+
+  ...missingLettersQuestions.slice(0, 4).map((question) => ({
+    ...question,
+    skill: "missing",
+    type: "missing",
+  })),
+
+  ...sentenceQuestions.slice(0, 4).map((question) => ({
+    ...question,
+    skill: "sentences",
+    type: "sentences",
+  })),
 ];
 
 const emptyPlutoResults = () =>
   Object.fromEntries(
-    plutoSkills.map((skill) => [skill.id, { correct: 0, total: 4 }])
+    plutoSkills.map((skill) => [
+      skill.id,
+      {
+        correct: 0,
+        total: 4,
+      },
+    ])
   );
 
 const savedAssessmentResults = () => {
   try {
-    return JSON.parse(localStorage.getItem("atli-space-assessment-results")) || null;
+    return (
+      JSON.parse(
+        localStorage.getItem("atli-space-assessment-results")
+      ) || null
+    );
   } catch {
     return null;
   }
@@ -245,7 +289,11 @@ const savedGame = () => {
 function AppNav({ onHome, onMap, onSettings }) {
   return (
     <header className="topbar">
-      <button className="brand" onClick={onHome} aria-label="Go home">
+      <button
+        className="brand"
+        onClick={onHome}
+        aria-label="Go home"
+      >
         🚀 Atli's Space Game
       </button>
 
@@ -260,7 +308,11 @@ function AppNav({ onHome, onMap, onSettings }) {
 
 function PlanetVisual({ planet, className = "" }) {
   return planet.image ? (
-    <img className={className} src={planet.image} alt={planet.name} />
+    <img
+      className={className}
+      src={planet.image}
+      alt={planet.name}
+    />
   ) : (
     <span
       className={className}
@@ -275,34 +327,40 @@ function PlanetVisual({ planet, className = "" }) {
 function App() {
   const [progress, setProgress] = useState(savedGame);
   const [screen, setScreen] = useState("home");
-  const [assessmentResults, setAssessmentResults] = useState(savedAssessmentResults);
-  const [assessmentScores, setAssessmentScores] = useState(emptyPlutoResults);
+  const [assessmentResults, setAssessmentResults] = useState(
+    savedAssessmentResults
+  );
+  const [assessmentScores, setAssessmentScores] =
+    useState(emptyPlutoResults);
   const [soundOn, setSoundOn] = useState(true);
   const [feedback, setFeedback] = useState("");
   const [builtSentence, setBuiltSentence] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [revealedAnswer, setRevealedAnswer] = useState("");
+
   const promptAudio = useRef(null);
   const advanceTimer = useRef(null);
 
   const planet =
-    planets.find((item) => item.id === progress.activePlanet) ||
-    planets[0];
+    planets.find(
+      (item) => item.id === progress.activePlanet
+    ) || planets[0];
 
-  // Neptune is a story, so its pages must stay in order.
-  // All other planets continue to shuffle their questions.
+  // Neptune is a story, so its pages stay in order.
+  // All other planets shuffle their questions.
   const missionQuestions = useMemo(
     () =>
       planet.id === 8
         ? planet.questions
         : planet.id === 9
           ? shuffleArray(plutoQuestions)
-        : shuffleArray(planet.questions),
+          : shuffleArray(planet.questions),
     [planet.id, planet.questions]
   );
 
   const question =
-    missionQuestions[progress.question] || missionQuestions[0];
+    missionQuestions[progress.question] ||
+    missionQuestions[0];
 
   const recording = question?.sound
     ? phonicsAudio[
@@ -311,25 +369,37 @@ function App() {
     : null;
 
   const options = useMemo(() => {
-    if (!question || planet.id === 8) return [];
+    if (!question || planet.id === 8) {
+      return [];
+    }
 
-    if (planet.id === 5 || question.type === "reading") {
+    if (
+      planet.id === 5 ||
+      question.type === "reading"
+    ) {
       return generateReadingOptions(question.answer);
     }
 
-    if (planet.id === 6 || question.type === "missing") {
-      return generateMissingLettersOptions(question.answer);
+    if (
+      planet.id === 6 ||
+      question.type === "missing"
+    ) {
+      return generateMissingLettersOptions(
+        question.answer
+      );
     }
 
-    if (planet.id === 7 || question.type === "sentences") {
-      return generateSentenceOptions(question.words);
+    if (
+      planet.id === 7 ||
+      question.type === "sentences"
+    ) {
+      return generateSentenceOptions(
+        question.words
+      );
     }
 
     return generateOptions(question.answer);
   }, [question, planet.id]);
-
-  console.log("Question:", question?.answer);
-  console.log("Recording:", recording);
 
   useEffect(() => {
     localStorage.setItem(
@@ -385,6 +455,7 @@ function App() {
       ...current,
       question: 0,
     }));
+
     setAssessmentScores(emptyPlutoResults());
     setBuiltSentence([]);
     setFeedback("");
@@ -399,11 +470,13 @@ function App() {
       [question.skill]: {
         ...assessmentScores[question.skill],
         correct:
-          assessmentScores[question.skill].correct + (isCorrect ? 1 : 0),
+          assessmentScores[question.skill].correct +
+          (isCorrect ? 1 : 0),
       },
     };
 
     setAssessmentScores(nextScores);
+
     return nextScores;
   };
 
@@ -414,7 +487,9 @@ function App() {
   };
 
   const speak = () => {
-    if (!soundOn || !question?.sound) return;
+    if (!soundOn || !question?.sound) {
+      return;
+    }
 
     window.speechSynthesis?.cancel();
 
@@ -429,16 +504,24 @@ function App() {
       return;
     }
 
-    if (!("speechSynthesis" in window)) return;
+    if (!("speechSynthesis" in window)) {
+      return;
+    }
 
-    const utterance = new SpeechSynthesisUtterance(question.sound);
+    const utterance = new SpeechSynthesisUtterance(
+      question.sound
+    );
+
     utterance.rate = 0.75;
 
     window.speechSynthesis.speak(utterance);
   };
 
   useEffect(() => {
-    if (screen === "mission" && question?.sound) {
+    if (
+      screen === "mission" &&
+      question?.sound
+    ) {
       speak();
     }
 
@@ -447,7 +530,9 @@ function App() {
   }, [screen, progress.question, planet.id]);
 
   const previousStoryPage = () => {
-    if (progress.question === 0) return;
+    if (progress.question === 0) {
+      return;
+    }
 
     setProgress((current) => ({
       ...current,
@@ -456,7 +541,10 @@ function App() {
   };
 
   const nextStoryPage = () => {
-    if (progress.question < missionQuestions.length - 1) {
+    if (
+      progress.question <
+      missionQuestions.length - 1
+    ) {
       setProgress((current) => ({
         ...current,
         question: current.question + 1,
@@ -470,20 +558,32 @@ function App() {
   };
 
   const removeSentenceWord = (index) => {
-    if (isProcessing) return;
+    if (isProcessing) {
+      return;
+    }
 
     setBuiltSentence((current) =>
-      current.filter((_, wordIndex) => wordIndex !== index)
+      current.filter(
+        (_, wordIndex) => wordIndex !== index
+      )
     );
 
     setFeedback("");
   };
 
   const selectSentenceWord = (word) => {
-    if (isProcessing || builtSentence.length >= question.words.length) return;
+    if (
+      isProcessing ||
+      builtSentence.length >= question.words.length
+    ) {
+      return;
+    }
 
-    const expectedWord = question.words[builtSentence.length];
-    const correctWord = word === expectedWord;
+    const expectedWord =
+      question.words[builtSentence.length];
+
+    const correctWord =
+      word === expectedWord;
 
     if (correctWord) {
       playSound(correctSound);
@@ -491,29 +591,42 @@ function App() {
       playSound(wrongSound);
     }
 
-    const nextSentence = [...builtSentence, word];
+    const nextSentence = [
+      ...builtSentence,
+      word,
+    ];
 
     setBuiltSentence(nextSentence);
     setFeedback("");
 
-    if (nextSentence.length !== question.words.length) {
+    if (
+      nextSentence.length !==
+      question.words.length
+    ) {
       return;
     }
 
-    const correct =
-      nextSentence.every(
-        (item, index) => item === question.words[index]
-      );
+    const correct = nextSentence.every(
+      (item, index) =>
+        item === question.words[index]
+    );
 
     if (!correct) {
       return;
     }
 
-    const nextScores = planet.id === 9 ? savePlutoAnswer(true) : null;
+    const nextScores =
+      planet.id === 9
+        ? savePlutoAnswer(true)
+        : null;
+
     setIsProcessing(true);
 
     advanceTimer.current = setTimeout(() => {
-      if (progress.question < missionQuestions.length - 1) {
+      if (
+        progress.question <
+        missionQuestions.length - 1
+      ) {
         setProgress((current) => ({
           ...current,
           question: current.question + 1,
@@ -532,23 +645,27 @@ function App() {
         playSound(victorySound);
         setScreen("celebration");
       }
+
       setIsProcessing(false);
     }, 3000);
-
-    return;
-
   };
 
   const answer = (selectedAnswer) => {
-    if (isProcessing) return;
+    if (isProcessing) {
+      return;
+    }
 
-    if (selectedAnswer !== question.answer) {
+    if (
+      selectedAnswer !== question.answer
+    ) {
       playSound(wrongSound);
 
       if (planet.id === 6) {
         setFeedback("");
       } else {
-        setFeedback("Almost! Try another star.");
+        setFeedback(
+          "Almost! Try another star."
+        );
       }
 
       return;
@@ -557,16 +674,25 @@ function App() {
     setFeedback("");
     playSound(correctSound);
 
-    const nextScores = planet.id === 9 ? savePlutoAnswer(true) : null;
+    const nextScores =
+      planet.id === 9
+        ? savePlutoAnswer(true)
+        : null;
 
-    // Saturn is the only regular answer mission that needs a
-    // 3-second pause so the child can read the completed word.
-    if (planet.id === 6 || question.type === "reading") {
+    // Saturn and reading questions pause so the child
+    // can see and read the completed answer.
+    if (
+      planet.id === 6 ||
+      question.type === "reading"
+    ) {
       setIsProcessing(true);
       setRevealedAnswer(selectedAnswer);
 
       advanceTimer.current = setTimeout(() => {
-        if (progress.question < missionQuestions.length - 1) {
+        if (
+          progress.question <
+          missionQuestions.length - 1
+        ) {
           setProgress((current) => ({
             ...current,
             question: current.question + 1,
@@ -584,14 +710,17 @@ function App() {
           playSound(victorySound);
           setScreen("celebration");
         }
+
         setIsProcessing(false);
       }, 3000);
 
       return;
     }
 
-    // All regular answer missions except Saturn advance immediately.
-    if (progress.question < missionQuestions.length - 1) {
+    if (
+      progress.question <
+      missionQuestions.length - 1
+    ) {
       setProgress((current) => ({
         ...current,
         question: current.question + 1,
@@ -610,6 +739,7 @@ function App() {
 
   const unlockNext = () => {
     const nextPlanetId = planet.id + 1;
+
     const unlockedPlanet = planets.find(
       (item) => item.id === nextPlanetId
     );
@@ -623,12 +753,17 @@ function App() {
 
     setProgress((current) => ({
       ...current,
-      unlocked: Math.max(current.unlocked, nextPlanetId),
+      unlocked: Math.max(
+        current.unlocked,
+        nextPlanetId
+      ),
       activePlanet: nextPlanetId,
       question: 0,
     }));
 
-    setScreen(unlockedPlanet ? "planet" : "map");
+    setScreen(
+      unlockedPlanet ? "planet" : "map"
+    );
   };
 
   const resetProgress = () => {
@@ -646,7 +781,10 @@ function App() {
     handler,
     className = "primary-button"
   ) => (
-    <button className={className} onClick={handler}>
+    <button
+      className={className}
+      onClick={handler}
+    >
       {label}
     </button>
   );
@@ -656,27 +794,31 @@ function App() {
   if (screen === "home") {
     content = (
       <main className="hero-panel">
-        <span className="hero-rocket">🚀</span>
+        <span className="hero-rocket">
+          🚀
+        </span>
 
-        <p className="eyebrow">WELCOME, CAPTAIN</p>
+        <p className="eyebrow">
+          WELCOME, CAPTAIN
+        </p>
 
-        <h1>Ready for a stellar adventure?</h1>
+        <h1>
+          Ready for a stellar adventure?
+        </h1>
 
         <p>
-          Learn letters, sounds, and matching while visiting every planet
-          in our solar system.
+          Explore learning adventures across
+          letters, reading, maths, and the
+          planets.
         </p>
 
         <div className="button-row">
-          {action("Start", () => {
-            playSound(blastoffSound);
-            setScreen("launch");
-          })}
-
           {action(
-            "Keep Playing",
-            () => setScreen("mission"),
-            "secondary-button"
+            "Space Reading Adventures",
+            () => {
+              playSound(blastoffSound);
+              setScreen("launch");
+            }
           )}
 
           {action(
@@ -695,7 +837,12 @@ function App() {
       </main>
     );
   } else if (screen === "math") {
-    content = <MathSection onHome={() => setScreen("home")} soundOn={soundOn} />;
+    content = (
+      <MathSection
+        onHome={() => setScreen("home")}
+        soundOn={soundOn}
+      />
+    );
   } else if (screen === "launch") {
     content = (
       <main className="launch-panel">
@@ -706,37 +853,57 @@ function App() {
           <b>🚀</b>
         </div>
 
-        <p className="eyebrow">MISSION CONTROL</p>
+        <p className="eyebrow">
+          MISSION CONTROL
+        </p>
 
-        <h1>Launch sequence ready!</h1>
+        <h1>
+          Launch sequence ready!
+        </h1>
 
-        <p>Choose a planet to begin your next learning mission.</p>
+        <p>
+          Choose a planet to begin your next
+          learning mission.
+        </p>
 
-        {action("View planet map", () => setScreen("map"))}
+        {action(
+          "View planet map",
+          () => setScreen("map")
+        )}
       </main>
     );
   } else if (screen === "map") {
     content = (
       <main className="page">
-        <p className="eyebrow">YOUR JOURNEY</p>
+        <p className="eyebrow">
+          YOUR JOURNEY
+        </p>
 
         <h1>Planet Map</h1>
 
         <p className="page-intro">
-          Complete each planet to unlock the next destination.
+          Complete each planet to unlock the
+          next destination.
         </p>
 
         <div className="planet-map">
           {planets.map((item) => {
-            const locked = item.id > progress.unlocked;
+            const locked =
+              item.id > progress.unlocked;
 
             return (
               <button
                 key={item.id}
-                className={`planet-card ${locked ? "locked" : ""}`}
-                style={{ "--planet": item.color }}
+                className={`planet-card ${
+                  locked ? "locked" : ""
+                }`}
+                style={{
+                  "--planet": item.color,
+                }}
                 disabled={locked}
-                onClick={() => goToPlanet(item.id)}
+                onClick={() =>
+                  goToPlanet(item.id)
+                }
               >
                 {locked ? (
                   <span>🔒</span>
@@ -768,9 +935,13 @@ function App() {
           className="planet-icon planet-art"
         />
 
-        <p className="eyebrow">PLANET {planet.id}</p>
+        <p className="eyebrow">
+          PLANET {planet.id}
+        </p>
 
-        <h1>Welcome to Planet {planet.name}</h1>
+        <h1>
+          Welcome to Planet {planet.name}
+        </h1>
 
         <p>
           {planet.id === 8
@@ -786,6 +957,7 @@ function App() {
               : "Start mission",
           () => {
             playSound(blastoffSound);
+
             if (planet.id === 9) {
               startPlutoAssessment();
             } else {
@@ -801,21 +973,31 @@ function App() {
     );
   } else if (screen === "mission") {
     const journeyPercent =
-      (progress.question / missionQuestions.length) * 100;
+      (progress.question /
+        missionQuestions.length) *
+      100;
 
     content = (
       <main className="mission-panel">
         <div className="mission-status">
           <button
             className="text-button"
-            onClick={() => setScreen("planet")}
+            onClick={() =>
+              setScreen("planet")
+            }
           >
             ← Planet
           </button>
 
           <span>
-            {planet.name} · {planet.id === 8 ? "Page" : planet.id === 9 ? "Question" : "Star"}{" "}
-            {progress.question + 1} of {missionQuestions.length}
+            {planet.name} ·{" "}
+            {planet.id === 8
+              ? "Page"
+              : planet.id === 9
+                ? "Question"
+                : "Star"}{" "}
+            {progress.question + 1} of{" "}
+            {missionQuestions.length}
           </span>
         </div>
 
@@ -831,7 +1013,9 @@ function App() {
           <div className="journey-line">
             <b
               className="journey-rocket"
-              style={{ left: `${journeyPercent}%` }}
+              style={{
+                left: `${journeyPercent}%`,
+              }}
             >
               🚀
             </b>
@@ -840,7 +1024,9 @@ function App() {
 
         {planet.id === 8 ? (
           <>
-            <p className="eyebrow">ATLI AND THE LOST MAP</p>
+            <p className="eyebrow">
+              ATLI AND THE LOST MAP
+            </p>
 
             <div className="story-book">
               <div
@@ -852,7 +1038,8 @@ function App() {
                 }}
               >
                 <div className="story-page-number">
-                  Page {progress.question + 1} of {missionQuestions.length}
+                  Page {progress.question + 1} of{" "}
+                  {missionQuestions.length}
                 </div>
 
                 <div
@@ -887,9 +1074,13 @@ function App() {
                     justifyContent: "center",
                   }}
                 >
-                  {question.text.map((line, index) => (
-                    <p key={index}>{line}</p>
-                  ))}
+                  {question.text.map(
+                    (line, index) => (
+                      <p key={index}>
+                        {line}
+                      </p>
+                    )
+                  )}
                 </div>
               </div>
             </div>
@@ -897,8 +1088,12 @@ function App() {
             <div className="story-controls">
               <button
                 className="secondary-button story-button"
-                onClick={previousStoryPage}
-                disabled={progress.question === 0}
+                onClick={
+                  previousStoryPage
+                }
+                disabled={
+                  progress.question === 0
+                }
               >
                 ← Back
               </button>
@@ -907,15 +1102,19 @@ function App() {
                 className="primary-button story-button"
                 onClick={nextStoryPage}
               >
-                {progress.question === missionQuestions.length - 1
+                {progress.question ===
+                missionQuestions.length - 1
                   ? "Finish Book 🚀"
                   : "Next Page →"}
               </button>
             </div>
           </>
-        ) : planet.id === 5 || question.type === "reading" ? (
+        ) : planet.id === 5 ||
+          question.type === "reading" ? (
           <>
-            <p className="eyebrow">WHAT IS THIS?</p>
+            <p className="eyebrow">
+              WHAT IS THIS?
+            </p>
 
             <div className="reading-image-container">
               <img
@@ -930,7 +1129,9 @@ function App() {
                 <button
                   key={word}
                   className="word-button"
-                  onClick={() => answer(word)}
+                  onClick={() =>
+                    answer(word)
+                  }
                   disabled={isProcessing}
                 >
                   {word}
@@ -938,9 +1139,12 @@ function App() {
               ))}
             </div>
           </>
-        ) : planet.id === 6 || question.type === "missing" ? (
+        ) : planet.id === 6 ||
+          question.type === "missing" ? (
           <>
-            <p className="eyebrow">FILL IN THE MISSING LETTER</p>
+            <p className="eyebrow">
+              FILL IN THE MISSING LETTER
+            </p>
 
             <div className="missing-word-target">
               {revealedAnswer
@@ -953,7 +1157,9 @@ function App() {
                 <button
                   key={letter}
                   className="letter-button"
-                  onClick={() => answer(letter)}
+                  onClick={() =>
+                    answer(letter)
+                  }
                   disabled={isProcessing}
                 >
                   {letter}
@@ -961,25 +1167,39 @@ function App() {
               ))}
             </div>
           </>
-        ) : planet.id === 7 || question.type === "sentences" ? (
+        ) : planet.id === 7 ||
+          question.type === "sentences" ? (
           <>
-            <p className="eyebrow">BUILD THE SENTENCE</p>
+            <p className="eyebrow">
+              BUILD THE SENTENCE
+            </p>
 
-            <div className="sentence-target" aria-live="polite">
+            <div
+              className="sentence-target"
+              aria-live="polite"
+            >
               {builtSentence.length > 0 ? (
                 <>
-                  {builtSentence.map((word, index) => (
-                    <button
-                      key={`${word}-${index}`}
-                      className="sentence-word"
-                      onClick={() => removeSentenceWord(index)}
-                      disabled={isProcessing}
-                      aria-label={`Remove ${word}`}
-                      type="button"
-                    >
-                      {word}
-                    </button>
-                  ))}
+                  {builtSentence.map(
+                    (word, index) => (
+                      <button
+                        key={`${word}-${index}`}
+                        className="sentence-word"
+                        onClick={() =>
+                          removeSentenceWord(
+                            index
+                          )
+                        }
+                        disabled={
+                          isProcessing
+                        }
+                        aria-label={`Remove ${word}`}
+                        type="button"
+                      >
+                        {word}
+                      </button>
+                    )
+                  )}
 
                   <span className="sentence-hint">
                     Tap a word to remove it.
@@ -987,25 +1207,34 @@ function App() {
                 </>
               ) : (
                 <span className="sentence-placeholder">
-                  Tap the words in the right order
+                  Tap the words in the right
+                  order
                 </span>
               )}
             </div>
 
             <div className="answer-grid sentence-options">
-              {options.map((word, index) => (
-                <button
-                  key={`${word}-${index}`}
-                  className="word-button"
-                  onClick={() => selectSentenceWord(word)}
-                  disabled={
-                    isProcessing ||
-                    builtSentence.includes(word)
-                  }
-                >
-                  {word}
-                </button>
-              ))}
+              {options.map(
+                (word, index) => (
+                  <button
+                    key={`${word}-${index}`}
+                    className="word-button"
+                    onClick={() =>
+                      selectSentenceWord(
+                        word
+                      )
+                    }
+                    disabled={
+                      isProcessing ||
+                      builtSentence.includes(
+                        word
+                      )
+                    }
+                  >
+                    {word}
+                  </button>
+                )
+              )}
             </div>
           </>
         ) : (
@@ -1034,7 +1263,9 @@ function App() {
                 <button
                   key={letter}
                   className="letter-button"
-                  onClick={() => answer(letter)}
+                  onClick={() =>
+                    answer(letter)
+                  }
                   disabled={isProcessing}
                 >
                   {letter}
@@ -1057,9 +1288,13 @@ function App() {
       <main className="celebration-panel">
         <span>🎉</span>
 
-        <p className="eyebrow">MISSION COMPLETE</p>
+        <p className="eyebrow">
+          MISSION COMPLETE
+        </p>
 
-        <h1>You did it, Captain!</h1>
+        <h1>
+          You did it, Captain!
+        </h1>
 
         <p>
           {planet.id === 8
@@ -1070,60 +1305,119 @@ function App() {
         </p>
 
         {planet.id === 9
-          ? action("See Parent Results", () => setScreen("results"))
+          ? action(
+              "See Parent Results",
+              () => setScreen("results")
+            )
           : planet.id < planets.length
-            ? action("Unlock next planet", unlockNext)
-            : action("Return to planet map", () => setScreen("map"))}
+            ? action(
+                "Unlock next planet",
+                unlockNext
+              )
+            : action(
+                "Return to planet map",
+                () => setScreen("map")
+              )}
       </main>
     );
   } else if (screen === "results") {
-    const resultEntries = plutoSkills.map((skill) => {
-      const result = assessmentResults?.[skill.id] || { correct: 0, total: 4 };
-      const percentage = Math.round((result.correct / result.total) * 100);
-      const status =
-        percentage >= 90
-          ? "Strong"
-          : percentage >= 70
-            ? "Developing"
-            : "Keep Practicing";
+    const resultEntries = plutoSkills.map(
+      (skill) => {
+        const result =
+          assessmentResults?.[skill.id] || {
+            correct: 0,
+            total: 4,
+          };
 
-      return { ...skill, ...result, percentage, status };
-    });
-    const overallCorrect = resultEntries.reduce(
-      (total, result) => total + result.correct,
-      0
+        const percentage = Math.round(
+          (result.correct / result.total) *
+            100
+        );
+
+        const status =
+          percentage >= 90
+            ? "Strong"
+            : percentage >= 70
+              ? "Developing"
+              : "Keep Practicing";
+
+        return {
+          ...skill,
+          ...result,
+          percentage,
+          status,
+        };
+      }
     );
-    const overallTotal = resultEntries.reduce(
-      (total, result) => total + result.total,
-      0
-    );
-    const doingWell = resultEntries.filter((result) => result.percentage >= 70);
-    const keepPracticing = resultEntries.filter(
-      (result) => result.percentage < 70
-    );
+
+    const overallCorrect =
+      resultEntries.reduce(
+        (total, result) =>
+          total + result.correct,
+        0
+      );
+
+    const overallTotal =
+      resultEntries.reduce(
+        (total, result) =>
+          total + result.total,
+        0
+      );
+
+    const doingWell =
+      resultEntries.filter(
+        (result) => result.percentage >= 70
+      );
+
+    const keepPracticing =
+      resultEntries.filter(
+        (result) => result.percentage < 70
+      );
 
     content = (
       <main className="page results-page">
-        <p className="eyebrow">ATLI SPACE GAME</p>
+        <p className="eyebrow">
+          ATLI SPACE GAME
+        </p>
 
         <h1>Parent Results</h1>
 
         <p className="page-intro">
-          Results from the final Pluto assessment in Atli Space Game.
+          Results from the final Pluto assessment
+          in Atli Space Game.
         </p>
 
         <div className="result-summary">
           <h2>Overall score</h2>
-          <strong>{overallCorrect}/{overallTotal}</strong>
-          <span>{Math.round((overallCorrect / overallTotal) * 100)}%</span>
+
+          <strong>
+            {overallCorrect}/{overallTotal}
+          </strong>
+
+          <span>
+            {Math.round(
+              (overallCorrect /
+                overallTotal) *
+                100
+            )}
+            %
+          </span>
         </div>
 
         <div className="result-list">
           {resultEntries.map((result) => (
-            <div className="result-row" key={result.id}>
+            <div
+              className="result-row"
+              key={result.id}
+            >
               <strong>{result.name}</strong>
-              <span>{result.correct}/{result.total}</span>
-              <span>{result.percentage}%</span>
+              <span>
+                {result.correct}/
+                {result.total}
+              </span>
+              <span>
+                {result.percentage}%
+              </span>
               <span>{result.status}</span>
             </div>
           ))}
@@ -1132,22 +1426,48 @@ function App() {
         <div className="result-columns">
           <section>
             <h2>Doing well</h2>
-            <p>{doingWell.length > 0 ? doingWell.map((result) => result.name).join(", ") : "Keep exploring each skill."}</p>
+
+            <p>
+              {doingWell.length > 0
+                ? doingWell
+                    .map(
+                      (result) =>
+                        result.name
+                    )
+                    .join(", ")
+                : "Keep exploring each skill."}
+            </p>
           </section>
 
           <section>
             <h2>Keep practicing</h2>
-            <p>{keepPracticing.length > 0 ? keepPracticing.map((result) => result.name).join(", ") : "No skills to list."}</p>
+
+            <p>
+              {keepPracticing.length > 0
+                ? keepPracticing
+                    .map(
+                      (result) =>
+                        result.name
+                    )
+                    .join(", ")
+                : "No skills to list."}
+            </p>
           </section>
         </div>
 
-        {action("Return home", () => setScreen("home"), "secondary-button")}
+        {action(
+          "Return home",
+          () => setScreen("home"),
+          "secondary-button"
+        )}
       </main>
     );
   } else {
     content = (
       <main className="settings-panel">
-        <p className="eyebrow">MISSION CONTROL</p>
+        <p className="eyebrow">
+          MISSION CONTROL
+        </p>
 
         <h1>Settings</h1>
 
@@ -1157,13 +1477,18 @@ function App() {
           <button
             className="toggle"
             aria-pressed={soundOn}
-            onClick={() => setSoundOn((on) => !on)}
+            onClick={() =>
+              setSoundOn((on) => !on)
+            }
           >
             {soundOn ? "On" : "Off"}
           </button>
         </label>
 
-        <button className="danger-button" onClick={resetProgress}>
+        <button
+          className="danger-button"
+          onClick={resetProgress}
+        >
           Reset game progress
         </button>
       </main>
@@ -1175,7 +1500,9 @@ function App() {
       <AppNav
         onHome={() => setScreen("home")}
         onMap={() => setScreen("map")}
-        onSettings={() => setScreen("settings")}
+        onSettings={() =>
+          setScreen("settings")
+        }
       />
 
       {content}

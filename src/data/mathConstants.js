@@ -21,12 +21,14 @@ export const colors = {
   green: "#66d17a",
   orange: "#ff9f43",
   purple: "#a875e8",
+
   redOrange: "#f2764f",
   yellowOrange: "#ffc247",
   yellowGreen: "#a9cf54",
   blueGreen: "#4abfa5",
   bluePurple: "#6878d8",
   redPurple: "#c260a8",
+
   gold: "#f4c542",
   lime: "#b7d94c",
   violet: "#8f5de7",
