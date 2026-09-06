@@ -11,6 +11,7 @@ import { generateOptions } from "./utils/generateOptions";
 import { generateReadingOptions } from "./utils/generateReadingOptions";
 import { generateSentenceOptions } from "./utils/generateSentenceOptions";
 import { generateMissingLettersOptions } from "./utils/generateMissingLettersOptions";
+import MathSection from "./components/MathSection";
 
 import mercuryImage from "./assets/images/planets/mercury.png";
 import venusImage from "./assets/images/planets/venus.png";
@@ -678,6 +679,12 @@ function App() {
             "secondary-button"
           )}
 
+          {action(
+            "Math Adventures",
+            () => setScreen("math"),
+            "secondary-button"
+          )}
+
           {assessmentResults &&
             action(
               "Parent Results",
@@ -687,6 +694,8 @@ function App() {
         </div>
       </main>
     );
+  } else if (screen === "math") {
+    content = <MathSection onHome={() => setScreen("home")} soundOn={soundOn} />;
   } else if (screen === "launch") {
     content = (
       <main className="launch-panel">
