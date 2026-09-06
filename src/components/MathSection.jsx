@@ -58,7 +58,27 @@ const countColors = [
 ];
 
 function Shape({ name, color = "currentColor", className = "" }) {
-  return <span className={`math-shape math-shape-${name} ${className}`} style={{ "--shape-color": color }} aria-hidden="true" />;
+  const paths = {
+    circle: <circle cx="50" cy="50" r="42" />,
+    square: <rect x="9" y="9" width="82" height="82" rx="5" />,
+    triangle: <polygon points="50,7 94,91 6,91" />,
+    rectangle: <rect x="5" y="22" width="90" height="56" rx="5" />,
+    oval: <ellipse cx="50" cy="50" rx="40" ry="28" />,
+    diamond: <polygon points="50,5 94,50 50,95 6,50" />,
+    star: <polygon points="50,5 61,37 95,37 68,57 78,91 50,71 22,91 32,57 5,37 39,37" />,
+    heart: <path d="M50 88 13 51C-7 31 7 7 29 8c10 0 17 5 21 13 4-8 11-13 21-13 22-1 36 23 16 43Z" />,
+    pentagon: <polygon points="50,6 95,39 78,92 22,92 5,39" />,
+    hexagon: <polygon points="25,7 75,7 94,50 75,93 25,93 6,50" />,
+    octagon: <polygon points="29,6 71,6 94,29 94,71 71,94 29,94 6,71 6,29" />,
+    crescent: <path d="M72 9C51 17 39 34 39 54c0 20 12 37 33 45-7 3-14 4-22 2C25 97 8 77 8 53 8 28 25 8 48 4c8-1 16 1 24 5Z" />,
+    semicircle: <path d="M7 55a43 43 0 0 1 86 0v38H7Z" />,
+  };
+
+  return (
+    <svg className={`math-shape math-shape-${name} ${className}`} viewBox="0 0 100 100" style={{ "--shape-color": color }} aria-hidden="true">
+      {paths[name] || paths.circle}
+    </svg>
+  );
 }
 
 function NumberVisual({ question }) {
@@ -71,6 +91,15 @@ function CountingShapesVisual({ question }) {
       {question.shapes.map((shape, index) => (
         <Shape key={`${shape}-${index}`} name={shape} color={countColors[index % countColors.length]} />
       ))}
+    </div>
+  );
+}
+
+function ShapeIntroductionVisual({ question }) {
+  return (
+    <div className="math-introduction-visual">
+      <div className="math-feature-display"><Shape name={question.shape} color="#55c6ff" /></div>
+      <p>{question.teachingText}</p>
     </div>
   );
 }
@@ -241,7 +270,7 @@ function SharingVisual({ question }) {
 
 const visualRenderers = {
   number: NumberVisual,
-  "shape-introduction": ShapeFactVisual,
+  "shape-introduction": ShapeIntroductionVisual,
   "shape-sides": ShapeFactVisual,
   "shape-corners": ShapeFactVisual,
   "shape-recognition": ShapeRecognitionVisual,
