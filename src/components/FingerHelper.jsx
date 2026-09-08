@@ -23,7 +23,6 @@ function Finger({
   onDoubleTap,
   raisedPath,
   loweredPath,
-  className = "",
 }) {
   const lastTapRef = useRef(0);
 
@@ -41,7 +40,7 @@ function Finger({
 
   return (
     <path
-      className={`finger ${raised ? "raised" : "lowered"} ${className}`}
+      className={`finger ${raised ? "raised" : "lowered"}`}
       d={raised ? raisedPath : loweredPath}
       tabIndex="0"
       role="button"
@@ -63,10 +62,15 @@ function Finger({
 
 function HandSVG({ isLeft, fingers, onDoubleTap }) {
   /*
-    The left hand is drawn normally.
+    This hand is drawn as a natural open palm.
 
-    The right hand uses a horizontal flip so the
-    two thumbs naturally point toward the middle.
+    The base artwork contains ONLY the palm.
+    Every visible finger is its own interactive
+    SVG path.
+
+    The left hand has its thumb toward the
+    center. The right hand is mirrored so its
+    thumb also points toward the center.
   */
 
   const handTransform = isLeft
@@ -78,56 +82,61 @@ function HandSVG({ isLeft, fingers, onDoubleTap }) {
       className="finger-hand"
       viewBox="0 0 300 360"
       xmlns="http://www.w3.org/2000/svg"
-      aria-label={isLeft ? "Left hand" : "Right hand"}
+      aria-label={isLeft ? "Left counting hand" : "Right counting hand"}
     >
       <g transform={handTransform}>
+
         {/* =====================================
             PALM
+
+            IMPORTANT:
+            This is ONLY the palm.
+            There are NO FINGERS hidden inside it.
             ===================================== */}
 
         <path
           className="hand-palm"
           d="
-            M72 190
-            C58 178 52 160 55 142
-            C58 125 70 116 84 120
-            C91 122 96 128 99 137
+            M82 165
 
-            L99 72
-            C99 58 108 48 120 48
-            C132 48 140 58 140 72
-            L140 126
+            C68 171 60 184 60 202
+            C60 220 66 237 76 251
 
-            L140 42
-            C140 28 149 18 161 18
-            C173 18 182 28 182 42
-            L182 128
+            C88 267 94 280 95 299
 
-            L182 58
-            C182 44 191 34 203 34
-            C215 34 224 44 224 58
-            L224 137
+            L99 326
 
-            L224 86
-            C224 72 233 62 245 62
-            C257 62 266 72 266 86
-            L266 174
+            L201 326
 
-            C266 211 249 239 223 258
-            C204 272 188 291 183 318
+            L205 299
 
-            L95 318
+            C207 278 214 263 227 248
 
-            C93 291 86 269 74 248
-            C63 230 58 211 59 196
+            C239 234 246 216 246 195
 
-            C60 193 66 191 72 190
+            C246 178 237 166 224 162
+
+            C214 159 204 163 198 171
+
+            C190 163 181 160 172 164
+
+            C164 157 153 154 143 159
+
+            C134 153 123 151 114 157
+
+            C104 151 91 153 82 165
+
             Z
           "
         />
 
         {/* =====================================
             THUMB
+
+            Raised = thumb naturally extended
+            toward the center.
+
+            Lowered = thumb folded across palm.
             ===================================== */}
 
         <Finger
@@ -135,21 +144,34 @@ function HandSVG({ isLeft, fingers, onDoubleTap }) {
           raised={fingers.thumb}
           onDoubleTap={onDoubleTap}
           raisedPath="
-            M72 190
-            C58 178 52 160 55 142
-            C58 125 70 116 84 120
-            C94 123 100 133 99 145
-            C98 158 91 169 84 179
-            C80 185 76 189 72 190
+            M198 171
+
+            C209 154 221 139 234 130
+            C246 121 258 124 265 134
+            C272 145 269 158 258 168
+
+            C246 179 232 188 217 198
+
+            C209 203 201 197 198 190
+
+            C195 183 195 177 198 171
+
             Z
           "
           loweredPath="
-            M72 190
-            C58 178 52 160 55 142
-            C58 125 70 116 84 120
-            C94 123 100 133 99 145
-            C99 157 92 166 85 173
-            C80 179 76 185 72 190
+            M198 178
+
+            C210 176 223 179 234 185
+            C245 191 251 201 247 210
+
+            C243 219 232 222 220 217
+
+            L194 204
+
+            C187 200 186 190 190 184
+
+            C192 181 195 179 198 178
+
             Z
           "
         />
@@ -163,23 +185,31 @@ function HandSVG({ isLeft, fingers, onDoubleTap }) {
           raised={fingers.index}
           onDoubleTap={onDoubleTap}
           raisedPath="
-            M99 137
-            L99 72
-            C99 58 108 48 120 48
-            C132 48 140 58 140 72
-            L140 137
-            C140 147 131 154 120 154
-            C109 154 99 147 99 137
+            M84 165
+
+            L84 91
+
+            C84 77 93 67 106 67
+            C119 67 128 77 128 91
+
+            L128 166
+
+            C128 178 119 185 106 185
+            C93 185 84 177 84 165
+
             Z
           "
           loweredPath="
-            M99 137
-            L99 120
-            C99 109 108 102 120 102
-            C132 102 140 109 140 120
-            L140 139
-            C140 150 131 157 120 157
-            C109 157 99 150 99 137
+            M84 166
+
+            C84 154 93 146 106 146
+            C119 146 128 154 128 166
+
+            L128 192
+
+            C128 204 119 212 106 212
+            C93 212 84 204 84 192
+
             Z
           "
         />
@@ -193,23 +223,31 @@ function HandSVG({ isLeft, fingers, onDoubleTap }) {
           raised={fingers.middle}
           onDoubleTap={onDoubleTap}
           raisedPath="
-            M140 128
-            L140 42
-            C140 28 149 18 161 18
-            C173 18 182 28 182 42
-            L182 128
-            C182 139 173 146 161 146
-            C149 146 140 139 140 128
+            M128 157
+
+            L128 55
+
+            C128 41 137 31 150 31
+            C163 31 172 41 172 55
+
+            L172 157
+
+            C172 169 163 177 150 177
+            C137 177 128 169 128 157
+
             Z
           "
           loweredPath="
-            M140 130
-            L140 112
-            C140 101 149 94 161 94
-            C173 94 182 101 182 112
-            L182 130
-            C182 141 173 148 161 148
-            C149 148 140 141 140 130
+            M128 158
+
+            C128 146 137 138 150 138
+            C163 138 172 146 172 158
+
+            L172 188
+
+            C172 200 163 208 150 208
+            C137 208 128 200 128 188
+
             Z
           "
         />
@@ -223,23 +261,31 @@ function HandSVG({ isLeft, fingers, onDoubleTap }) {
           raised={fingers.ring}
           onDoubleTap={onDoubleTap}
           raisedPath="
-            M182 137
-            L182 58
-            C182 44 191 34 203 34
-            C215 34 224 44 224 58
-            L224 137
-            C224 148 215 155 203 155
-            C191 155 182 148 182 137
+            M172 163
+
+            L172 67
+
+            C172 53 181 43 194 43
+            C207 43 216 53 216 67
+
+            L216 169
+
+            C216 181 207 189 194 189
+            C181 189 172 181 172 163
+
             Z
           "
           loweredPath="
-            M182 137
-            L182 119
-            C182 108 191 101 203 101
-            C215 101 224 108 224 119
-            L224 138
-            C224 149 215 156 203 156
-            C191 156 182 149 182 137
+            M172 164
+
+            C172 152 181 144 194 144
+            C207 144 216 152 216 164
+
+            L216 193
+
+            C216 205 207 213 194 213
+            C181 213 172 205 172 193
+
             Z
           "
         />
@@ -253,23 +299,31 @@ function HandSVG({ isLeft, fingers, onDoubleTap }) {
           raised={fingers.pinky}
           onDoubleTap={onDoubleTap}
           raisedPath="
-            M224 146
-            L224 86
-            C224 72 233 62 245 62
-            C257 62 266 72 266 86
-            L266 174
-            C266 185 257 192 245 192
-            C233 192 224 184 224 174
+            M216 171
+
+            L216 91
+
+            C216 77 225 67 238 67
+            C251 67 260 77 260 91
+
+            L260 177
+
+            C260 189 251 197 238 197
+            C225 197 216 189 216 171
+
             Z
           "
           loweredPath="
-            M224 150
-            L224 135
-            C224 124 233 117 245 117
-            C257 117 266 124 266 135
-            L266 174
-            C266 185 257 192 245 192
-            C233 192 224 184 224 174
+            M216 173
+
+            C216 161 225 153 238 153
+            C251 153 260 161 260 173
+
+            L260 198
+
+            C260 210 251 218 238 218
+            C225 218 216 210 216 198
+
             Z
           "
         />
@@ -281,32 +335,32 @@ function HandSVG({ isLeft, fingers, onDoubleTap }) {
         <path
           className="hand-detail"
           d="
-            M93 211
-            C111 224 130 228 149 226
+            M91 224
+            C108 235 127 239 146 237
           "
         />
 
         <path
           className="hand-detail"
           d="
-            M93 232
-            C112 243 131 247 151 244
+            M91 245
+            C110 256 131 260 151 257
           "
         />
 
         <path
           className="hand-detail"
           d="
-            M185 224
-            C201 220 214 211 224 198
+            M185 239
+            C202 235 216 227 226 216
           "
         />
 
         <path
           className="hand-detail"
           d="
-            M101 268
-            C119 277 140 280 159 278
+            M104 274
+            C124 283 146 286 167 283
           "
         />
       </g>
@@ -325,7 +379,7 @@ export default function FingerHelper() {
   const [rightHand, setRightHand] = useState(createHandState);
 
   /* =======================================
-     RESET HANDS
+     RESET
      ======================================= */
 
   const resetHands = () => {
@@ -351,7 +405,7 @@ export default function FingerHelper() {
   };
 
   /* =======================================
-     TOGGLE LEFT FINGER
+     LEFT HAND
      ======================================= */
 
   const toggleLeftFinger = (fingerName) => {
@@ -362,7 +416,7 @@ export default function FingerHelper() {
   };
 
   /* =======================================
-     TOGGLE RIGHT FINGER
+     RIGHT HAND
      ======================================= */
 
   const toggleRightFinger = (fingerName) => {
@@ -399,6 +453,7 @@ export default function FingerHelper() {
   return (
     <div className="finger-helper">
       <div className="finger-helper-content">
+
         <button
           type="button"
           className="finger-helper-close"
@@ -409,6 +464,7 @@ export default function FingerHelper() {
         </button>
 
         <div className="finger-helper-hands">
+
           {/* LEFT HAND */}
           <div className="finger-helper-hand">
             <HandSVG
@@ -426,11 +482,13 @@ export default function FingerHelper() {
               onDoubleTap={toggleRightFinger}
             />
           </div>
+
         </div>
 
         <div className="finger-helper-label">
           Double-tap a finger to move it
         </div>
+
       </div>
     </div>
   );
