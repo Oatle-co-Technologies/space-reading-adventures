@@ -5,31 +5,178 @@
 .finger-helper {
   width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   margin: 24px auto;
+  position: relative;
+}
+
+/* =========================================
+   HELP TRIGGER
+   ========================================= */
+
+.finger-helper-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 12px 18px;
+
+  border: 0;
+  border-radius: 999px;
+
+  background: #ffffff;
+  color: #234a8a;
+
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.12),
+    0 2px 5px rgba(0, 0, 0, 0.08);
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+.finger-helper-trigger:hover {
+  transform: translateY(-2px);
+  background: #f8fbff;
+
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.14),
+    0 3px 7px rgba(0, 0, 0, 0.08);
+}
+
+.finger-helper-trigger:active {
+  transform: scale(0.96);
+}
+
+.finger-helper-trigger:focus-visible {
+  outline: 3px solid rgba(85, 198, 255, 0.55);
+  outline-offset: 3px;
+}
+
+.finger-helper-trigger-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+/* =========================================
+   HANDS AREA
+   ========================================= */
+
+.finger-helper-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  animation: fingerHelperPopIn 0.28s ease-out;
+}
+
+@keyframes fingerHelperPopIn {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.92);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .finger-helper-hands {
-  width: min(760px, 100%);
+  width: min(820px, 100%);
+
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 8px;
+
+  gap: 4px;
+
+  margin-top: 10px;
 }
 
 .finger-helper-hand {
   flex: 1;
   min-width: 0;
+
   display: flex;
   justify-content: center;
+  align-items: flex-end;
 }
 
 .finger-hand {
   width: 100%;
-  max-width: 340px;
+  max-width: 390px;
   height: auto;
+
   overflow: visible;
+
   touch-action: manipulation;
+
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* =========================================
+   CLOSE BUTTON
+   ========================================= */
+
+.finger-helper-close {
+  align-self: flex-end;
+
+  margin: 0 8px 4px 0;
+
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: rgba(10, 18, 40, 0.1);
+  color: #234a8a;
+
+  font-family: inherit;
+  font-size: 1.25rem;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.finger-helper-close:hover {
+  background: rgba(10, 18, 40, 0.16);
+  transform: scale(1.06);
+}
+
+.finger-helper-close:active {
+  transform: scale(0.92);
+}
+
+.finger-helper-close:focus-visible {
+  outline: 3px solid rgba(85, 198, 255, 0.55);
+  outline-offset: 2px;
 }
 
 /* =========================================
@@ -40,14 +187,23 @@
   fill: #f2b27f;
   stroke: #b96f48;
   stroke-width: 3;
+
   stroke-linejoin: round;
+  stroke-linecap: round;
 }
+
+/* =========================================
+   FINGERS
+   ========================================= */
 
 .finger {
   fill: #f2b27f;
   stroke: #b96f48;
   stroke-width: 3;
+
   stroke-linejoin: round;
+  stroke-linecap: round;
+
   cursor: pointer;
 
   transform-box: fill-box;
@@ -72,17 +228,6 @@
   filter: brightness(0.96);
 }
 
-/* Subtle hand details */
-
-.hand-detail {
-  fill: none;
-  stroke: #d18a62;
-  stroke-width: 3;
-  stroke-linecap: round;
-  opacity: 0.65;
-  pointer-events: none;
-}
-
 /* =========================================
    FINGER STATES
    ========================================= */
@@ -96,19 +241,92 @@
 }
 
 /* =========================================
+   HAND DETAILS
+   ========================================= */
+
+.hand-detail {
+  fill: none;
+
+  stroke: #d18a62;
+  stroke-width: 3;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  opacity: 0.65;
+
+  pointer-events: none;
+}
+
+/* =========================================
+   HELPER LABEL
+   ========================================= */
+
+.finger-helper-label {
+  margin-top: 4px;
+
+  color: rgba(35, 74, 138, 0.75);
+
+  font-size: 0.8rem;
+  font-weight: 700;
+
+  text-align: center;
+}
+
+/* =========================================
    RESPONSIVE
    ========================================= */
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
   .finger-helper {
     margin: 18px auto;
   }
 
   .finger-helper-hands {
-    gap: 2px;
+    width: 100%;
+    gap: 0;
   }
 
   .finger-hand {
-    max-width: 190px;
+    max-width: 230px;
+  }
+
+  .finger-helper-close {
+    margin-right: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .finger-helper-trigger {
+    padding: 10px 15px;
+    font-size: 0.88rem;
+  }
+
+  .finger-helper-trigger-icon {
+    font-size: 1.2rem;
+  }
+
+  .finger-helper-hands {
+    gap: 0;
+  }
+
+  .finger-hand {
+    max-width: 185px;
+  }
+}
+
+/* =========================================
+   REDUCED MOTION
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .finger-helper-content {
+    animation: none;
+  }
+
+  .finger-helper-trigger,
+  .finger-helper-close,
+  .finger {
+    transition: none;
   }
 }
