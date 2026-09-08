@@ -71,8 +71,8 @@ function HandSVG({ isLeft, fingers, onDoubleTap }) {
   */
 
   const handTransform = isLeft
-    ? "translate(300 0) scale(-1 1)"
-    : undefined;
+  ? undefined
+  : "translate(300 0) scale(-1 1)";
 
   return (
     <svg
@@ -317,45 +317,44 @@ function HandSVG({ isLeft, fingers, onDoubleTap }) {
             ===================================== */}
 
         <Finger
-          name="pinky"
-          raised={fingers.pinky}
-          onDoubleTap={onDoubleTap}
-          raisedPath="
-            M204 184
+  name="pinky"
+  raised={fingers.pinky}
+  onDoubleTap={onDoubleTap}
+  raisedPath="
+    M209 184
 
-            L204 96
+    L209 96
 
-            C204 85 211 78 221 78
+    C209 85 216 78 226 78
 
-            C231 78 238 85 238 96
+    C236 78 243 85 243 96
 
-            L238 184
+    L243 184
 
-            C238 193 231 198 221 198
+    C243 193 236 198 226 198
 
-            C211 198 204 193 204 184
+    C216 198 209 193 209 184
 
-            Z
-          "
-          loweredPath="
-            M204 184
+    Z
+  "
+  loweredPath="
+    M209 184
 
-            L204 157
+    L209 157
 
-            C204 148 211 142 221 142
+    C209 148 216 142 226 142
 
-            C231 142 238 148 238 157
+    C236 142 243 148 243 157
 
-            L238 184
+    L243 184
 
-            C238 193 231 198 221 198
+    C243 193 236 198 226 198
 
-            C211 198 204 193 204 184
+    C216 198 209 193 209 184
 
-            Z
-          "
-        />
-
+    Z
+  "
+/>
         {/* =====================================
             PALM DETAILS
             ===================================== */}
