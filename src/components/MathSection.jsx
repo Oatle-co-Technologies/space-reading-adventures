@@ -15,6 +15,7 @@ import correctSound from "../sounds/correct.mp3";
 import wrongSound from "../sounds/wrong.mp3";
 import victorySound from "../sounds/victory.mp3";
 import blastoffSound from "../sounds/blastoff.mp3";
+import FingerHelper from "./FingerHelper";
 
 const defaultProgress = {
   unlocked: 1,
@@ -3320,6 +3321,10 @@ export default function MathSection({
           handleInteractiveWrong
         }
       />
+
+      {[3, 6, 7].includes(mission.id) ? (
+        <FingerHelper />
+      ) : null}
 
       {!isInteractive ? (
         <div
