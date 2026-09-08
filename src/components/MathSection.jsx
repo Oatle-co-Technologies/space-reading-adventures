@@ -7,6 +7,10 @@ import {
 import "./MathSection.css";
 import { colors, shapes } from "../data/mathConstants";
 import { mathMissions } from "../data/mathMissions";
+import {
+  mathAssessmentQuestions,
+  assessmentSkills,
+} from "../data/mathAssessmentQuestions";
 import correctSound from "../sounds/correct.mp3";
 import wrongSound from "../sounds/wrong.mp3";
 import victorySound from "../sounds/victory.mp3";
@@ -2620,6 +2624,49 @@ function shuffleOptions(
   return shuffled;
 }
 
+function shuffleArray(array) {
+  const shuffled = [...array];
+
+  for (
+    let index = shuffled.length - 1;
+    index > 0;
+    index -= 1
+  ) {
+    const randomIndex = Math.floor(
+      Math.random() * (index + 1)
+    );
+
+    [
+      shuffled[index],
+      shuffled[randomIndex],
+    ] = [
+      shuffled[randomIndex],
+      shuffled[index],
+    ];
+  }
+
+  return shuffled;
+}
+
+function getAssessmentQuestions() {
+  const selected = [];
+
+  assessmentSkills.forEach((skill) => {
+    const skillPool = shuffleArray(
+      mathAssessmentQuestions.filter(
+        (question) =>
+          question.skill === skill.id
+      )
+    );
+
+    selected.push(
+      ...skillPool.slice(0, 2)
+    );
+  });
+
+  return shuffleArray(selected);
+}
+
 export default function MathSection({
   onHome,
   soundOn,
@@ -2643,6 +2690,11 @@ export default function MathSection({
     setAssessmentAnswers,
   ] = useState([]);
 
+  const [
+    assessmentQuestions,
+    setAssessmentQuestions,
+  ] = useState([]);
+
   const mission =
     mathMissions.find(
       (item) =>
@@ -2652,13 +2704,18 @@ export default function MathSection({
     mathMissions[0];
 
   const questions =
-    useMemo(
-      () =>
-        getMissionQuestions(
-          mission
-        ),
-      [mission]
-    );
+    useMemo(() => {
+      if (mission.assessment) {
+        return assessmentQuestions;
+      }
+
+      return getMissionQuestions(
+        mission
+      );
+    }, [
+      mission,
+      assessmentQuestions,
+    ]);
 
   const question =
     questions[
@@ -2732,6 +2789,58 @@ export default function MathSection({
       assessmentAnswers,
     ]);
 
+  const assessmentSkillResults =
+    useMemo(() => {
+      return assessmentSkills.map(
+        (skill) => {
+          const answers =
+            assessmentAnswers.filter(
+              (answer) =>
+                answer.skill ===
+                skill.id
+            );
+
+          const correct =
+            answers.filter(
+              (answer) =>
+                answer.correct
+            ).length;
+
+          const total =
+            answers.length;
+
+          const percentage =
+            total > 0
+              ? Math.round(
+                  (correct / total) *
+                    100
+                )
+              : 0;
+
+          let status =
+            "Keep Practicing";
+
+          if (percentage >= 90) {
+            status = "Strong";
+          } else if (
+            percentage >= 70
+          ) {
+            status = "Developing";
+          }
+
+          return {
+            ...skill,
+            correct,
+            total,
+            percentage,
+            status,
+          };
+        }
+      );
+    }, [
+      assessmentAnswers,
+    ]);
+
   const playSound = (
     sound
   ) => {
@@ -2753,6 +2862,19 @@ export default function MathSection({
     playSound(
       blastoffSound
     );
+
+    const selectedMission =
+      mathMissions.find(
+        (item) => item.id === id
+      );
+
+    if (selectedMission?.assessment) {
+      setAssessmentQuestions(
+        getAssessmentQuestions()
+      );
+    } else {
+      setAssessmentQuestions([]);
+    }
 
     setProgress(
       (current) => ({
@@ -2840,10 +2962,12 @@ export default function MathSection({
         return;
       }
 
-      const correct =
-        question.teaching ||
-        selectedAnswer ===
-          question.answer;
+      const correct = isAssessment
+        ? selectedAnswer ===
+          question.answer
+        : question.teaching ||
+          selectedAnswer ===
+            question.answer;
 
       playSound(
         correct
@@ -3026,7 +3150,7 @@ export default function MathSection({
     "assessment-results"
   ) {
     return (
-      <main className="math-center-panel">
+      <main className="math-center-panel math-assessment-results">
         <span className="math-celebration">
           🚀
         </span>
@@ -3042,15 +3166,76 @@ export default function MathSection({
 
         <p>
           You answered{" "}
-          {
-            assessmentSummary.correct
-          }{" "}
+          {assessmentSummary.correct}{" "}
           of{" "}
-          {
-            assessmentSummary.total
-          }{" "}
+          {assessmentSummary.total}{" "}
           questions correctly.
         </p>
+
+        <div
+          className="math-assessment-skill-results"
+          style={{
+            width: "100%",
+            maxWidth: "680px",
+            margin: "24px auto 0",
+            display: "grid",
+            gap: "12px",
+          }}
+        >
+          {assessmentSkillResults.map(
+            (skill) => (
+              <div
+                key={skill.id}
+                className="math-assessment-skill-row"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    "minmax(0, 1fr) auto",
+                  gap: "12px",
+                  alignItems: "center",
+                  padding: "14px 16px",
+                  border:
+                    "2px solid #8fe7ff33",
+                  borderRadius: "16px",
+                  background:
+                    "#ffffff08",
+                  textAlign: "left",
+                }}
+              >
+                <div>
+                  <strong
+                    style={{
+                      display: "block",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    {skill.name}
+                  </strong>
+
+                  <span
+                    style={{
+                      fontSize: "0.85rem",
+                      color: "#c7d2f6",
+                      fontWeight: 700,
+                    }}
+                  >
+                    {skill.correct} of{" "}
+                    {skill.total} correct ·{" "}
+                    {skill.status}
+                  </span>
+                </div>
+
+                <strong
+                  style={{
+                    fontSize: "1.2rem",
+                  }}
+                >
+                  {skill.percentage}%
+                </strong>
+              </div>
+            )
+          )}
+        </div>
 
         <div className="math-action-row">
           <button
