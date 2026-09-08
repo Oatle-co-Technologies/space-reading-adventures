@@ -44,12 +44,6 @@ import neptunePage10 from "./assets/images/story/neptune-page10.png";
 import neptunePage11 from "./assets/images/story/neptune-page11.png";
 import neptunePage12 from "./assets/images/story/neptune-page12.png";
 
-const phonicsAudio = import.meta.glob("./sounds/*-sound.mp3", {
-  eager: true,
-  query: "?url",
-  import: "default",
-});
-
 const neptuneStory = [
   {
     image: neptunePage1,
@@ -286,23 +280,137 @@ const savedGame = () => {
   }
 };
 
-function AppNav({ onHome, onMap, onSettings }) {
+function HomeIcon() {
   return (
-    <header className="topbar">
-      <button
-        className="brand"
-        onClick={onHome}
-        aria-label="Go home"
-      >
-        🚀 Atli's Space Game
-      </button>
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M3 10.5 12 3l9 7.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M5.5 9.5V21h13V9.5M9 21v-6h6v6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
-      <nav>
-        <button onClick={onHome}>Home</button>
-        <button onClick={onMap}>Planet Map</button>
-        <button onClick={onSettings}>Settings</button>
-      </nav>
-    </header>
+function PlanetIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="6.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="10"
+        ry="4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        transform="rotate(-20 12 12)"
+      />
+    </svg>
+  );
+}
+
+function SettingsIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+
+      <path
+        d="m19.4 15.2 1.2 1-.2 1.2-1.8 1.8-1.2.2-1-1.2-1.6.7-.2 1.5-1 .8h-2.6l-1-.8-.2-1.5-1.6-.7-1 1.2-1.2-.2-1.8-1.8-.2-1.2 1.2-1-.7-1.6-1.5-.2-.8-1V9.8l.8-1 1.5-.2.7-1.6-1.2-1 .2-1.2L6 3l1.2-.2 1 1.2 1.6-.7.2-1.5 1-.8h2.6l1 .8.2 1.5 1.6.7 1-1.2L19 3l1.8 1.8.2 1.2-1.2 1 .7 1.6 1.5.2.8 1v2.6l-.8 1-1.5.2-.7 1.6Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function AppNav({ onHome, onMap, onSettings, activeScreen }) {
+  const items = [
+    {
+      label: "Home",
+      action: onHome,
+      icon: <HomeIcon />,
+      active: activeScreen === "home",
+    },
+    {
+      label: "Planets",
+      action: onMap,
+      icon: <PlanetIcon />,
+      active:
+        activeScreen === "map" ||
+        activeScreen === "planet" ||
+        activeScreen === "mission" ||
+        activeScreen === "launch",
+    },
+    {
+      label: "Settings",
+      action: onSettings,
+      icon: <SettingsIcon />,
+      active: activeScreen === "settings",
+    },
+  ];
+
+  return (
+    <nav className="bottom-nav" aria-label="Main navigation">
+      {items.map((item) => (
+        <button
+          key={item.label}
+          className={`bottom-nav-item ${
+            item.active ? "active" : ""
+          }`}
+          onClick={item.action}
+          type="button"
+          aria-label={item.label}
+          aria-current={item.active ? "page" : undefined}
+        >
+          <span className="bottom-nav-icon">
+            {item.icon}
+          </span>
+
+          <span className="bottom-nav-label">
+            {item.label}
+          </span>
+        </button>
+      ))}
+    </nav>
   );
 }
 
@@ -338,7 +446,6 @@ function App() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [revealedAnswer, setRevealedAnswer] = useState("");
 
-  const promptAudio = useRef(null);
   const advanceTimer = useRef(null);
 
   const planet =
@@ -346,8 +453,6 @@ function App() {
       (item) => item.id === progress.activePlanet
     ) || planets[0];
 
-  // Neptune is a story, so its pages stay in order.
-  // All other planets shuffle their questions.
   const missionQuestions = useMemo(
     () =>
       planet.id === 8
@@ -361,12 +466,6 @@ function App() {
   const question =
     missionQuestions[progress.question] ||
     missionQuestions[0];
-
-  const recording = question?.sound
-    ? phonicsAudio[
-        `./sounds/${question.answer.toLowerCase()}-sound.mp3`
-      ]
-    : null;
 
   const options = useMemo(() => {
     if (!question || planet.id === 8) {
@@ -485,49 +584,6 @@ function App() {
     playSound(victorySound);
     setScreen("celebration");
   };
-
-  const speak = () => {
-    if (!soundOn || !question?.sound) {
-      return;
-    }
-
-    window.speechSynthesis?.cancel();
-
-    if (recording) {
-      promptAudio.current?.pause();
-
-      const audio = new Audio(recording);
-      audio.volume = 0.8;
-      promptAudio.current = audio;
-
-      audio.play().catch(() => {});
-      return;
-    }
-
-    if (!("speechSynthesis" in window)) {
-      return;
-    }
-
-    const utterance = new SpeechSynthesisUtterance(
-      question.sound
-    );
-
-    utterance.rate = 0.75;
-
-    window.speechSynthesis.speak(utterance);
-  };
-
-  useEffect(() => {
-    if (
-      screen === "mission" &&
-      question?.sound
-    ) {
-      speak();
-    }
-
-    // Playing the prompt when a phonics question changes is intentional.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [screen, progress.question, planet.id]);
 
   const previousStoryPage = () => {
     if (progress.question === 0) {
@@ -679,8 +735,6 @@ function App() {
         ? savePlutoAnswer(true)
         : null;
 
-    // Saturn and reading questions pause so the child
-    // can see and read the completed answer.
     if (
       planet.id === 6 ||
       question.type === "reading"
@@ -784,6 +838,7 @@ function App() {
     <button
       className={className}
       onClick={handler}
+      type="button"
     >
       {label}
     </button>
@@ -904,6 +959,7 @@ function App() {
                 onClick={() =>
                   goToPlanet(item.id)
                 }
+                type="button"
               >
                 {locked ? (
                   <span>🔒</span>
@@ -985,6 +1041,7 @@ function App() {
             onClick={() =>
               setScreen("planet")
             }
+            type="button"
           >
             ← Planet
           </button>
@@ -1094,6 +1151,7 @@ function App() {
                 disabled={
                   progress.question === 0
                 }
+                type="button"
               >
                 ← Back
               </button>
@@ -1101,6 +1159,7 @@ function App() {
               <button
                 className="primary-button story-button"
                 onClick={nextStoryPage}
+                type="button"
               >
                 {progress.question ===
                 missionQuestions.length - 1
@@ -1133,6 +1192,7 @@ function App() {
                     answer(word)
                   }
                   disabled={isProcessing}
+                  type="button"
                 >
                   {word}
                 </button>
@@ -1161,6 +1221,7 @@ function App() {
                     answer(letter)
                   }
                   disabled={isProcessing}
+                  type="button"
                 >
                   {letter}
                 </button>
@@ -1230,6 +1291,7 @@ function App() {
                         word
                       )
                     }
+                    type="button"
                   >
                     {word}
                   </button>
@@ -1240,15 +1302,16 @@ function App() {
         ) : (
           <>
             <p className="eyebrow">
-              {question.sound
+              {question.soundText
                 ? "LISTEN AND CHOOSE"
                 : "FIND THE LETTER"}
             </p>
 
-            {question.sound ? (
+            {question.soundText ? (
               <button
                 className="sound-target"
-                onClick={speak}
+                type="button"
+                disabled
               >
                 🔊 Hear the sound
               </button>
@@ -1267,6 +1330,7 @@ function App() {
                     answer(letter)
                   }
                   disabled={isProcessing}
+                  type="button"
                 >
                   {letter}
                 </button>
@@ -1411,13 +1475,16 @@ function App() {
               key={result.id}
             >
               <strong>{result.name}</strong>
+
               <span>
                 {result.correct}/
                 {result.total}
               </span>
+
               <span>
                 {result.percentage}%
               </span>
+
               <span>{result.status}</span>
             </div>
           ))}
@@ -1480,6 +1547,7 @@ function App() {
             onClick={() =>
               setSoundOn((on) => !on)
             }
+            type="button"
           >
             {soundOn ? "On" : "Off"}
           </button>
@@ -1488,6 +1556,7 @@ function App() {
         <button
           className="danger-button"
           onClick={resetProgress}
+          type="button"
         >
           Reset game progress
         </button>
@@ -1497,15 +1566,16 @@ function App() {
 
   return (
     <div className="app">
+      {content}
+
       <AppNav
         onHome={() => setScreen("home")}
         onMap={() => setScreen("map")}
         onSettings={() =>
           setScreen("settings")
         }
+        activeScreen={screen}
       />
-
-      {content}
     </div>
   );
 }
