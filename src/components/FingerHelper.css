@@ -330,3 +330,184 @@
     transition: none;
   }
 }
+
+.finger-helper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 24px auto;
+}
+
+.finger-helper-content {
+  position: relative;
+  width: 100%;
+}
+
+.finger-helper-hands {
+  width: min(900px, 100%);
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 0 28px;
+}
+
+.finger-helper-hand {
+  flex: 0 0 42%;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.finger-hand {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  overflow: visible;
+  touch-action: manipulation;
+}
+
+.hand-palm {
+  fill: #f2b27f;
+  stroke: #b96f48;
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.finger {
+  fill: #f2b27f;
+  stroke: #b96f48;
+  stroke-width: 3;
+  stroke-linejoin: round;
+  cursor: pointer;
+
+  transform-box: fill-box;
+  transform-origin: center bottom;
+
+  transition:
+    d 0.22s ease,
+    transform 0.22s ease,
+    filter 0.15s ease;
+}
+
+.finger:hover {
+  filter: brightness(1.06);
+}
+
+.finger:focus-visible {
+  outline: none;
+  filter: brightness(1.1);
+}
+
+.finger:active {
+  filter: brightness(0.96);
+}
+
+.finger.raised {
+  filter: none;
+}
+
+.finger.lowered {
+  filter: brightness(0.98);
+}
+
+.hand-detail {
+  fill: none;
+  stroke: #d18a62;
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+/* =========================================
+   TRIGGER
+   ========================================= */
+
+.finger-helper-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.finger-helper-trigger-icon {
+  font-size: 1.4rem;
+}
+
+/* =========================================
+   CLOSE
+   ========================================= */
+
+.finger-helper-close {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  z-index: 5;
+
+  width: 34px;
+  height: 34px;
+
+  border: 0;
+  background: transparent;
+
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 28px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.finger-helper-close:hover {
+  color: white;
+}
+
+/* =========================================
+   LABEL
+   ========================================= */
+
+.finger-helper-label {
+  margin-top: 12px;
+  text-align: center;
+
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+  .finger-helper {
+    margin: 18px auto;
+  }
+
+  .finger-helper-hands {
+    width: 100%;
+    gap: 8px;
+    padding: 0 8px;
+  }
+
+  .finger-helper-hand {
+    flex: 0 0 48%;
+  }
+
+  .finger-hand {
+    max-width: 190px;
+  }
+
+  .finger-helper-label {
+    font-size: 0.82rem;
+  }
+}
