@@ -553,6 +553,7 @@ function DraggableItem({
   position,
   dragging,
   onPointerDown,
+  size = 76,
 }) {
   if (!position) {
     return null;
@@ -575,8 +576,8 @@ function DraggableItem({
         position: "absolute",
         left: `${position.x}px`,
         top: `${position.y}px`,
-        width: "76px",
-        height: "76px",
+        width: `${size}px`,
+        height: `${size}px`,
         display: "grid",
         placeItems: "center",
         transform:
@@ -608,7 +609,10 @@ function DraggableItem({
       ) : item.icon ? (
         <span
           style={{
-            fontSize: "3.4rem",
+            fontSize:
+              size <= 60
+                ? "2.5rem"
+                : "3.4rem",
             lineHeight: 1,
           }}
         >
@@ -617,8 +621,14 @@ function DraggableItem({
       ) : (
         <span
           style={{
-            width: "58px",
-            height: "58px",
+            width:
+              size <= 60
+                ? "44px"
+                : "58px",
+            height:
+              size <= 60
+                ? "44px"
+                : "58px",
             borderRadius: "50%",
             backgroundColor:
               color,
@@ -640,6 +650,9 @@ function InteractiveSortVisual({
 }) {
   const containerRef =
     useRef(null);
+
+  const [containerWidth, setContainerWidth] =
+    useState(0);
 
   const [positions, setPositions] =
     useState({});
@@ -682,44 +695,312 @@ function InteractiveSortVisual({
         )
       : [];
 
+  /*
+   * Measure the actual available
+   * portrait/desktop width instead
+   * of assuming a 760px canvas.
+   */
   useEffect(() => {
+    const element =
+      containerRef.current;
+
+    if (!element) {
+      return undefined;
+    }
+
+    const updateWidth = () => {
+      setContainerWidth(
+        element.clientWidth
+      );
+    };
+
+    updateWidth();
+
+    if (
+      typeof ResizeObserver !==
+      "undefined"
+    ) {
+      const observer =
+        new ResizeObserver(
+          updateWidth
+        );
+
+      observer.observe(element);
+
+      return () =>
+        observer.disconnect();
+    }
+
+    window.addEventListener(
+      "resize",
+      updateWidth
+    );
+
+    return () =>
+      window.removeEventListener(
+        "resize",
+        updateWidth
+      );
+  }, []);
+
+  const layoutWidth =
+    containerWidth || 320;
+
+  const isSmallPhone =
+    layoutWidth <= 380;
+
+  const isMobile =
+    layoutWidth <= 600;
+
+  const sourceColumns =
+    isSmallPhone
+      ? 2
+      : isMobile
+        ? 3
+        : 5;
+
+  const sourceHorizontalPadding =
+    isMobile ? 28 : 72;
+
+  const sourceSlotWidth =
+    Math.max(
+      (
+        layoutWidth -
+        sourceHorizontalPadding *
+          2
+      ) /
+        sourceColumns,
+      1
+    );
+
+  const sourceItemSize =
+    isSmallPhone
+      ? 54
+      : isMobile
+        ? 58
+        : 76;
+
+  const sourceRowGap =
+    isMobile ? 76 : 88;
+
+  const sourceRows =
+    Math.max(
+      Math.ceil(
+        items.length /
+          sourceColumns
+      ),
+      1
+    );
+
+  const objectAreaHeight =
+    isMobile
+      ? Math.max(
+          150,
+          sourceRows *
+            sourceRowGap +
+            38
+        )
+      : Math.max(
+          250,
+          sourceRows *
+            sourceRowGap +
+            38
+        );
+
+  /*
+   * The destination is also portrait-first.
+   * On a small phone it becomes taller
+   * rather than wider.
+   */
+  const zoneColumns =
+    isSmallPhone
+      ? 2
+      : isMobile
+        ? 3
+        : 4;
+
+  const zoneHorizontalPadding =
+    isMobile ? 14 : 24;
+
+  const zoneSlotWidth =
+    Math.max(
+      (
+        layoutWidth -
+        zoneHorizontalPadding *
+          2
+      ) /
+        zoneColumns,
+      1
+    );
+
+  const zoneRowHeight =
+    isMobile ? 64 : 68;
+
+  const zoneRows =
+    Math.max(
+      Math.ceil(
+        targetItems.length /
+          zoneColumns
+      ),
+      1
+    );
+
+  const zoneHeight =
+    isMobile
+      ? Math.max(
+          150,
+          zoneRows *
+            zoneRowHeight +
+            34
+        )
+      : Math.max(
+          190,
+          zoneRows *
+            zoneRowHeight +
+            34
+        );
+
+  /*
+   * Reset only when the question
+   * changes. A phone resize does NOT
+   * wipe the child's progress.
+   */
+  useEffect(() => {
+    setPlaced({});
+    setPlacedPositions({});
+    setDraggingId(null);
+    currentPointerId.current =
+      null;
+  }, [question]);
+
+  /*
+   * Recalculate the unplaced source
+   * positions whenever the available
+   * width changes.
+   */
+  useEffect(() => {
+    if (!items.length) {
+      return;
+    }
+
     const nextPositions =
       {};
 
     items.forEach(
       (item, index) => {
         const column =
-          index % 5;
+          index %
+          sourceColumns;
 
         const row =
-          Math.floor(index / 5);
+          Math.floor(
+            index /
+              sourceColumns
+          );
 
         nextPositions[
           item.id
         ] = {
           x:
-            72 +
-            column * 135,
+            sourceHorizontalPadding +
+            sourceSlotWidth *
+              (column + 0.5),
           y:
-            78 +
-            row * 88,
+            30 +
+            row *
+              sourceRowGap,
         };
       }
     );
 
     setPositions(
-      nextPositions
+      (current) => {
+        const next = {
+          ...current,
+        };
+
+        Object.entries(
+          nextPositions
+        ).forEach(
+          ([itemId, position]) => {
+            if (!placed[itemId]) {
+              next[itemId] =
+                position;
+            }
+          }
+        );
+
+        return next;
+      }
     );
 
     originalPositions.current =
       nextPositions;
+  }, [
+    layoutWidth,
+    items,
+    sourceColumns,
+    sourceHorizontalPadding,
+    sourceSlotWidth,
+    sourceRowGap,
+    placed,
+  ]);
 
-    setPlaced({});
-    setPlacedPositions({});
-    setDraggingId(null);
-    currentPointerId.current =
-      null;
-  }, [question, items]);
+  /*
+   * Reflow already placed objects
+   * when the phone changes width.
+   */
+  useEffect(() => {
+    if (!targetItems.length) {
+      return;
+    }
+
+    const nextPlacedPositions =
+      {};
+
+    targetItems.forEach(
+      (item, index) => {
+        if (!placed[item.id]) {
+          return;
+        }
+
+        const column =
+          index %
+          zoneColumns;
+
+        const row =
+          Math.floor(
+            index /
+              zoneColumns
+          );
+
+        nextPlacedPositions[
+          item.id
+        ] = {
+          x:
+            zoneHorizontalPadding +
+            zoneSlotWidth *
+              (column + 0.5),
+          y:
+            30 +
+            row *
+              zoneRowHeight,
+        };
+      }
+    );
+
+    setPlacedPositions(
+      nextPlacedPositions
+    );
+  }, [
+    layoutWidth,
+    targetItems,
+    placed,
+    zoneColumns,
+    zoneHorizontalPadding,
+    zoneSlotWidth,
+    zoneRowHeight,
+  ]);
 
   const getContainerPoint =
     (event) => {
@@ -951,43 +1232,38 @@ function InteractiveSortVisual({
       nextPlaced
     );
 
-    const zoneElement =
-      containerRef.current?.querySelector(
-        `[data-sort-zone="${zoneId}"]`
+    /*
+     * Position the dropped shape
+     * using the actual responsive
+     * destination grid.
+     */
+    const targetIndex =
+      targetItems.findIndex(
+        (targetItem) =>
+          targetItem.id ===
+          itemId
       );
 
-    if (!zoneElement) {
-      return;
-    }
-
-    const alreadyPlaced =
-      targetItems.filter(
-        (targetItem) =>
-          nextPlaced[
-            targetItem.id
-          ] === zoneId
-      ).length - 1;
-
-    const columns = 4;
-
     const column =
-      alreadyPlaced %
-      columns;
+      targetIndex %
+      zoneColumns;
 
     const row =
       Math.floor(
-        alreadyPlaced /
-          columns
+        targetIndex /
+          zoneColumns
       );
 
     const nextPlacedPosition =
       {
         x:
-          72 +
-          column * 78,
+          zoneHorizontalPadding +
+          zoneSlotWidth *
+            (column + 0.5),
         y:
-          82 +
-          row * 68,
+          30 +
+          row *
+            zoneRowHeight,
       };
 
     setPlacedPositions(
@@ -1040,11 +1316,11 @@ function InteractiveSortVisual({
         position: "relative",
         width: "100%",
         maxWidth: "760px",
-        minHeight: "470px",
         margin:
           "20px auto 0",
         touchAction: "none",
         userSelect: "none",
+        boxSizing: "border-box",
       }}
       onPointerMove={
         moveDrag
@@ -1059,11 +1335,9 @@ function InteractiveSortVisual({
       <div
         className="math-sort-object-area"
         style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "250px",
+          position: "relative",
+          width: "100%",
+          height: `${objectAreaHeight}px`,
           border:
             "2px dashed #8fe7ff55",
           borderRadius:
@@ -1072,6 +1346,8 @@ function InteractiveSortVisual({
             "#ffffff08",
           overflow:
             "hidden",
+          boxSizing:
+            "border-box",
         }}
       >
         {items.map(
@@ -1098,6 +1374,9 @@ function InteractiveSortVisual({
                 onPointerDown={
                   startDrag
                 }
+                size={
+                  sourceItemSize
+                }
               />
             );
           }
@@ -1107,11 +1386,9 @@ function InteractiveSortVisual({
       <div
         className="math-sort-zones"
         style={{
-          position:
-            "absolute",
-          left: 0,
-          right: 0,
-          bottom: 0,
+          width: "100%",
+          marginTop:
+            "18px",
         }}
       >
         <div
@@ -1122,8 +1399,9 @@ function InteractiveSortVisual({
           style={{
             position:
               "relative",
+            width: "100%",
             minHeight:
-              "190px",
+              `${zoneHeight}px`,
             border:
               "3px dashed #8fe7ff",
             borderRadius:
@@ -1132,6 +1410,8 @@ function InteractiveSortVisual({
               "#ffffff0d",
             overflow:
               "hidden",
+            boxSizing:
+              "border-box",
           }}
         >
           {targetItems.map(
@@ -1166,9 +1446,13 @@ function InteractiveSortVisual({
                     left: `${boxPosition.x}px`,
                     top: `${boxPosition.y}px`,
                     width:
-                      "60px",
+                      isMobile
+                        ? "48px"
+                        : "60px",
                     height:
-                      "60px",
+                      isMobile
+                        ? "48px"
+                        : "60px",
                     transform:
                       "translate(-50%, -50%)",
                     display:
@@ -1201,18 +1485,16 @@ function InteractiveSortVisual({
 
       <div
         style={{
-          position:
-            "absolute",
-          bottom:
-            "-34px",
-          left: 0,
-          right: 0,
+          marginTop:
+            "8px",
           textAlign:
             "center",
           color:
             "#c7d2f6",
           fontSize:
-            "0.85rem",
+            isSmallPhone
+              ? "0.75rem"
+              : "0.85rem",
           fontWeight: 800,
         }}
       >
