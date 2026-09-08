@@ -14,46 +14,22 @@ const createHandState = () => ({
 });
 
 /* =========================================
-   FINGER
+   DOUBLE TAP DETECTOR
    ========================================= */
 
-function Finger({
-  name,
-  raised,
-  onDoubleTap,
-  raisedPath,
-  loweredPath,
-}) {
+function useDoubleTap(callback) {
   const lastTapRef = useRef(0);
 
-  const handlePointerDown = () => {
+  return () => {
     const now = Date.now();
-    const timeSinceLastTap = now - lastTapRef.current;
 
-    if (timeSinceLastTap < 350) {
-      onDoubleTap(name);
+    if (now - lastTapRef.current < 350) {
+      callback();
       lastTapRef.current = 0;
     } else {
       lastTapRef.current = now;
     }
   };
-
-  return (
-    <path
-      className={`finger ${raised ? "raised" : "lowered"}`}
-      d={raised ? raisedPath : loweredPath}
-      tabIndex="0"
-      role="button"
-      aria-label={`${name} finger`}
-      onPointerDown={handlePointerDown}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          onDoubleTap(name);
-        }
-      }}
-    />
-  );
 }
 
 /* =========================================
@@ -62,66 +38,97 @@ function Finger({
 
 function HandSVG({ isLeft, fingers, onDoubleTap }) {
   /*
-    The two hands face inward.
+    The artwork is designed as ONE coherent hand.
 
-    LEFT hand is mirrored so its thumb points
-    toward the center.
+    Left hand:
+      thumb points toward the center.
 
-    RIGHT hand stays in its normal orientation.
+    Right hand:
+      mirrored, so its thumb also points
+      toward the center.
   */
 
   const handTransform = isLeft
-  ? undefined
-  : "translate(300 0) scale(-1 1)";
+    ? undefined
+    : "translate(300 0) scale(-1 1)";
+
+  const toggleThumb = useDoubleTap(() =>
+    onDoubleTap("thumb")
+  );
+
+  const toggleIndex = useDoubleTap(() =>
+    onDoubleTap("index")
+  );
+
+  const toggleMiddle = useDoubleTap(() =>
+    onDoubleTap("middle")
+  );
+
+  const toggleRing = useDoubleTap(() =>
+    onDoubleTap("ring")
+  );
+
+  const togglePinky = useDoubleTap(() =>
+    onDoubleTap("pinky")
+  );
 
   return (
     <svg
       className="finger-hand"
       viewBox="0 0 300 360"
       xmlns="http://www.w3.org/2000/svg"
-      aria-label={isLeft ? "Left hand" : "Right hand"}
+      aria-label={isLeft ? "Left hand counting helper" : "Right hand counting helper"}
     >
       <g transform={handTransform}>
 
         {/* =====================================
-            PALM
+            COMPLETE OPEN HAND SILHOUETTE
 
-            The palm is kept simple and proportional.
-            It does NOT contain the finger silhouettes.
+            This is ONE hand.
+
+            Fingers are part of the hand instead
+            of floating above a separate palm.
             ===================================== */}
 
         <path
-          className="hand-palm"
+          className="hand-base"
           d="
-            M82 145
+            M78 316
 
-            C78 154 76 166 76 180
+            C72 293 68 270 68 246
+            L68 185
 
-            L76 245
+            C68 174 74 166 83 165
+            C92 164 99 171 100 181
 
-            C76 272 81 296 88 316
+            L100 87
 
-            L212 316
+            C100 72 109 62 121 62
+            C133 62 142 72 142 87
 
-            C219 296 224 272 224 245
+            L142 68
 
-            L224 180
+            C142 52 151 42 163 42
+            C175 42 184 52 184 68
 
-            C224 164 218 154 207 151
+            L184 83
 
-            C197 148 189 154 185 164
+            C184 68 193 58 205 58
+            C217 58 226 68 226 83
 
-            L185 176
+            L226 100
 
-            C181 162 173 155 162 155
+            C226 87 234 79 245 79
+            C256 79 264 88 264 101
 
-            C151 155 143 163 141 176
+            L264 190
 
-            C138 162 131 155 120 155
+            C264 201 257 208 247 208
+            C238 208 231 203 229 194
 
-            C109 155 101 163 99 176
+            L229 232
 
-            C96 159 90 149 82 145
+            C229 267 222 294 214 316
 
             Z
           "
@@ -130,265 +137,258 @@ function HandSVG({ isLeft, fingers, onDoubleTap }) {
         {/* =====================================
             THUMB
 
-            Longer and extended outward.
-            Mirroring makes both thumbs point
-            inward toward the center.
+            Long inward-facing thumb.
+
+            This is an overlay because the main
+            silhouette includes the thumb area.
             ===================================== */}
 
-        <Finger
-          name="thumb"
-          raised={fingers.thumb}
-          onDoubleTap={onDoubleTap}
-          raisedPath="
-            M184 177
+        <path
+          className={`hand-thumb-overlay ${
+            fingers.thumb ? "finger-visible" : "finger-lowered"
+          }`}
+          d="
+            M226 193
 
-            C198 169 211 158 219 145
+            C211 186 198 177 188 165
 
-            C226 134 229 122 227 111
+            C180 155 176 143 177 131
 
-            C225 101 219 95 211 94
+            C178 119 185 110 195 108
 
-            C202 93 195 99 192 108
+            C205 106 214 112 218 122
 
-            C189 118 190 129 187 139
+            C222 132 220 143 216 153
 
-            C184 150 178 160 177 168
-
-            C177 172 180 176 184 177
-
-            Z
-          "
-          loweredPath="
-            M184 179
-
-            C196 176 207 168 214 158
-
-            C221 149 222 139 217 132
-
-            C212 125 203 125 196 130
-
-            C188 136 184 145 181 154
-
-            L178 168
-
-            C177 174 180 178 184 179
+            C212 164 217 176 226 184
 
             Z
           "
         />
 
         {/* =====================================
-            INDEX FINGER
+            FINGER SEPARATION LINES
+
+            These make the individual fingers
+            visually distinct while keeping the
+            hand as one coherent silhouette.
             ===================================== */}
 
-        <Finger
-          name="index"
-          raised={fingers.index}
-          onDoubleTap={onDoubleTap}
-          raisedPath="
-            M99 177
+        <path
+          className="finger-separator"
+          d="M100 181 C101 194 109 201 121 201 C133 201 142 194 142 181"
+        />
 
-            L99 78
+        <path
+          className="finger-separator"
+          d="M142 177 C143 191 151 198 163 198 C175 198 184 191 184 177"
+        />
 
-            C99 67 107 59 119 59
+        <path
+          className="finger-separator"
+          d="M184 181 C185 195 193 201 205 201 C217 201 226 194 226 181"
+        />
 
-            C131 59 140 67 140 78
-
-            L140 177
-
-            C140 185 131 190 120 190
-
-            C109 190 99 185 99 177
-
-            Z
-          "
-          loweredPath="
-            M99 177
-
-            L99 149
-
-            C99 140 108 134 120 134
-
-            C132 134 140 140 140 149
-
-            L140 177
-
-            C140 185 131 190 120 190
-
-            C109 190 99 185 99 177
-
-            Z
-          "
+        <path
+          className="finger-separator"
+          d="M226 188 C227 200 234 207 245 207"
         />
 
         {/* =====================================
-            MIDDLE FINGER
+            LOWERED FINGER OVERLAYS
+
+            When a finger is lowered, we cover
+            its raised portion with the palm color
+            and draw a new rounded top lower down.
+
+            This means the underlying hand remains
+            one coherent shape.
             ===================================== */}
 
-        <Finger
-          name="middle"
-          raised={fingers.middle}
-          onDoubleTap={onDoubleTap}
-          raisedPath="
-            M140 176
+        {!fingers.index && (
+          <path
+            className="lowered-finger"
+            d="
+              M100 181
+              L100 157
 
-            L140 63
+              C100 147 108 140 121 140
+              C133 140 142 147 142 157
 
-            C140 51 149 43 161 43
+              L142 181
 
-            C173 43 182 51 182 63
+              C142 194 133 201 121 201
+              C109 201 100 194 100 181
+              Z
+            "
+          />
+        )}
 
-            L182 176
+        {!fingers.middle && (
+          <path
+            className="lowered-finger"
+            d="
+              M142 177
+              L142 145
 
-            C182 185 173 190 161 190
+              C142 135 151 128 163 128
+              C175 128 184 135 184 145
 
-            C149 190 140 185 140 176
+              L184 177
 
-            Z
-          "
-          loweredPath="
-            M140 176
+              C184 190 175 198 163 198
+              C151 198 142 190 142 177
+              Z
+            "
+          />
+        )}
 
-            L140 143
+        {!fingers.ring && (
+          <path
+            className="lowered-finger"
+            d="
+              M184 181
+              L184 153
 
-            C140 134 149 128 161 128
+              C184 143 193 136 205 136
+              C217 136 226 143 226 153
 
-            C173 128 182 134 182 143
+              L226 181
 
-            L182 176
+              C226 194 217 201 205 201
+              C193 201 184 194 184 181
+              Z
+            "
+          />
+        )}
 
-            C182 185 173 190 161 190
+        {!fingers.pinky && (
+          <path
+            className="lowered-finger"
+            d="
+              M226 188
+              L226 162
 
-            C149 190 140 185 140 176
+              C226 153 233 147 245 147
+              C256 147 264 153 264 162
 
-            Z
-          "
-        />
+              L264 190
+
+              C264 201 257 208 247 208
+              C238 208 231 203 229 194
+              Z
+            "
+          />
+        )}
+
+        {!fingers.thumb && (
+          <path
+            className="lowered-thumb"
+            d="
+              M226 193
+
+              C216 189 207 184 200 177
+
+              C194 171 191 163 193 156
+
+              C195 149 202 146 209 149
+
+              C216 152 219 159 218 166
+
+              C218 176 222 184 226 193
+
+              Z
+            "
+          />
+        )}
 
         {/* =====================================
-            RING FINGER
-            ===================================== */}
-
-        <Finger
-          name="ring"
-          raised={fingers.ring}
-          onDoubleTap={onDoubleTap}
-          raisedPath="
-            M182 178
-
-            L182 75
-
-            C182 64 191 56 203 56
-
-            C215 56 224 64 224 75
-
-            L224 178
-
-            C224 187 215 192 203 192
-
-            C191 192 182 187 182 178
-
-            Z
-          "
-          loweredPath="
-            M182 178
-
-            L182 149
-
-            C182 140 191 134 203 134
-
-            C215 134 224 140 224 149
-
-            L224 178
-
-            C224 187 215 192 203 192
-
-            C191 192 182 187 182 178
-
-            Z
-          "
-        />
-
-        {/* =====================================
-            PINKY
-
-            Smaller and pulled inward so it stays
-            proportional to the palm.
-            ===================================== */}
-
-        <Finger
-  name="pinky"
-  raised={fingers.pinky}
-  onDoubleTap={onDoubleTap}
-  raisedPath="
-    M209 184
-
-    L209 96
-
-    C209 85 216 78 226 78
-
-    C236 78 243 85 243 96
-
-    L243 184
-
-    C243 193 236 198 226 198
-
-    C216 198 209 193 209 184
-
-    Z
-  "
-  loweredPath="
-    M209 184
-
-    L209 157
-
-    C209 148 216 142 226 142
-
-    C236 142 243 148 243 157
-
-    L243 184
-
-    C243 193 236 198 226 198
-
-    C216 198 209 193 209 184
-
-    Z
-  "
-/>
-        {/* =====================================
-            PALM DETAILS
+            PALM LINES
             ===================================== */}
 
         <path
           className="hand-detail"
-          d="
-            M101 229
-            C119 239 139 242 158 239
-          "
+          d="M101 235 C121 245 143 248 163 244"
         />
 
         <path
           className="hand-detail"
-          d="
-            M102 250
-            C121 260 141 263 160 260
-          "
+          d="M101 257 C121 268 143 270 165 266"
         />
 
         <path
           className="hand-detail"
-          d="
-            M180 232
-            C197 228 211 219 222 207
-          "
+          d="M103 280 C122 289 143 292 163 289"
+        />
+
+        {/* =====================================
+            INVISIBLE INTERACTION AREAS
+
+            Each finger has its own independent
+            hit area.
+
+            The artwork itself does not need to
+            be five separate visible SVG shapes.
+            ===================================== */}
+
+        <rect
+          className="finger-hit-area"
+          x="96"
+          y="55"
+          width="49"
+          height="145"
+          rx="22"
+          onPointerDown={toggleIndex}
+          aria-label="Index finger"
+        />
+
+        <rect
+          className="finger-hit-area"
+          x="138"
+          y="35"
+          width="49"
+          height="165"
+          rx="22"
+          onPointerDown={toggleMiddle}
+          aria-label="Middle finger"
+        />
+
+        <rect
+          className="finger-hit-area"
+          x="180"
+          y="51"
+          width="49"
+          height="155"
+          rx="22"
+          onPointerDown={toggleRing}
+          aria-label="Ring finger"
+        />
+
+        <rect
+          className="finger-hit-area"
+          x="221"
+          y="72"
+          width="47"
+          height="145"
+          rx="21"
+          onPointerDown={togglePinky}
+          aria-label="Pinky finger"
         />
 
         <path
-          className="hand-detail"
+          className="finger-hit-area"
           d="
-            M108 278
-            C126 286 146 288 165 285
+            M229 192
+            C212 187 198 178 188 166
+            C179 154 175 140 177 126
+            C179 111 189 101 201 102
+            C215 103 224 114 225 128
+            C226 143 220 157 218 169
+            C217 178 223 186 229 192
+            Z
           "
+          onPointerDown={toggleThumb}
+          aria-label="Thumb"
         />
       </g>
     </svg>
@@ -406,7 +406,7 @@ export default function FingerHelper() {
   const [rightHand, setRightHand] = useState(createHandState);
 
   /* =======================================
-     RESET BOTH HANDS
+     RESET
      ======================================= */
 
   const resetHands = () => {
@@ -415,7 +415,7 @@ export default function FingerHelper() {
   };
 
   /* =======================================
-     OPEN HELPER
+     OPEN
      ======================================= */
 
   const openHelper = () => {
@@ -424,7 +424,7 @@ export default function FingerHelper() {
   };
 
   /* =======================================
-     CLOSE HELPER
+     CLOSE
      ======================================= */
 
   const closeHelper = () => {
@@ -432,7 +432,7 @@ export default function FingerHelper() {
   };
 
   /* =======================================
-     TOGGLE LEFT FINGER
+     TOGGLE LEFT
      ======================================= */
 
   const toggleLeftFinger = (fingerName) => {
@@ -443,7 +443,7 @@ export default function FingerHelper() {
   };
 
   /* =======================================
-     TOGGLE RIGHT FINGER
+     TOGGLE RIGHT
      ======================================= */
 
   const toggleRightFinger = (fingerName) => {
@@ -454,7 +454,7 @@ export default function FingerHelper() {
   };
 
   /* =======================================
-     HELPER HIDDEN
+     HIDDEN STATE
      ======================================= */
 
   if (!isOpen) {
@@ -479,14 +479,12 @@ export default function FingerHelper() {
   }
 
   /* =======================================
-     HELPER OPEN
+     OPEN STATE
      ======================================= */
 
   return (
     <div className="finger-helper">
       <div className="finger-helper-content">
-
-        {/* CLOSE BUTTON */}
 
         <button
           type="button"
@@ -497,9 +495,9 @@ export default function FingerHelper() {
           ×
         </button>
 
-        {/* HANDS */}
-
         <div className="finger-helper-hands">
+
+          {/* LEFT */}
 
           <div className="finger-helper-hand">
             <HandSVG
@@ -508,6 +506,8 @@ export default function FingerHelper() {
               onDoubleTap={toggleLeftFinger}
             />
           </div>
+
+          {/* RIGHT */}
 
           <div className="finger-helper-hand">
             <HandSVG
@@ -518,8 +518,6 @@ export default function FingerHelper() {
           </div>
 
         </div>
-
-        {/* INSTRUCTION */}
 
         <div className="finger-helper-label">
           Double-tap a finger to move it
