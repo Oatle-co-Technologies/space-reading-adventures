@@ -1,14 +1,6 @@
 import { useRef, useState } from "react";
 import "./FingerHelper.css";
 
-const FINGER_NAMES = [
-  "thumb",
-  "index",
-  "middle",
-  "ring",
-  "pinky",
-];
-
 const createHandState = () => ({
   thumb: false,
   index: false,
@@ -17,19 +9,60 @@ const createHandState = () => ({
   pinky: false,
 });
 
-function HandSVG({ side, fingers, onFingerDoubleClick }) {
+function Finger({
+  name,
+  raised,
+  onPointerUp,
+  raisedPath,
+  loweredPath,
+  className = "",
+}) {
+  return (
+    <path
+      className={`finger ${className} ${
+        raised ? "raised" : "lowered"
+      }`}
+      d={raised ? raisedPath : loweredPath}
+      onPointerUp={onPointerUp}
+      role="button"
+      tabIndex={0}
+      aria-label={`${name} finger ${
+        raised ? "up" : "down"
+      }`}
+      onKeyDown={(event) => {
+        if (
+          event.key === "Enter" ||
+          event.key === " "
+        ) {
+          event.preventDefault();
+          onPointerUp();
+        }
+      }}
+    />
+  );
+}
+
+function HandSVG({
+  side,
+  fingers,
+  onFingerDoubleTap,
+}) {
   const isLeft = side === "left";
 
   /*
    * The left hand is drawn normally.
-   *
-   * The right hand uses the same human-hand drawing,
-   * mirrored horizontally. This puts the thumbs toward
-   * the centre of the two-hand display.
+   * The right hand is mirrored so the thumbs
+   * face inward toward each other.
    */
   const handTransform = isLeft
     ? undefined
     : "translate(300 0) scale(-1 1)";
+
+  const finger = (name) => ({
+    raised: fingers[name],
+    onPointerUp: () =>
+      onFingerDoubleTap(name),
+  });
 
   return (
     <svg
@@ -39,16 +72,11 @@ function HandSVG({ side, fingers, onFingerDoubleClick }) {
       aria-label={`${side} hand counting tool`}
     >
       <g transform={handTransform}>
-        {/* =========================
-            THUMB
-            ========================= */}
+        {/* THUMB */}
 
         <Finger
           name="thumb"
-          raised={fingers.thumb}
-          onDoubleClick={() =>
-            onFingerDoubleClick("thumb")
-          }
+          {...finger("thumb")}
           className="hand-thumb"
           raisedPath="
             M205 196
@@ -72,16 +100,11 @@ function HandSVG({ side, fingers, onFingerDoubleClick }) {
           "
         />
 
-        {/* =========================
-            INDEX FINGER
-            ========================= */}
+        {/* INDEX FINGER */}
 
         <Finger
           name="index"
-          raised={fingers.index}
-          onDoubleClick={() =>
-            onFingerDoubleClick("index")
-          }
+          {...finger("index")}
           className="hand-finger hand-index"
           raisedPath="
             M75 156
@@ -105,16 +128,11 @@ function HandSVG({ side, fingers, onFingerDoubleClick }) {
           "
         />
 
-        {/* =========================
-            MIDDLE FINGER
-            ========================= */}
+        {/* MIDDLE FINGER */}
 
         <Finger
           name="middle"
-          raised={fingers.middle}
-          onDoubleClick={() =>
-            onFingerDoubleClick("middle")
-          }
+          {...finger("middle")}
           className="hand-finger hand-middle"
           raisedPath="
             M113 151
@@ -138,16 +156,11 @@ function HandSVG({ side, fingers, onFingerDoubleClick }) {
           "
         />
 
-        {/* =========================
-            RING FINGER
-            ========================= */}
+        {/* RING FINGER */}
 
         <Finger
           name="ring"
-          raised={fingers.ring}
-          onDoubleClick={() =>
-            onFingerDoubleClick("ring")
-          }
+          {...finger("ring")}
           className="hand-finger hand-ring"
           raisedPath="
             M151 158
@@ -171,16 +184,11 @@ function HandSVG({ side, fingers, onFingerDoubleClick }) {
           "
         />
 
-        {/* =========================
-            PINKY
-            ========================= */}
+        {/* PINKY FINGER */}
 
         <Finger
           name="pinky"
-          raised={fingers.pinky}
-          onDoubleClick={() =>
-            onFingerDoubleClick("pinky")
-          }
+          {...finger("pinky")}
           className="hand-finger hand-pinky"
           raisedPath="
             M188 169
@@ -204,9 +212,7 @@ function HandSVG({ side, fingers, onFingerDoubleClick }) {
           "
         />
 
-        {/* =========================
-            PALM
-            ========================= */}
+        {/* PALM */}
 
         <path
           className="hand-palm"
@@ -237,7 +243,8 @@ function HandSVG({ side, fingers, onFingerDoubleClick }) {
           "
         />
 
-        {/* Soft palm detail */}
+        {/* PALM DETAILS */}
+
         <path
           className="hand-detail"
           d="
@@ -259,39 +266,6 @@ function HandSVG({ side, fingers, onFingerDoubleClick }) {
   );
 }
 
-function Finger({
-  name,
-  raised,
-  onDoubleClick,
-  raisedPath,
-  loweredPath,
-  className = "",
-}) {
-  return (
-    <path
-      className={`finger ${className} ${
-        raised ? "raised" : "lowered"
-      }`}
-      d={raised ? raisedPath : loweredPath}
-      onDoubleClick={onDoubleClick}
-      role="button"
-      tabIndex={0}
-      aria-label={`${name} finger ${
-        raised ? "up" : "down"
-      }`}
-      onKeyDown={(event) => {
-        if (
-          event.key === "Enter" ||
-          event.key === " "
-        ) {
-          event.preventDefault();
-          onDoubleClick();
-        }
-      }}
-    />
-  );
-}
-
 function FingerHelper() {
   const [leftHand, setLeftHand] =
     useState(createHandState);
@@ -299,15 +273,6 @@ function FingerHelper() {
   const [rightHand, setRightHand] =
     useState(createHandState);
 
-  /*
-   * Stores the most recent pointer-up time for each
-   * individual finger.
-   *
-   * This lets the same interaction work as:
-   *
-   *   mouse double-click
-   *   touch double-tap
-   */
   const lastTapRef = useRef({});
 
   const toggleFinger = (side, finger) => {
@@ -326,14 +291,16 @@ function FingerHelper() {
     }));
   };
 
-  const handleFingerPointerUp = (
-    side,
-    finger
-  ) => {
+  const handleFingerTap = (side, finger) => {
     const key = `${side}-${finger}`;
     const now = Date.now();
-    const previous = lastTapRef.current[key] || 0;
+    const previous =
+      lastTapRef.current[key] || 0;
 
+    /*
+     * Two taps on the same finger within
+     * 350ms count as a double-tap.
+     */
     if (now - previous < 350) {
       toggleFinger(side, finger);
       lastTapRef.current[key] = 0;
@@ -353,8 +320,8 @@ function FingerHelper() {
           <HandSVG
             side="left"
             fingers={leftHand}
-            onFingerDoubleClick={(finger) =>
-              handleFingerPointerUp(
+            onFingerDoubleTap={(finger) =>
+              handleFingerTap(
                 "left",
                 finger
               )
@@ -366,8 +333,8 @@ function FingerHelper() {
           <HandSVG
             side="right"
             fingers={rightHand}
-            onFingerDoubleClick={(finger) =>
-              handleFingerPointerUp(
+            onFingerDoubleTap={(finger) =>
+              handleFingerTap(
                 "right",
                 finger
               )
