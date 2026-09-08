@@ -1,0 +1,114 @@
+/* =========================================
+   FINGER HELPER
+   ========================================= */
+
+.finger-helper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 24px auto;
+}
+
+.finger-helper-hands {
+  width: min(760px, 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+}
+
+.finger-helper-hand {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.finger-hand {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  overflow: visible;
+  touch-action: manipulation;
+}
+
+/* =========================================
+   HAND APPEARANCE
+   ========================================= */
+
+.hand-palm {
+  fill: #f2b27f;
+  stroke: #b96f48;
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.finger {
+  fill: #f2b27f;
+  stroke: #b96f48;
+  stroke-width: 3;
+  stroke-linejoin: round;
+  cursor: pointer;
+
+  transform-box: fill-box;
+  transform-origin: center bottom;
+
+  transition:
+    d 0.22s ease,
+    transform 0.22s ease,
+    filter 0.15s ease;
+}
+
+.finger:hover {
+  filter: brightness(1.06);
+}
+
+.finger:focus-visible {
+  outline: none;
+  filter: brightness(1.1);
+}
+
+.finger:active {
+  filter: brightness(0.96);
+}
+
+/* Subtle hand details */
+
+.hand-detail {
+  fill: none;
+  stroke: #d18a62;
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+/* =========================================
+   FINGER STATES
+   ========================================= */
+
+.finger.raised {
+  filter: none;
+}
+
+.finger.lowered {
+  filter: brightness(0.98);
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 600px) {
+  .finger-helper {
+    margin: 18px auto;
+  }
+
+  .finger-helper-hands {
+    gap: 2px;
+  }
+
+  .finger-hand {
+    max-width: 190px;
+  }
+}
