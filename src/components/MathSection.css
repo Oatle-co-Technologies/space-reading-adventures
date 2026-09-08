@@ -529,109 +529,533 @@
 
 /* -------------------------------------------------------
    RESPONSIVE
+   Portrait-first mobile layout
 ------------------------------------------------------- */
 
+.math-mission-page {
+  box-sizing: border-box;
+  width: min(760px, calc(100% - 32px));
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.math-number-display,
+.math-feature-display,
+.math-introduction-visual,
+.math-mix-display,
+.math-count-display,
+.math-group-display,
+.math-feature-row,
+.math-bars,
+.math-equal-groups,
+.math-arithmetic-display,
+.math-sharing-display {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.math-answer-grid {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Tablets / larger phones */
 @media (max-width: 700px) {
-  .math-mission-map {
-    grid-template-columns: 1fr 1fr;
+  .math-page {
+    width: calc(100% - 28px);
+    padding: 38px 0 48px;
+  }
+
+  .math-mission-page {
+    width: calc(100% - 28px);
+  }
+
+  .math-heading h1,
+  .math-center-panel h1,
+  .math-mission-page h1 {
+    font-size: clamp(1.55rem, 6vw, 2.2rem);
+    line-height: 1.15;
+  }
+
+  .math-heading p:not(.math-eyebrow),
+  .math-center-panel p:not(.math-eyebrow),
+  .math-mission-page .math-feedback {
+    font-size: 0.98rem;
   }
 
   .math-status-row {
     align-items: flex-start;
     flex-direction: column;
+    gap: 6px;
   }
 
+  .math-journey-track {
+    gap: 8px;
+    margin-bottom: 36px;
+  }
+
+  .math-journey-planet {
+    width: 40px;
+    height: 40px;
+  }
+
+  .math-journey-rocket {
+    font-size: 1.7rem;
+  }
+
+  .math-count-display,
   .math-counting-shape-display {
-    gap: 16px;
-    max-width: 520px;
+    width: 100%;
+    max-width: 100%;
+    gap: 14px;
+    padding: 10px 4px;
   }
 
   .math-counting-shape-display .math-shape {
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
   }
 
   .math-mix-colours {
-    gap: 14px;
+    gap: 12px;
   }
 
   .math-mix-swatch {
-    width: 72px;
-    height: 72px;
+    width: 70px;
+    height: 70px;
     border-width: 4px;
   }
 
   .math-mix-result .math-mix-swatch {
-    width: 88px;
-    height: 88px;
+    width: 86px;
+    height: 86px;
   }
 
   .math-mix-arrow {
+    font-size: 2rem;
+  }
+
+  .math-teaching-text {
+    max-width: 100%;
+    padding: 0 6px;
+    font-size: 1rem;
+  }
+
+  /* Keep arithmetic as one coherent horizontal operation. */
+  .math-arithmetic-display {
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 135px;
+    overflow: visible;
+  }
+
+  .math-arithmetic-group {
+    flex: 1 1 0;
+    width: auto;
+    max-width: 42%;
+    gap: 6px;
+  }
+
+  .math-arithmetic-group .math-shape {
+    width: 42px;
+    height: 42px;
+  }
+
+  .math-operation-symbol {
+    flex: 0 0 auto;
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .math-sharing-display {
+    width: 100%;
+    max-width: 100%;
+    gap: 10px;
+  }
+
+  .math-equal-groups {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+    min-height: 0;
+    padding: 6px 2px;
+  }
+
+  .math-small-group {
+    width: 100%;
+    min-width: 0;
+    min-height: 76px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+
+  .math-small-group .math-shape {
+    width: 34px;
+    height: 34px;
+  }
+
+  .math-group-display,
+  .math-feature-row {
+    width: 100%;
+    max-width: 100%;
+    gap: 12px;
+  }
+
+  .math-group-display {
+    min-height: 125px;
+  }
+
+  .math-number-equation {
+    min-height: 125px;
+    padding: 0 4px;
+    font-size: clamp(2.4rem, 10vw, 3.4rem);
+  }
+
+  .math-object {
     font-size: 2.2rem;
   }
-}
 
-@media (max-width: 480px) {
-  .math-mission-map,
-  .math-answer-grid,
-  .math-answer-grid.has-three-options {
-    grid-template-columns: 1fr;
+  .math-answer-grid {
+    gap: 11px;
+    margin-top: 16px;
   }
 
-  .math-number-display {
-    font-size: 6rem;
-  }
-
-  .math-shape {
-    width: 46px;
-    height: 46px;
-  }
-
-  .math-count-display {
-    gap: 14px;
-    padding: 8px 0;
-  }
-
-  .math-counting-shape-display {
-    gap: 14px;
-  }
-
-  .math-counting-shape-display .math-shape {
-    width: 48px;
-    height: 48px;
+  .math-answer-button {
+    min-height: 70px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 1.15rem;
   }
 
   .math-answer-button .math-shape {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .math-option-group {
+    max-width: 130px;
   }
 
   .math-option-group .math-shape {
-    width: 18px;
-    height: 18px;
+    width: 17px;
+    height: 17px;
   }
 
+  .math-feedback {
+    margin-top: 16px;
+    font-size: 0.95rem;
+  }
+
+  .math-primary-button,
+  .math-secondary-button {
+    padding: 12px 18px;
+    font-size: 0.98rem;
+  }
+}
+
+/* Small portrait phones */
+@media (max-width: 480px) {
+  .math-page {
+    width: calc(100% - 20px);
+    padding: 26px 0 36px;
+  }
+
+  .math-mission-page {
+    width: calc(100% - 20px);
+  }
+
+  .math-heading h1,
+  .math-center-panel h1,
+  .math-mission-page h1 {
+    margin-top: 8px;
+    margin-bottom: 10px;
+    font-size: clamp(1.35rem, 7vw, 1.8rem);
+  }
+
+  .math-heading p:not(.math-eyebrow),
+  .math-center-panel p:not(.math-eyebrow),
+  .math-mission-page .math-feedback {
+    font-size: 0.9rem;
+  }
+
+  .math-eyebrow {
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+  }
+
+  .math-back-button {
+    padding: 7px 9px;
+    font-size: 0.9rem;
+  }
+
+  .math-mission-map {
+    grid-template-columns: 1fr;
+  }
+
+  .math-status-row {
+    font-size: 0.82rem;
+  }
+
+  .math-journey-track {
+    gap: 5px;
+    margin: 12px 0 28px;
+  }
+
+  .math-journey-planet {
+    width: 32px;
+    height: 32px;
+  }
+
+  .math-journey-line {
+    height: 4px;
+    border-top-width: 2px;
+  }
+
+  .math-journey-rocket {
+    font-size: 1.35rem;
+  }
+
+  .math-number-display {
+    min-height: 115px;
+    font-size: clamp(4.8rem, 24vw, 6rem);
+  }
+
+  .math-feature-display {
+    min-height: 115px;
+  }
+
+  .math-introduction-visual {
+    gap: 7px;
+  }
+
+  .math-introduction-visual p {
+    font-size: 0.92rem;
+  }
+
+  .math-shape {
+    width: 42px;
+    height: 42px;
+  }
+
+  /* Counting: clean rows, no touching/overlapping shapes. */
+  .math-count-display,
+  .math-counting-shape-display {
+    gap: 10px;
+    padding: 8px 2px;
+  }
+
+  .math-counting-shape-display .math-shape {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Colour mixing: compact but still readable. */
   .math-mix-colours {
-    gap: 8px;
+    gap: 6px;
+    min-height: 135px;
   }
 
   .math-mix-swatch {
-    width: 58px;
-    height: 58px;
+    width: 52px;
+    height: 52px;
     border-width: 3px;
   }
 
   .math-mix-result .math-mix-swatch {
-    width: 70px;
-    height: 70px;
+    width: 66px;
+    height: 66px;
+    border-width: 4px;
   }
 
   .math-mix-arrow {
-    font-size: 1.7rem;
+    font-size: 1.45rem;
   }
 
   .math-teaching-text {
-    padding: 0 10px;
+    padding: 0 4px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  /*
+    Arithmetic remains a single horizontal operation:
+      [objects]  −  [objects]
+    Groups may wrap their own shapes, but the operation symbol
+    must not fall underneath a group.
+  */
+  .math-arithmetic-display {
+    gap: 6px;
+    min-height: 125px;
+  }
+
+  .math-arithmetic-group {
+    max-width: 44%;
+    gap: 5px;
+  }
+
+  .math-arithmetic-group .math-shape {
+    width: clamp(30px, 9vw, 40px);
+    height: clamp(30px, 9vw, 40px);
+  }
+
+  .math-operation-symbol {
+    font-size: clamp(1.55rem, 8vw, 2rem);
+  }
+
+  .math-operation-answer {
+    min-width: 30px;
+  }
+
+  .math-number-equation {
+    min-height: 110px;
+    font-size: clamp(2rem, 11vw, 2.8rem);
+  }
+
+  /* Equal groups: two clean columns instead of a squeezed row. */
+  .math-equal-groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    padding: 4px 0;
+  }
+
+  .math-small-group {
+    min-height: 68px;
+    gap: 4px;
+    padding: 7px 5px;
+    border-radius: 9px;
+  }
+
+  .math-small-group .math-shape {
+    width: 29px;
+    height: 29px;
+  }
+
+  .math-group-display,
+  .math-feature-row {
+    gap: 8px;
+    min-height: 110px;
+  }
+
+  .math-object {
+    font-size: 1.8rem;
+  }
+
+  /* Answer buttons: smaller visual footprint, still finger-friendly. */
+  .math-answer-grid {
+    gap: 9px;
+    margin-top: 14px;
+  }
+
+  .math-answer-button {
+    min-height: 62px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    font-size: 1.05rem;
+  }
+
+  .math-answer-button .math-shape {
+    width: 26px;
+    height: 26px;
+  }
+
+  .math-option-group {
+    max-width: 115px;
+    gap: 3px;
+  }
+
+  .math-option-group .math-shape {
+    width: 16px;
+    height: 16px;
+  }
+
+  .math-colour-swatch {
+    width: 22px;
+    height: 22px;
+  }
+
+  .math-feedback {
+    min-height: 24px;
+    margin-top: 13px;
+    font-size: 0.88rem;
+  }
+
+  .math-action-row {
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .math-primary-button,
+  .math-secondary-button {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 9px;
+    font-size: 0.9rem;
+  }
+
+  .math-celebration {
+    font-size: 4rem;
+  }
+}
+
+/* Very small portrait phones */
+@media (max-width: 360px) {
+  .math-page,
+  .math-mission-page {
+    width: calc(100% - 16px);
+  }
+
+  .math-mission-page h1 {
+    font-size: 1.3rem;
+  }
+
+  .math-arithmetic-display {
+    gap: 4px;
+  }
+
+  .math-arithmetic-group {
+    max-width: 45%;
+    gap: 4px;
+  }
+
+  .math-arithmetic-group .math-shape {
+    width: 28px;
+    height: 28px;
+  }
+
+  .math-operation-symbol {
+    font-size: 1.45rem;
+  }
+
+  .math-small-group .math-shape {
+    width: 26px;
+    height: 26px;
+  }
+
+  .math-answer-button {
+    min-height: 58px;
     font-size: 1rem;
+  }
+
+  .math-counting-shape-display .math-shape {
+    width: 40px;
+    height: 40px;
+  }
+
+  .math-mix-swatch {
+    width: 48px;
+    height: 48px;
+  }
+
+  .math-mix-result .math-mix-swatch {
+    width: 60px;
+    height: 60px;
   }
 }
