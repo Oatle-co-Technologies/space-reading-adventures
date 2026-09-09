@@ -19,7 +19,7 @@ import Scribbler from "./components/Scribbler";
 import AlphabetTracingMission from "./components/AlphabetTracingMission";
 import NumberTracingMission from "./components/NumberTracingMission";
 import ShapeTracingMission from "./components/ShapeTracingMission";
-import SentenceWritingMission from "./components/SentenceWritingMission";
+import SentenceWritingMission from "./components/SentenceWritingSession";
 
 import mercuryImage from "./assets/images/planets/mercury.png";
 import venusImage from "./assets/images/planets/venus.png";
