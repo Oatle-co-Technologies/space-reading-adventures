@@ -573,3 +573,7 @@ body {
     height: 44px;
   }
 }
+.alphabet-tool-bar {
+  grid-template-columns: repeat(4, 42px);
+  grid-template-rows: 42px;
+}
