@@ -638,6 +638,63 @@
 }
 
 /* =========================
+   TRACING LETTERS
+   ========================= */
+
+.alphabet-target-display {
+  position: absolute;
+
+  left: 50%;
+  top: 30%;
+
+  transform: translateX(-50%);
+
+  width: min(520px, 70%);
+
+  height: 40%;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  gap: 18px;
+
+  pointer-events: none;
+
+  z-index: 2;
+}
+
+/* =========================
+   CAPITAL A
+   ========================= */
+
+.alphabet-uppercase {
+  width: auto;
+  height: 100%;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  color: rgba(82, 172, 205, 0.30);
+
+  font-family:
+    "Andika",
+    "Comic Sans MS",
+    "Chalkboard SE",
+    sans-serif;
+
+  font-size: 250px;
+
+  font-weight: 700;
+
+  line-height: 0.65;
+
+  margin: 0;
+  padding: 0;
+}
+
+/* =========================
    LOWERCASE a
    ========================= */
 
