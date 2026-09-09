@@ -1,17 +1,38 @@
 import { useState } from "react";
+
 import "./AbacusHelper.css";
 
 const TOTAL_BEADS = 10;
 
+const BEAD_COLORS = [
+  "#ef5b5b", // red
+  "#ffd45c", // yellow
+  "#55c6ff", // blue
+  "#66d17a", // green
+  "#ff9f43", // orange
+  "#a875e8", // purple
+  "#f27bbd", // pink
+  "#35c7c4", // turquoise
+  "#f4c542", // gold
+  "#b7d94c", // lime
+];
+
 const createBeads = () =>
-  Array.from({ length: TOTAL_BEADS }, (_, index) => ({
-    id: index,
-    moved: false,
-  }));
+  Array.from(
+    { length: TOTAL_BEADS },
+    (_, index) => ({
+      id: index,
+      moved: false,
+      color: BEAD_COLORS[index],
+    })
+  );
 
 export default function AbacusHelper() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [beads, setBeads] = useState(createBeads);
+  const [isOpen, setIsOpen] =
+    useState(false);
+
+  const [beads, setBeads] =
+    useState(createBeads);
 
   /* =========================================
      RESET
@@ -87,7 +108,6 @@ export default function AbacusHelper() {
   return (
     <div className="abacus-helper">
       <div className="abacus-helper-content">
-
         <button
           type="button"
           className="abacus-helper-close"
@@ -103,30 +123,39 @@ export default function AbacusHelper() {
 
         <div className="abacus">
           <div className="abacus-frame">
-
             <div className="abacus-rail">
               {beads.map((bead) => (
                 <button
                   key={bead.id}
                   type="button"
                   className={`abacus-bead ${
-                    bead.moved ? "moved" : ""
+                    bead.moved
+                      ? "moved"
+                      : ""
                   }`}
-                  onClick={() => toggleBead(bead.id)}
-                  aria-label={`Counting bead ${bead.id + 1}`}
+                  style={{
+                    "--bead-color":
+                      bead.color,
+                  }}
+                  onClick={() =>
+                    toggleBead(
+                      bead.id
+                    )
+                  }
+                  aria-label={`Counting bead ${
+                    bead.id + 1
+                  }`}
                 >
                   <span className="abacus-bead-highlight" />
                 </button>
               ))}
             </div>
-
           </div>
         </div>
 
         <div className="abacus-helper-label">
           Tap a bead to move it
         </div>
-
       </div>
     </div>
   );
