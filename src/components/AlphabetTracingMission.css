@@ -593,8 +593,7 @@
   transform: translateX(-50%);
 
   width: min(520px, 70%);
-
-  height: 40%;
+  height: 188px;
 
   display: flex;
   align-items: flex-start;
@@ -603,7 +602,6 @@
   gap: 18px;
 
   pointer-events: none;
-
   z-index: 2;
 }
 
@@ -613,7 +611,7 @@
 
 .alphabet-uppercase {
   width: auto;
-  height: 100%;
+  height: 188px;
 
   display: flex;
   align-items: flex-start;
@@ -628,64 +626,6 @@
     sans-serif;
 
   font-size: 250px;
-
-  font-weight: 700;
-
-  line-height: 0.65;
-
-  margin: 0;
-  padding: 0;
-}
-
-/* =========================
-   TRACING LETTERS
-   ========================= */
-
-.alphabet-target-display {
-  position: absolute;
-
-  left: 50%;
-  top: 30%;
-
-  transform: translateX(-50%);
-
-  width: min(520px, 70%);
-
-  height: 40%;
-
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-
-  gap: 18px;
-
-  pointer-events: none;
-
-  z-index: 2;
-}
-
-/* =========================
-   CAPITAL A
-   ========================= */
-
-.alphabet-uppercase {
-  width: auto;
-  height: 100%;
-
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-
-  color: rgba(82, 172, 205, 0.30);
-
-  font-family:
-    "Andika",
-    "Comic Sans MS",
-    "Chalkboard SE",
-    sans-serif;
-
-  font-size: 250px;
-
   font-weight: 700;
 
   line-height: 0.65;
@@ -700,9 +640,16 @@
 
 .alphabet-lowercase {
   width: auto;
-  height: 50%;
+  height: 94px;
 
-  margin-top: 50%;
+  /*
+     The lowercase a starts on the
+     middle handwriting line.
+  */
+  margin: 0;
+
+  position: relative;
+  top: 94px;
 
   display: flex;
   align-items: flex-start;
@@ -716,12 +663,10 @@
     "Chalkboard SE",
     sans-serif;
 
-  font-size: 175px;
-
+  font-size: 145px;
   font-weight: 700;
 
   line-height: 0.55;
 
-  margin-bottom: 0;
   padding: 0;
 }
