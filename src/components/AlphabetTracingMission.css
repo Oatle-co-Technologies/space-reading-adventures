@@ -647,7 +647,7 @@
   position: relative;
 
   /* Move the lowercase a 2px upward */
-  top: 100px;
+  top: 84px;
 
   display: flex;
   align-items: flex-start;
@@ -662,7 +662,7 @@
     sans-serif;
 
   /* 10px larger */
-  font-size: 140px;
+  font-size: 150px;
 
   font-weight: 700;
 
