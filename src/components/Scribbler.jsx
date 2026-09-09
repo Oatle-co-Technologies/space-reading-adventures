@@ -559,6 +559,18 @@ export default function Scribbler({ onBack }) {
           >
             <BrushIcon />
           </button>
+                  <button
+          type="button"
+          className={`scribbler-eraser ${
+            tool === "eraser" ? "selected" : ""
+          }`}
+          onClick={erase}
+          aria-label="Eraser"
+          aria-pressed={tool === "eraser"}
+          title="Eraser"
+        >
+          <EraserIcon />
+        </button>
         </div>
 
         <div className="scribbler-color-tools">
@@ -612,18 +624,7 @@ export default function Scribbler({ onBack }) {
           ))}
         </div>
 
-        <button
-          type="button"
-          className={`scribbler-eraser ${
-            tool === "eraser" ? "selected" : ""
-          }`}
-          onClick={erase}
-          aria-label="Eraser"
-          aria-pressed={tool === "eraser"}
-          title="Eraser"
-        >
-          <EraserIcon />
-        </button>
+
       </aside>
     </main>
   );
