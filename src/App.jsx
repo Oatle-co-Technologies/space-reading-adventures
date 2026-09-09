@@ -16,6 +16,7 @@ import { generateSentenceOptions } from "./utils/generateSentenceOptions";
 import { generateMissingLettersOptions } from "./utils/generateMissingLettersOptions";
 
 import MathSection from "./components/MathSection";
+import Scribbler from "./components/Scribbler";
 
 
 import mercuryImage from "./assets/images/planets/mercury.png";
@@ -973,23 +974,7 @@ function App() {
       </main>
     );
   } else if (screen === "writing") {
-    content = (
-      <main className="page adventure-placeholder">
-        <p className="eyebrow">WRITING</p>
-
-        <h1>Writing</h1>
-
-        <p className="page-intro">
-          Your writing adventure is ready to launch here.
-        </p>
-
-        {action(
-          "Back to Explore",
-          () => setScreen("explore"),
-          "secondary-button"
-        )}
-      </main>
-    );
+    content = <Scribbler />;
   } else if (screen === "home") {
     content = (
       <main className="hero-panel">
@@ -1703,14 +1688,16 @@ function App() {
     <div className="app">
       {content}
 
-      <AppNav
-        onHome={() => setScreen("home")}
-        onExplore={() => setScreen("explore")}
-        onSettings={() =>
-          setScreen("settings")
-        }
-        activeScreen={screen}
-      />
+      {screen !== "writing" && (
+        <AppNav
+          onHome={() => setScreen("home")}
+          onExplore={() => setScreen("explore")}
+          onSettings={() =>
+            setScreen("settings")
+          }
+          activeScreen={screen}
+        />
+      )}
     </div>
   );
 }
