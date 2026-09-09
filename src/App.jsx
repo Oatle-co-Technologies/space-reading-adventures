@@ -17,6 +17,7 @@ import { generateMissingLettersOptions } from "./utils/generateMissingLettersOpt
 
 import MathSection from "./components/MathSection";
 import Scribbler from "./components/Scribbler";
+import AlphabetTracingMission from "./components/AlphabetTracingMission";
 
 
 import mercuryImage from "./assets/images/planets/mercury.png";
@@ -455,7 +456,10 @@ function AppNav({ onHome, onExplore, onSettings, activeScreen }) {
         activeScreen === "mission" ||
         activeScreen === "launch" ||
         activeScreen === "math" ||
-        activeScreen === "writing",
+        activeScreen === "writing" ||
+        activeScreen === "writingMap" ||
+        activeScreen === "scribbler" ||
+        activeScreen === "writingMission1",
     },
     {
       label: "Settings",
@@ -962,7 +966,7 @@ function App() {
 
           <button
             className="adventure-card"
-            onClick={() => setScreen("writing")}
+            onClick={() => setScreen("writingMap")}
             type="button"
           >
             <span className="adventure-card-icon">
@@ -973,8 +977,79 @@ function App() {
         </div>
       </main>
     );
-  } else if (screen === "writing") {
-    content = <Scribbler onBack={() => setScreen("explore")} />;
+  } else if (screen === "writingMap") {
+    content = (
+      <main className="page writing-map-page">
+        <p className="eyebrow">YOUR JOURNEY</p>
+
+        <h1>Writing Map</h1>
+
+        <p className="page-intro">
+          Choose a writing adventure and explore at your own pace.
+        </p>
+
+        <div className="writing-map">
+          <button
+            className="writing-map-card writing-map-free"
+            type="button"
+            onClick={() => setScreen("scribbler")}
+          >
+            <span className="writing-map-icon">✏️</span>
+            <strong>Scribbler</strong>
+            <small>Write, draw and explore freely.</small>
+          </button>
+
+          <button
+            className="writing-map-card writing-map-active"
+            type="button"
+            onClick={() => setScreen("writingMission1")}
+          >
+            <span className="writing-map-icon">🔤</span>
+            <strong>Trace the Alphabet</strong>
+            <small>Trace A to Z.</small>
+          </button>
+
+          <button
+            className="writing-map-card writing-map-locked"
+            type="button"
+            disabled
+          >
+            <span className="writing-map-lock">🔒</span>
+            <strong>Trace the Numbers</strong>
+            <small>Complete the previous mission.</small>
+          </button>
+
+          <button
+            className="writing-map-card writing-map-locked"
+            type="button"
+            disabled
+          >
+            <span className="writing-map-lock">🔒</span>
+            <strong>Trace the Shapes</strong>
+            <small>Complete the previous mission.</small>
+          </button>
+
+          <button
+            className="writing-map-card writing-map-locked"
+            type="button"
+            disabled
+          >
+            <span className="writing-map-lock">🔒</span>
+            <strong>Write Sentences</strong>
+            <small>Complete the previous mission.</small>
+          </button>
+        </div>
+      </main>
+    );
+  } else if (screen === "scribbler") {
+    content = <Scribbler onBack={() => setScreen("writingMap")} />;
+  } else if (screen === "writingMission1") {
+    content = (
+      <AlphabetTracingMission
+        onBack={() => setScreen("writingMap")}
+        onComplete={() => setScreen("writingMap")}
+      />
+    );
   } else if (screen === "home") {
     content = (
       <main className="hero-panel">
@@ -1688,7 +1763,7 @@ function App() {
     <div className="app">
       {content}
 
-      {screen !== "writing" && (
+      {screen !== "scribbler" && (
         <AppNav
           onHome={() => setScreen("home")}
           onExplore={() => setScreen("explore")}

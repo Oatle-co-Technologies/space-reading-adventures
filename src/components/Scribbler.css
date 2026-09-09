@@ -946,3 +946,138 @@
   border-color: var(--game-green);
   transform: translateY(-2px);
 }
+
+
+/* Sticker section */
+.scribbler-sticker-tools {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+  padding-top: 5px;
+  margin-top: 4px;
+  border-top: 1px solid rgba(255,255,255,.16);
+}
+
+.scribbler-sticker {
+  width: 29px;
+  height: 29px;
+  padding: 3px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: rgba(255,255,255,.08);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scribbler-sticker:hover,
+.scribbler-sticker.selected {
+  border-color: #ffd45c;
+  background: rgba(255,255,255,.18);
+}
+
+.scribbler-sticker svg {
+  width: 25px;
+  height: 25px;
+  display: block;
+}
+
+.scribbler-sticker-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.scribbler-sticker-on-page {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  transform: translate(-50%, -50%);
+  display: block;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.12));
+}
+
+.scribbler-sticker-on-page svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.scribbler-canvas {
+  position: relative;
+  z-index: 3;
+}
+
+.scribbler-canvas-sticker-mode {
+  cursor: crosshair;
+}
+
+@media (max-width: 700px) {
+  .scribbler-sticker-tools {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3px;
+  }
+
+  .scribbler-sticker {
+    width: 27px;
+    height: 27px;
+    padding: 2px;
+  }
+
+  .scribbler-sticker svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+
+/* Keep writing tools in two columns:
+   Pencil | Pen
+   Brush  | Eraser */
+.scribbler-tool-tools {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.scribbler-tool-tools .scribbler-tool,
+.scribbler-tool-tools .scribbler-eraser {
+  width: 34px;
+  height: 34px;
+  margin: 0;
+}
+
+
+/* Writing tools: two columns, with two tools stacked in each column */
+.scribbler-tool-tools {
+  display: grid;
+  grid-template-columns: repeat(2, 34px);
+  grid-template-rows: repeat(2, 34px);
+  gap: 5px;
+}
+
+/* Explicit placement so the tools stack vertically in each column */
+.scribbler-tool-tools .scribbler-tool:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.scribbler-tool-tools .scribbler-tool:nth-child(2) {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.scribbler-tool-tools .scribbler-tool:nth-child(3) {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.scribbler-tool-tools .scribbler-eraser {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+
