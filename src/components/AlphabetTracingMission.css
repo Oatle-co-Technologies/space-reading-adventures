@@ -1,0 +1,215 @@
+@import url("https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap");
+
+.alphabet-mission {
+  min-height: 100dvh;
+  padding: 24px;
+  box-sizing: border-box;
+  background: radial-gradient(circle at 50% 20%, #253b82 0%, #101738 55%, #080d22 100%);
+  color: #fff;
+  font-family: "Pixelify Sans", sans-serif;
+}
+
+.alphabet-mission-back {
+  border: 0;
+  border-radius: 12px;
+  padding: 9px 14px;
+  background: rgba(255,255,255,.1);
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+}
+
+.alphabet-mission-card {
+  width: min(1000px, 100%);
+  margin: 18px auto 0;
+}
+
+.alphabet-mission-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.alphabet-mission-planet {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #18255c;
+  border: 2px solid #8fe7ff;
+  color: #ffd45c;
+  font-size: 1.5rem;
+}
+
+.alphabet-mission-heading p {
+  margin: 0 0 2px;
+  opacity: .72;
+  font-size: .9rem;
+}
+
+.alphabet-mission-heading h1 {
+  margin: 0;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+}
+
+.alphabet-mission-progress {
+  margin: 14px 0 10px;
+  text-align: center;
+  font-family: "Andika", "Comic Sans MS", sans-serif;
+}
+
+.alphabet-mission-progress span {
+  font-size: 1.1rem;
+}
+
+.alphabet-mission-progress small {
+  opacity: .55;
+  margin-left: 5px;
+}
+
+.alphabet-paper {
+  position: relative;
+  width: 100%;
+  height: min(58vh, 470px);
+  min-height: 290px;
+  overflow: hidden;
+  border-radius: 24px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      #fff 0,
+      #fff 57px,
+      #cfe8f3 58px,
+      #cfe8f3 59px
+    );
+  box-shadow: 0 18px 40px rgba(0,0,0,.28);
+}
+
+.alphabet-guide {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.alphabet-target {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  color: rgba(82, 172, 205, .26);
+  font-family: "Andika", "Comic Sans MS", "Chalkboard SE", sans-serif;
+  font-size: clamp(105px, 18vw, 170px);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.alphabet-target span {
+  width: 42%;
+  text-align: center;
+  border: 3px dashed rgba(82, 172, 205, .28);
+  border-radius: 20px;
+  padding: 10px 0 20px;
+}
+
+.alphabet-baseline,
+.alphabet-midline {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: rgba(83, 166, 198, .3);
+}
+
+.alphabet-baseline {
+  bottom: 29%;
+}
+
+.alphabet-midline {
+  top: 41%;
+  opacity: .45;
+}
+
+.alphabet-tracing-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.alphabet-progress-dots {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.alphabet-progress-dots span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #d5e5eb;
+}
+
+.alphabet-progress-dots span.filled {
+  background: #55c6ff;
+}
+
+.alphabet-mission-hint {
+  margin: 12px 0 0;
+  text-align: center;
+  color: rgba(255,255,255,.78);
+  font-size: 1rem;
+}
+
+@media (max-width: 700px) {
+  .alphabet-mission {
+    padding: 12px;
+  }
+
+  .alphabet-mission-back {
+    padding: 7px 11px;
+  }
+
+  .alphabet-mission-heading {
+    gap: 9px;
+  }
+
+  .alphabet-mission-planet {
+    width: 38px;
+    height: 38px;
+    font-size: 1.1rem;
+  }
+
+  .alphabet-paper {
+    height: calc(100dvh - 170px);
+    min-height: 250px;
+    border-radius: 18px;
+  }
+
+  .alphabet-target {
+    width: 90%;
+    font-size: clamp(85px, 24vw, 145px);
+  }
+
+  .alphabet-target span {
+    width: 44%;
+    border-width: 2px;
+  }
+
+  .alphabet-mission-hint {
+    font-size: .85rem;
+  }
+}
