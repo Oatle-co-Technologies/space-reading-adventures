@@ -642,14 +642,12 @@
   width: auto;
   height: 94px;
 
-  /*
-     The lowercase a starts on the
-     middle handwriting line.
-  */
   margin: 0;
 
   position: relative;
-  top: 94px;
+
+  /* Move the lowercase a 2px upward */
+  top: 92px;
 
   display: flex;
   align-items: flex-start;
@@ -663,7 +661,9 @@
     "Chalkboard SE",
     sans-serif;
 
-  font-size: 145px;
+  /* 10px larger */
+  font-size: 155px;
+
   font-weight: 700;
 
   line-height: 0.55;
