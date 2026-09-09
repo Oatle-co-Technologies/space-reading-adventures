@@ -62,7 +62,6 @@
 
 .alphabet-mission-kicker {
   margin-bottom: 2px;
-
   opacity: 0.72;
   font-size: 0.9rem;
 }
@@ -107,7 +106,7 @@
   overflow: hidden;
   border-radius: 24px;
 
-  background: #ffffff;
+  background: #fff;
 
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
 }
@@ -117,12 +116,11 @@
    ========================= */
 
 /*
-   The writing paper has exactly THREE
-   guide lines:
+   Exactly three lines:
 
-   1. Top line
-   2. Middle line
-   3. Baseline
+   TOP
+   MIDDLE
+   BASELINE
 */
 
 .alphabet-paper::before {
@@ -134,6 +132,7 @@
   right: 6%;
 
   top: 30%;
+
   height: 1.5px;
 
   background: rgba(83, 166, 198, 0.32);
@@ -148,15 +147,8 @@
 }
 
 /* =========================
-   VISIBLE TRACING LETTERS
+   TRACING LETTER AREA
    ========================= */
-
-/*
-   These are the letters the child sees.
-
-   Light blue = tracing guide.
-   Black = child's actual writing.
-*/
 
 .alphabet-target-display {
   position: absolute;
@@ -165,6 +157,7 @@
   right: 10%;
 
   top: 30%;
+
   height: 188px;
 
   display: flex;
@@ -181,6 +174,12 @@
    CAPITAL LETTER
    ========================= */
 
+/*
+   Capital letters should visually
+   reach from the TOP line down
+   to the BASELINE.
+*/
+
 .alphabet-uppercase {
   width: 42%;
   height: 188px;
@@ -188,8 +187,6 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-
-  text-align: center;
 
   color: rgba(82, 172, 205, 0.30);
 
@@ -199,10 +196,15 @@
     "Chalkboard SE",
     sans-serif;
 
-  font-size: clamp(115px, 15vw, 160px);
+  /*
+     Larger than before so the actual
+     glyph fills the handwriting area.
+  */
+  font-size: clamp(170px, 18vw, 205px);
+
   font-weight: 700;
 
-  line-height: 1;
+  line-height: 0.95;
 
   padding: 0;
   margin: 0;
@@ -213,9 +215,9 @@
    ========================= */
 
 /*
-   Lowercase letters start on the
-   middle line and finish on the
-   baseline.
+   Lowercase letters begin at the
+   MIDDLE line and end at the
+   BASELINE.
 */
 
 .alphabet-lowercase {
@@ -228,8 +230,6 @@
   align-items: flex-start;
   justify-content: center;
 
-  text-align: center;
-
   color: rgba(82, 172, 205, 0.30);
 
   font-family:
@@ -238,13 +238,13 @@
     "Chalkboard SE",
     sans-serif;
 
-  font-size: clamp(85px, 12vw, 125px);
+  font-size: clamp(115px, 13vw, 145px);
+
   font-weight: 700;
 
   line-height: 0.95;
 
   padding: 0;
-  margin-bottom: 0;
 }
 
 /* =========================
@@ -360,12 +360,14 @@
   border-radius: 50%;
 
   background: rgba(255, 255, 255, 0.94);
+
   color: #263b82;
 
   display: grid;
   place-items: center;
 
   font-family: Arial, sans-serif;
+
   font-size: 2rem;
   font-weight: 700;
 
@@ -450,10 +452,7 @@
     border-radius: 18px;
   }
 
-  /*
-     Three lines remain evenly positioned
-     on the mobile paper.
-  */
+  /* Three lines */
 
   .alphabet-paper::before {
     left: 6%;
@@ -466,22 +465,31 @@
       0 44% 0 rgba(83, 166, 198, 0.32);
   }
 
+  /* Letter area */
+
   .alphabet-target-display {
     left: 8%;
     right: 8%;
 
     top: 30%;
+
     height: 44%;
 
     align-items: flex-start;
   }
 
+  /* Capital */
+
   .alphabet-uppercase {
     width: 44%;
     height: 44%;
 
-    font-size: clamp(85px, 22vw, 135px);
+    font-size: clamp(115px, 28vw, 165px);
+
+    line-height: 0.95;
   }
+
+  /* Lowercase */
 
   .alphabet-lowercase {
     width: 44%;
@@ -489,8 +497,12 @@
 
     margin-top: 22%;
 
-    font-size: clamp(68px, 18vw, 110px);
+    font-size: clamp(82px, 22vw, 125px);
+
+    line-height: 0.95;
   }
+
+  /* Tools */
 
   .alphabet-tool-bar {
     right: 10px;
@@ -510,6 +522,8 @@
     width: 27px;
     height: 27px;
   }
+
+  /* Next */
 
   .alphabet-next-button {
     right: 12px;
