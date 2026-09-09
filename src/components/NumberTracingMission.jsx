@@ -293,8 +293,8 @@ export default function NumberTracingMission({ onBack, onComplete }) {
               <button
                 key={toolName}
                 type="button"
-                className={`alphabet-tool-button ${
-                  tool === toolName ? "active" : ""
+                className={`alphabet-tool ${
+                  tool === toolName ? "selected" : ""
                 }`}
                 onClick={() => setTool(toolName)}
                 aria-label={toolName}
