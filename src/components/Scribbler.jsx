@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import "./Scribbler.css";
+import AlphabetTracingMission from "./AlphabetTracingMission";
 
 const COLORS = [
   { name: "Black", value: "#202020" },
@@ -255,6 +256,7 @@ export default function Scribbler({ onBack }) {
   const [tool, setTool] = useState("pencil");
   const [selectedSticker, setSelectedSticker] = useState(null);
   const [stickers, setStickers] = useState([]);
+  const [activeMission, setActiveMission] = useState(null);
 
   useLayoutEffect(() => {
     const canvas = canvasRef.current;
@@ -434,6 +436,15 @@ export default function Scribbler({ onBack }) {
     setTool("eraser");
   };
 
+  if (activeMission === "alphabet") {
+    return (
+      <AlphabetTracingMission
+        onBack={() => setActiveMission(null)}
+        onComplete={() => setActiveMission(null)}
+      />
+    );
+  }
+
   return (
     <main className="scribbler-page">
       <button
@@ -443,6 +454,17 @@ export default function Scribbler({ onBack }) {
         aria-label="Back to Explore"
       >
         ← Back
+      </button>
+
+      <button
+        className="scribbler-mission-launcher"
+        type="button"
+        onClick={() => setActiveMission("alphabet")}
+        aria-label="Alphabet tracing mission"
+        title="Trace the alphabet"
+      >
+        <span>A</span>
+        <span>a</span>
       </button>
 
       <section
