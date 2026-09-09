@@ -18,6 +18,7 @@ import { generateMissingLettersOptions } from "./utils/generateMissingLettersOpt
 import MathSection from "./components/MathSection";
 import Scribbler from "./components/Scribbler";
 import AlphabetTracingMission from "./components/AlphabetTracingMission";
+import NumberTracingMission from "./components/NumberTracingMission";
 
 
 import mercuryImage from "./assets/images/planets/mercury.png";
@@ -284,6 +285,22 @@ const savedGame = () => {
   }
 };
 
+const savedWritingProgress = () => {
+  try {
+    return (
+      JSON.parse(
+        localStorage.getItem("atli-writing-progress")
+      ) || {
+        unlocked: 1,
+      }
+    );
+  } catch {
+    return {
+      unlocked: 1,
+    };
+  }
+};
+
 function HomeIcon() {
   return (
     <svg
@@ -459,7 +476,8 @@ function AppNav({ onHome, onExplore, onSettings, activeScreen }) {
         activeScreen === "writing" ||
         activeScreen === "writingMap" ||
         activeScreen === "scribbler" ||
-        activeScreen === "writingMission1",
+        activeScreen === "writingMission1" ||
+        activeScreen === "writingMission2",
     },
     {
       label: "Settings",
@@ -515,6 +533,8 @@ function PlanetVisual({ planet, className = "" }) {
 
 function App() {
   const [progress, setProgress] = useState(savedGame);
+  const [writingProgress, setWritingProgress] =
+    useState(savedWritingProgress);
   const [screen, setScreen] = useState("home");
   const [assessmentResults, setAssessmentResults] = useState(
     savedAssessmentResults
@@ -587,6 +607,13 @@ function App() {
       JSON.stringify(progress)
     );
   }, [progress]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "atli-writing-progress",
+      JSON.stringify(writingProgress)
+    );
+  }, [writingProgress]);
 
   useEffect(() => {
     if (assessmentResults) {
@@ -872,6 +899,20 @@ function App() {
     }
   };
 
+  const completeWritingMission = (missionId) => {
+    const nextMission = missionId + 1;
+
+    setWritingProgress((current) => ({
+      ...current,
+      unlocked: Math.max(
+        current.unlocked,
+        nextMission
+      ),
+    }));
+
+    setScreen("writingMap");
+  };
+
   const unlockNext = () => {
     const nextPlanetId = planet.id + 1;
 
@@ -906,6 +947,10 @@ function App() {
       unlocked: 1,
       activePlanet: 1,
       question: 0,
+    });
+
+    setWritingProgress({
+      unlocked: 1,
     });
 
     setScreen("home");
@@ -1000,9 +1045,14 @@ function App() {
           </button>
 
           <button
-            className="planet-card writing-map-active"
+            className={`planet-card ${
+              writingProgress.unlocked >= 1
+                ? "writing-map-active"
+                : "writing-map-locked"
+            }`}
             type="button"
             onClick={() => setScreen("writingMission1")}
+            disabled={writingProgress.unlocked < 1}
           >
             <span className="writing-map-icon">🔤</span>
             <strong>Trace the Alphabet</strong>
@@ -1010,13 +1060,26 @@ function App() {
           </button>
 
           <button
-            className="planet-card writing-map-locked"
+            className={`planet-card ${
+              writingProgress.unlocked >= 2
+                ? "writing-map-active"
+                : "writing-map-locked"
+            }`}
             type="button"
-            disabled
+            onClick={() => setScreen("writingMission2")}
+            disabled={writingProgress.unlocked < 2}
           >
-            <span className="writing-map-lock">🔒</span>
+            {writingProgress.unlocked >= 2 ? (
+              <span className="writing-map-icon">123</span>
+            ) : (
+              <span className="writing-map-lock">🔒</span>
+            )}
             <strong>Trace the Numbers</strong>
-            <small>Complete the previous mission.</small>
+            <small>
+              {writingProgress.unlocked >= 2
+                ? "Trace 0 to 20."
+                : "Complete the previous mission."}
+            </small>
           </button>
 
           <button
@@ -1047,7 +1110,18 @@ function App() {
     content = (
       <AlphabetTracingMission
         onBack={() => setScreen("writingMap")}
-        onComplete={() => setScreen("writingMap")}
+        onComplete={() =>
+          completeWritingMission(1)
+        }
+      />
+    );
+  } else if (screen === "writingMission2") {
+    content = (
+      <NumberTracingMission
+        onBack={() => setScreen("writingMap")}
+        onComplete={() =>
+          completeWritingMission(2)
+        }
       />
     );
   } else if (screen === "home") {
