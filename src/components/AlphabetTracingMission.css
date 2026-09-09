@@ -1,80 +1,112 @@
 @import url("https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap");
 
-.alphabet-mission {
+/* =========================
+   MISSION
+   ========================= */
+
+.alphabet-tracing-mission {
   min-height: 100dvh;
   padding: 24px;
   box-sizing: border-box;
-  background: radial-gradient(circle at 50% 20%, #253b82 0%, #101738 55%, #080d22 100%);
+
+  background:
+    radial-gradient(
+      circle at 50% 20%,
+      #253b82 0%,
+      #101738 55%,
+      #080d22 100%
+    );
+
   color: #fff;
   font-family: "Pixelify Sans", sans-serif;
 }
 
-.alphabet-mission-back {
+/* =========================
+   HEADER
+   ========================= */
+
+.alphabet-mission-header {
+  width: min(1100px, 100%);
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+}
+
+.alphabet-back-button {
+  width: 44px;
+  height: 44px;
+
   border: 0;
   border-radius: 12px;
-  padding: 9px 14px;
-  background: rgba(255,255,255,.1);
+
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
-  cursor: pointer;
-  font: inherit;
-}
 
-.alphabet-mission-card {
-  width: min(1000px, 100%);
-  margin: 18px auto 0;
-}
-
-.alphabet-mission-heading {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.alphabet-mission-planet {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
   display: grid;
   place-items: center;
-  background: #18255c;
-  border: 2px solid #8fe7ff;
-  color: #ffd45c;
-  font-size: 1.5rem;
+
+  font-size: 1.3rem;
+  cursor: pointer;
 }
 
-.alphabet-mission-heading p {
-  margin: 0 0 2px;
-  opacity: .72;
-  font-size: .9rem;
+.alphabet-back-button:hover {
+  background: rgba(255, 255, 255, 0.16);
 }
 
-.alphabet-mission-heading h1 {
+.alphabet-mission-title {
+  min-width: 0;
+}
+
+.alphabet-mission-kicker {
+  margin-bottom: 2px;
+
+  opacity: 0.72;
+  font-size: 0.9rem;
+}
+
+.alphabet-mission-title h1 {
   margin: 0;
+
   font-size: clamp(1.35rem, 3vw, 2rem);
+  line-height: 1.1;
 }
 
 .alphabet-mission-progress {
-  margin: 14px 0 10px;
-  text-align: center;
   font-family: "Andika", "Comic Sans MS", sans-serif;
-}
-
-.alphabet-mission-progress span {
   font-size: 1.1rem;
+  white-space: nowrap;
 }
 
-.alphabet-mission-progress small {
-  opacity: .55;
-  margin-left: 5px;
+/* =========================
+   CONTENT
+   ========================= */
+
+.alphabet-mission-content {
+  width: min(1100px, 100%);
+  margin: 18px auto 0;
 }
+
+.alphabet-paper-area {
+  width: 100%;
+}
+
+/* =========================
+   PAPER
+   ========================= */
 
 .alphabet-paper {
   position: relative;
+
   width: 100%;
   height: min(58vh, 470px);
   min-height: 290px;
+
   overflow: hidden;
   border-radius: 24px;
+
   background:
     repeating-linear-gradient(
       to bottom,
@@ -83,148 +115,163 @@
       #cfe8f3 58px,
       #cfe8f3 59px
     );
-  box-shadow: 0 18px 40px rgba(0,0,0,.28);
+
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
 }
 
-.alphabet-guide {
+/* =========================
+   PAPER GUIDES
+   ========================= */
+
+.alphabet-paper::before,
+.alphabet-paper::after {
+  content: "";
   position: absolute;
-  inset: 0;
-  z-index: 1;
+
+  left: 10%;
+  right: 10%;
+
+  height: 2px;
+
+  background: rgba(83, 166, 198, 0.3);
+
   pointer-events: none;
+  z-index: 1;
 }
 
-.alphabet-target {
+.alphabet-paper::before {
+  top: 41%;
+}
+
+.alphabet-paper::after {
+  bottom: 29%;
+}
+
+/* =========================
+   VISIBLE TRACING LETTERS
+   ========================= */
+
+/*
+   THESE are the letters the child sees.
+
+   They are intentionally LIGHT BLUE.
+   The child's actual drawing is BLACK.
+*/
+
+.alphabet-target-display {
   position: absolute;
+
   left: 50%;
   top: 50%;
+
   transform: translate(-50%, -50%);
+
   width: 80%;
+
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  color: rgba(82, 172, 205, .26);
-  font-family: "Andika", "Comic Sans MS", "Chalkboard SE", sans-serif;
-  font-size: clamp(105px, 18vw, 170px);
+
+  pointer-events: none;
+
+  z-index: 2;
+}
+
+.alphabet-uppercase,
+.alphabet-lowercase {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  color: rgba(82, 172, 205, 0.30);
+
+  font-family:
+    "Andika",
+    "Comic Sans MS",
+    "Chalkboard SE",
+    sans-serif;
+
   font-weight: 700;
   line-height: 1;
 }
 
-.alphabet-target span {
+.alphabet-uppercase {
   width: 42%;
-  text-align: center;
-  border: 3px dashed rgba(82, 172, 205, .28);
-  border-radius: 20px;
-  padding: 10px 0 20px;
+
+  font-size: clamp(105px, 18vw, 170px);
 }
 
-.alphabet-baseline,
-.alphabet-midline {
-  position: absolute;
-  left: 10%;
-  right: 10%;
-  height: 2px;
-  background: rgba(83, 166, 198, .3);
+.alphabet-lowercase {
+  width: 42%;
+
+  font-size: clamp(82px, 15vw, 135px);
 }
 
-.alphabet-baseline {
-  bottom: 29%;
-}
-
-.alphabet-midline {
-  top: 41%;
-  opacity: .45;
-}
+/* =========================
+   DRAWING CANVAS
+   ========================= */
 
 .alphabet-tracing-canvas {
   position: absolute;
+
   inset: 0;
+
   z-index: 3;
+
   width: 100%;
   height: 100%;
+
   touch-action: none;
+
+  -webkit-user-select: none;
+  user-select: none;
+
+  -webkit-touch-callout: none;
+
   cursor: crosshair;
 }
 
-.alphabet-progress-dots {
+/*
+   Hidden canvas used only by the
+   tracing-completion calculation.
+*/
+
+.alphabet-target-canvas {
   position: absolute;
-  z-index: 4;
-  left: 50%;
-  bottom: 14px;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 6px;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
   pointer-events: none;
+
+  z-index: 0;
 }
 
-.alphabet-progress-dots span {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #d5e5eb;
-}
+/* =========================
+   TOOL BAR
+   ========================= */
 
-.alphabet-progress-dots span.filled {
-  background: #55c6ff;
-}
-
-.alphabet-mission-hint {
-  margin: 12px 0 0;
-  text-align: center;
-  color: rgba(255,255,255,.78);
-  font-size: 1rem;
-}
-
-@media (max-width: 700px) {
-  .alphabet-mission {
-    padding: 12px;
-  }
-
-  .alphabet-mission-back {
-    padding: 7px 11px;
-  }
-
-  .alphabet-mission-heading {
-    gap: 9px;
-  }
-
-  .alphabet-mission-planet {
-    width: 38px;
-    height: 38px;
-    font-size: 1.1rem;
-  }
-
-  .alphabet-paper {
-    height: calc(100dvh - 170px);
-    min-height: 250px;
-    border-radius: 18px;
-  }
-
-  .alphabet-target {
-    width: 90%;
-    font-size: clamp(85px, 24vw, 145px);
-  }
-
-  .alphabet-target span {
-    width: 44%;
-    border-width: 2px;
-  }
-
-  .alphabet-mission-hint {
-    font-size: .85rem;
-  }
-}
 .alphabet-tool-bar {
-  display: grid;
-  grid-template-columns: repeat(2, 42px);
-  grid-template-rows: repeat(2, 42px);
-  gap: 6px;
-
   position: absolute;
+
   right: 14px;
   top: 50%;
+
   transform: translateY(-50%);
 
   z-index: 10;
+
+  display: grid;
+
+  grid-template-columns: repeat(2, 42px);
+  grid-template-rows: repeat(2, 42px);
+
+  gap: 6px;
 }
 
 .alphabet-tool {
@@ -232,24 +279,211 @@
   height: 42px;
 
   padding: 7px;
+
   border: 0;
   border-radius: 12px;
 
-  background: rgba(255,255,255,.9);
+  background: rgba(255, 255, 255, 0.9);
   color: #202020;
 
   display: grid;
   place-items: center;
 
   cursor: pointer;
+
+  box-sizing: border-box;
+
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.alphabet-tool:hover {
+  transform: scale(1.04);
+}
+
+.alphabet-tool:active {
+  transform: scale(0.96);
 }
 
 .alphabet-tool svg {
   width: 27px;
   height: 27px;
+
+  display: block;
 }
 
 .alphabet-tool.selected {
   background: #dff6ff;
-  box-shadow: 0 0 0 2px #55c6ff;
+
+  box-shadow:
+    0 0 0 2px #55c6ff,
+    0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* =========================
+   INSTRUCTION
+   ========================= */
+
+.alphabet-mission-hint {
+  margin: 12px 0 0;
+
+  text-align: center;
+
+  color: rgba(255, 255, 255, 0.78);
+
+  font-size: 1rem;
+}
+
+/* =========================
+   PROGRESS
+   ========================= */
+
+.alphabet-tracing-progress {
+  width: min(500px, 80%);
+
+  height: 7px;
+
+  margin: 12px auto 0;
+
+  overflow: hidden;
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.alphabet-tracing-progress-fill {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: #55c6ff;
+
+  transition: width 0.15s ease;
+}
+
+/* =========================
+   PORTRAIT MESSAGE
+   ========================= */
+
+.alphabet-portrait-message {
+  display: none;
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 700px) {
+
+  .alphabet-tracing-mission {
+    padding: 12px;
+  }
+
+  .alphabet-mission-header {
+    gap: 9px;
+  }
+
+  .alphabet-back-button {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 10px;
+
+    font-size: 1.1rem;
+  }
+
+  .alphabet-mission-kicker {
+    font-size: 0.72rem;
+  }
+
+  .alphabet-mission-title h1 {
+    font-size: 1.25rem;
+  }
+
+  .alphabet-mission-progress {
+    font-size: 0.9rem;
+  }
+
+  .alphabet-paper {
+    height: calc(100dvh - 170px);
+    min-height: 250px;
+
+    border-radius: 18px;
+  }
+
+  .alphabet-target-display {
+    width: 90%;
+  }
+
+  .alphabet-uppercase {
+    width: 44%;
+    font-size: clamp(85px, 24vw, 145px);
+  }
+
+  .alphabet-lowercase {
+    width: 44%;
+    font-size: clamp(70px, 20vw, 115px);
+  }
+
+  .alphabet-tool-bar {
+    right: 10px;
+
+    grid-template-columns: repeat(2, 42px);
+    grid-template-rows: repeat(2, 42px);
+
+    gap: 5px;
+  }
+
+  .alphabet-tool {
+    width: 42px;
+    height: 42px;
+  }
+
+  .alphabet-tool svg {
+    width: 27px;
+    height: 27px;
+  }
+
+  .alphabet-mission-hint {
+    font-size: 0.85rem;
+  }
+
+  .alphabet-tracing-progress {
+    width: 75%;
+  }
+}
+
+/* =========================
+   VERY SMALL PHONES
+   ========================= */
+
+@media (max-width: 420px) {
+
+  .alphabet-tracing-mission {
+    padding: 8px;
+  }
+
+  .alphabet-paper {
+    height: calc(100dvh - 150px);
+    min-height: 230px;
+  }
+
+  .alphabet-tool-bar {
+    right: 7px;
+  }
+
+  .alphabet-tool {
+    width: 38px;
+    height: 38px;
+
+    padding: 6px;
+  }
+
+  .alphabet-tool svg {
+    width: 24px;
+    height: 24px;
+  }
 }
