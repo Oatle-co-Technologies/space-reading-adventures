@@ -213,3 +213,43 @@
     font-size: .85rem;
   }
 }
+.alphabet-tool-bar {
+  display: grid;
+  grid-template-columns: repeat(2, 42px);
+  grid-template-rows: repeat(2, 42px);
+  gap: 6px;
+
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  z-index: 10;
+}
+
+.alphabet-tool {
+  width: 42px;
+  height: 42px;
+
+  padding: 7px;
+  border: 0;
+  border-radius: 12px;
+
+  background: rgba(255,255,255,.9);
+  color: #202020;
+
+  display: grid;
+  place-items: center;
+
+  cursor: pointer;
+}
+
+.alphabet-tool svg {
+  width: 27px;
+  height: 27px;
+}
+
+.alphabet-tool.selected {
+  background: #dff6ff;
+  box-shadow: 0 0 0 2px #55c6ff;
+}

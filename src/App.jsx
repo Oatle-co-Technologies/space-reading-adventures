@@ -988,9 +988,9 @@ function App() {
           Choose a writing adventure and explore at your own pace.
         </p>
 
-        <div className="writing-map">
+        <div className="planet-map writing-map">
           <button
-            className="writing-map-card writing-map-free"
+            className="planet-card writing-map-free"
             type="button"
             onClick={() => setScreen("scribbler")}
           >
@@ -1000,7 +1000,7 @@ function App() {
           </button>
 
           <button
-            className="writing-map-card writing-map-active"
+            className="planet-card writing-map-active"
             type="button"
             onClick={() => setScreen("writingMission1")}
           >
@@ -1010,7 +1010,7 @@ function App() {
           </button>
 
           <button
-            className="writing-map-card writing-map-locked"
+            className="planet-card writing-map-locked"
             type="button"
             disabled
           >
@@ -1020,7 +1020,7 @@ function App() {
           </button>
 
           <button
-            className="writing-map-card writing-map-locked"
+            className="planet-card writing-map-locked"
             type="button"
             disabled
           >
@@ -1030,7 +1030,7 @@ function App() {
           </button>
 
           <button
-            className="writing-map-card writing-map-locked"
+            className="planet-card writing-map-locked"
             type="button"
             disabled
           >
