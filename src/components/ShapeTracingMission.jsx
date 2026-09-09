@@ -297,6 +297,22 @@ export default function ShapeTracingMission({ onBack, onComplete }) {
               onContextMenu={(event) => event.preventDefault()}
             />
 
+
+
+            <button
+              type="button"
+              className="alphabet-next-button"
+              onClick={handleNext}
+              aria-label={
+                shapeIndex === SHAPES.length - 1
+                  ? "Complete mission"
+                  : "Next shape"
+              }
+            >
+              →
+            </button>
+          </div>
+
             <aside className="alphabet-tool-bar" aria-label="Writing tools">
               {["pencil", "brush", "pen", "eraser"].map((toolName) => (
                 <button
@@ -312,20 +328,6 @@ export default function ShapeTracingMission({ onBack, onComplete }) {
                 </button>
               ))}
             </aside>
-
-            <button
-              type="button"
-              className="alphabet-next-button"
-              onClick={handleNext}
-              aria-label={
-                shapeIndex === SHAPES.length - 1
-                  ? "Complete mission"
-                  : "Next shape"
-              }
-            >
-              →
-            </button>
-          </div>
 
           <div className="alphabet-mission-hint">
             Trace the {currentShape.name.toLowerCase()}.
