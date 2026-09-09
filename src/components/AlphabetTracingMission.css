@@ -684,57 +684,66 @@
    the portrait message instead.
 */
 
-@media (max-width: 700px) and (orientation: landscape) {
+@media (max-width: 700px) {
 
   .alphabet-tracing-mission {
     min-height: 100dvh;
-    padding: 20px;
-  }
-
-  .alphabet-mission-header,
-  .alphabet-mission-content,
-  .alphabet-mission-hint {
-    display: none;
-  }
-
-  .alphabet-portrait-message {
-    min-height: calc(100dvh - 40px);
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    text-align: center;
-
-    padding: 24px;
-
+    height: auto;
+    padding: 12px 12px 110px;
     box-sizing: border-box;
+    overflow: visible;
   }
 
-  .alphabet-portrait-message h2 {
-    margin: 0 0 10px;
-
-    font-family: "Pixelify Sans", sans-serif;
-
-    font-size: clamp(1.4rem, 4vw, 2rem);
-
-    color: #ffffff;
+  .alphabet-mission-content {
+    width: 100%;
+    margin: 18px auto 0;
   }
 
-  .alphabet-portrait-message p {
-    margin: 0;
-
-    max-width: 420px;
-
-    font-family: "Andika", sans-serif;
-
-    font-size: 1rem;
-
-    line-height: 1.5;
-
-    color: rgba(255, 255, 255, 0.75);
+  .alphabet-paper-area {
+    width: 100%;
   }
+
+  .alphabet-paper {
+    width: 100%;
+
+    /* Let the page determine the height naturally */
+    height: 620px;
+    min-height: 620px;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+  }
+
+  .alphabet-mission-hint {
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 420px) {
+
+  .alphabet-tracing-mission {
+    padding-bottom: 110px;
+  }
+
+  .alphabet-paper {
+    height: 560px;
+    min-height: 560px;
+  }
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.alphabet-tracing-mission {
+  overflow: visible;
 }
