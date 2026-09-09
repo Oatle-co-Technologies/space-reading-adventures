@@ -19,6 +19,7 @@ import MathSection from "./components/MathSection";
 import Scribbler from "./components/Scribbler";
 import AlphabetTracingMission from "./components/AlphabetTracingMission";
 import NumberTracingMission from "./components/NumberTracingMission";
+import ShapeTracingMission from "./components/ShapeTracingMission";
 
 
 import mercuryImage from "./assets/images/planets/mercury.png";
@@ -477,7 +478,8 @@ function AppNav({ onHome, onExplore, onSettings, activeScreen }) {
         activeScreen === "writingMap" ||
         activeScreen === "scribbler" ||
         activeScreen === "writingMission1" ||
-        activeScreen === "writingMission2",
+        activeScreen === "writingMission2" ||
+        activeScreen === "writingMission3",
     },
     {
       label: "Settings",
@@ -1083,13 +1085,26 @@ function App() {
           </button>
 
           <button
-            className="planet-card writing-map-locked"
+            className={`planet-card ${
+              writingProgress.unlocked >= 3
+                ? "writing-map-active"
+                : "writing-map-locked"
+            }`}
             type="button"
-            disabled
+            onClick={() => setScreen("writingMission3")}
+            disabled={writingProgress.unlocked < 3}
           >
-            <span className="writing-map-lock">🔒</span>
+            {writingProgress.unlocked >= 3 ? (
+              <span className="writing-map-icon">△</span>
+            ) : (
+              <span className="writing-map-lock">🔒</span>
+            )}
             <strong>Trace the Shapes</strong>
-            <small>Complete the previous mission.</small>
+            <small>
+              {writingProgress.unlocked >= 3
+                ? "Trace simple shapes."
+                : "Complete the previous mission."}
+            </small>
           </button>
 
           <button
@@ -1121,6 +1136,15 @@ function App() {
         onBack={() => setScreen("writingMap")}
         onComplete={() =>
           completeWritingMission(2)
+        }
+      />
+    );
+  } else if (screen === "writingMission3") {
+    content = (
+      <ShapeTracingMission
+        onBack={() => setScreen("writingMap")}
+        onComplete={() =>
+          completeWritingMission(3)
         }
       />
     );
