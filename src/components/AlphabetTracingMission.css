@@ -670,3 +670,71 @@
 
   padding: 0;
 }
+
+/* =========================
+   PORTRAIT-ONLY WRITING
+   ========================= */
+
+/*
+   Writing missions are designed for
+   portrait phone use.
+
+   When the phone is turned sideways,
+   hide the writing interface and show
+   the portrait message instead.
+*/
+
+@media (max-width: 700px) and (orientation: landscape) {
+
+  .alphabet-tracing-mission {
+    min-height: 100dvh;
+    padding: 20px;
+  }
+
+  .alphabet-mission-header,
+  .alphabet-mission-content,
+  .alphabet-mission-hint {
+    display: none;
+  }
+
+  .alphabet-portrait-message {
+    min-height: calc(100dvh - 40px);
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 24px;
+
+    box-sizing: border-box;
+  }
+
+  .alphabet-portrait-message h2 {
+    margin: 0 0 10px;
+
+    font-family: "Pixelify Sans", sans-serif;
+
+    font-size: clamp(1.4rem, 4vw, 2rem);
+
+    color: #ffffff;
+  }
+
+  .alphabet-portrait-message p {
+    margin: 0;
+
+    max-width: 420px;
+
+    font-family: "Andika", sans-serif;
+
+    font-size: 1rem;
+
+    line-height: 1.5;
+
+    color: rgba(255, 255, 255, 0.75);
+  }
+}
