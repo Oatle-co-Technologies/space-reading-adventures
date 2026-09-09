@@ -119,33 +119,6 @@
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
 }
 
-/* =========================
-   PAPER GUIDES
-   ========================= */
-
-.alphabet-paper::before,
-.alphabet-paper::after {
-  content: "";
-  position: absolute;
-
-  left: 10%;
-  right: 10%;
-
-  height: 2px;
-
-  background: rgba(83, 166, 198, 0.3);
-
-  pointer-events: none;
-  z-index: 1;
-}
-
-.alphabet-paper::before {
-  top: 41%;
-}
-
-.alphabet-paper::after {
-  bottom: 29%;
-}
 
 /* =========================
    VISIBLE TRACING LETTERS
@@ -488,55 +461,3 @@
   }
 }
 
-.alphabet-next-button {
-  position: absolute;
-
-  right: 18px;
-  bottom: 18px;
-
-  z-index: 11;
-
-  width: 54px;
-  height: 54px;
-
-  border: 0;
-  border-radius: 50%;
-
-  background: rgba(255, 255, 255, 0.92);
-  color: #263b82;
-
-  display: grid;
-  place-items: center;
-
-  font-family: Arial, sans-serif;
-  font-size: 2rem;
-  font-weight: 700;
-
-  cursor: pointer;
-
-  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.18);
-
-  transition:
-    transform 0.15s ease,
-    background 0.15s ease;
-}
-
-.alphabet-next-button:hover {
-  transform: scale(1.05);
-}
-
-.alphabet-next-button:active {
-  transform: scale(0.94);
-}
-
-@media (max-width: 700px) {
-  .alphabet-next-button {
-    right: 12px;
-    bottom: 12px;
-
-    width: 48px;
-    height: 48px;
-
-    font-size: 1.7rem;
-  }
-}
