@@ -259,22 +259,6 @@ export default function NumberTracingMission({ onBack, onComplete }) {
 
       <main className="alphabet-mission-content">
         <div className="alphabet-paper-area">
-          <aside className="alphabet-tool-bar" aria-label="Writing tools">
-            {["pencil", "brush", "pen", "eraser"].map((toolName) => (
-              <button
-                key={toolName}
-                type="button"
-                className={`alphabet-tool-button ${
-                  tool === toolName ? "active" : ""
-                }`}
-                onClick={() => setTool(toolName)}
-                aria-label={toolName}
-              >
-                <ToolIcon type={toolName} />
-              </button>
-            ))}
-          </aside>
-
           <div className="alphabet-paper">
             <div className="alphabet-target-display">
               <div className="alphabet-uppercase">{currentNumber}</div>
@@ -304,7 +288,23 @@ export default function NumberTracingMission({ onBack, onComplete }) {
             </button>
           </div>
 
-          <div className="alphabet-mission-hint">Trace the number.</div>
+                    <aside className="alphabet-tool-bar" aria-label="Writing tools">
+            {["pencil", "brush", "pen", "eraser"].map((toolName) => (
+              <button
+                key={toolName}
+                type="button"
+                className={`alphabet-tool-button ${
+                  tool === toolName ? "active" : ""
+                }`}
+                onClick={() => setTool(toolName)}
+                aria-label={toolName}
+              >
+                <ToolIcon type={toolName} />
+              </button>
+            ))}
+          </aside>
+
+                    <div className="alphabet-mission-hint">Trace the number.</div>
         </div>
       </main>
     </div>
