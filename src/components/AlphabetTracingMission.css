@@ -579,3 +579,90 @@
     height: 44px;
   }
 }
+
+/* =========================
+   TRACING LETTERS
+   ========================= */
+
+.alphabet-target-display {
+  position: absolute;
+
+  left: 50%;
+  top: 22%;
+
+  transform: translateX(-50%);
+
+  width: min(560px, 70%);
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  gap: 18px;
+
+  pointer-events: none;
+
+  z-index: 2;
+}
+
+/* =========================
+   CAPITAL A
+   ========================= */
+
+.alphabet-uppercase {
+  width: auto;
+  height: 188px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  color: rgba(82, 172, 205, 0.30);
+
+  font-family:
+    "Andika",
+    "Comic Sans MS",
+    "Chalkboard SE",
+    sans-serif;
+
+  font-size: clamp(145px, 17vw, 185px);
+
+  font-weight: 700;
+
+  line-height: 1;
+
+  margin: 0;
+  padding: 0;
+}
+
+/* =========================
+   LOWERCASE a
+   ========================= */
+
+.alphabet-lowercase {
+  width: auto;
+  height: 94px;
+
+  margin-top: 94px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  color: rgba(82, 172, 205, 0.30);
+
+  font-family:
+    "Andika",
+    "Comic Sans MS",
+    "Chalkboard SE",
+    sans-serif;
+
+  font-size: clamp(95px, 12vw, 130px);
+
+  font-weight: 700;
+
+  line-height: 0.95;
+
+  margin-bottom: 0;
+  padding: 0;
+}
