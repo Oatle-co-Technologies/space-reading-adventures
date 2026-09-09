@@ -1,3 +1,104 @@
+
+/* =========================================
+   ADVENTURE HUB
+   ========================================= */
+
+.adventure-hub {
+  max-width: 1000px;
+}
+
+.adventure-grid {
+  width: min(900px, 100%);
+  margin: 36px auto 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.adventure-card {
+  min-height: 220px;
+  padding: 28px 20px;
+  border: 3px solid #8fe7ff;
+  border-radius: 24px;
+  color: #fff;
+  background: #111a42cc;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.adventure-card:hover {
+  transform: translateY(-6px);
+  background: #1c2860;
+  border-color: var(--game-green);
+  box-shadow: 0 10px 24px #00000035;
+}
+
+.adventure-card:active {
+  transform: translateY(-2px) scale(0.98);
+}
+
+.adventure-card-icon {
+  width: 92px;
+  height: 92px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffdb64;
+}
+
+.adventure-card-icon svg {
+  width: 82px;
+  height: 82px;
+  display: block;
+}
+
+.adventure-card strong {
+  font: 700 1.7rem "Pixelify Sans", sans-serif;
+  color: #fff;
+}
+
+.adventure-placeholder {
+  padding-top: 90px;
+}
+
+@media (max-width: 700px) {
+  .adventure-grid {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+  }
+
+  .adventure-card {
+    min-height: 160px;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 20px 28px;
+  }
+
+  .adventure-card-icon {
+    width: 70px;
+    height: 70px;
+    flex: 0 0 70px;
+  }
+
+  .adventure-card-icon svg {
+    width: 64px;
+    height: 64px;
+  }
+
+  .adventure-card strong {
+    font-size: 1.5rem;
+  }
+}
+
 /* =========================================
    BOTTOM NAVIGATION
    ========================================= */

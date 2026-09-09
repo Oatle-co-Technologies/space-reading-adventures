@@ -364,7 +364,78 @@ function SettingsIcon() {
   );
 }
 
-function AppNav({ onHome, onMap, onSettings, activeScreen }) {
+function NumberIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <text
+        x="12"
+        y="17"
+        textAnchor="middle"
+        fontSize="13"
+        fontWeight="800"
+        fill="currentColor"
+      >
+        123
+      </text>
+    </svg>
+  );
+}
+
+function BookIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M4 5.5c2.8-.8 5.5-.2 8 1.5v12c-2.5-1.7-5.2-2.3-8-1.5z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M20 5.5c-2.8-.8-5.5-.2-8 1.5v12c2.5-1.7 5.2-2.3 8-1.5z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function PencilIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="m15.5 5.5 3 3L8 19H5v-3z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="m14 7 3 3"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function AppNav({ onHome, onExplore, onSettings, activeScreen }) {
   const items = [
     {
       label: "Home",
@@ -373,14 +444,17 @@ function AppNav({ onHome, onMap, onSettings, activeScreen }) {
       active: activeScreen === "home",
     },
     {
-      label: "Planets",
-      action: onMap,
+      label: "Explore",
+      action: onExplore,
       icon: <PlanetIcon />,
       active:
+        activeScreen === "explore" ||
         activeScreen === "map" ||
         activeScreen === "planet" ||
         activeScreen === "mission" ||
-        activeScreen === "launch",
+        activeScreen === "launch" ||
+        activeScreen === "math" ||
+        activeScreen === "writing",
     },
     {
       label: "Settings",
@@ -848,7 +922,75 @@ function App() {
 
   let content;
 
-  if (screen === "home") {
+  if (screen === "explore") {
+    content = (
+      <main className="page adventure-hub">
+        <p className="eyebrow">LET'S EXPLORE</p>
+
+        <h1>What shall we explore?</h1>
+
+        <p className="page-intro">
+          Pick an adventure and let's go!
+        </p>
+
+        <div className="adventure-grid">
+          <button
+            className="adventure-card"
+            onClick={() => {
+              playSound(blastoffSound);
+              setScreen("launch");
+            }}
+            type="button"
+          >
+            <span className="adventure-card-icon">
+              <BookIcon />
+            </span>
+            <strong>Reading</strong>
+          </button>
+
+          <button
+            className="adventure-card"
+            onClick={() => setScreen("math")}
+            type="button"
+          >
+            <span className="adventure-card-icon">
+              <NumberIcon />
+            </span>
+            <strong>Counting</strong>
+          </button>
+
+          <button
+            className="adventure-card"
+            onClick={() => setScreen("writing")}
+            type="button"
+          >
+            <span className="adventure-card-icon">
+              <PencilIcon />
+            </span>
+            <strong>Writing</strong>
+          </button>
+        </div>
+      </main>
+    );
+  } else if (screen === "writing") {
+    content = (
+      <main className="page adventure-placeholder">
+        <p className="eyebrow">WRITING</p>
+
+        <h1>Writing</h1>
+
+        <p className="page-intro">
+          Your writing adventure is ready to launch here.
+        </p>
+
+        {action(
+          "Back to Explore",
+          () => setScreen("explore"),
+          "secondary-button"
+        )}
+      </main>
+    );
+  } else if (screen === "home") {
     content = (
       <main className="hero-panel">
         <span className="hero-rocket">
@@ -871,17 +1013,8 @@ function App() {
 
         <div className="button-row">
           {action(
-            "Space Reading Adventures",
-            () => {
-              playSound(blastoffSound);
-              setScreen("launch");
-            }
-          )}
-
-          {action(
-            "Math Adventures",
-            () => setScreen("math"),
-            "secondary-button"
+            "Explore",
+            () => setScreen("explore")
           )}
 
           {assessmentResults &&
@@ -1572,7 +1705,7 @@ function App() {
 
       <AppNav
         onHome={() => setScreen("home")}
-        onMap={() => setScreen("map")}
+        onExplore={() => setScreen("explore")}
         onSettings={() =>
           setScreen("settings")
         }
