@@ -1,8 +1,10 @@
-import { useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import "./Scribbler.css";
 
 const COLORS = [
+  { name: "Black", value: "#202020" },
+  { name: "Gray", value: "#777777" },
   { name: "Red", value: "#ef5b5b" },
   { name: "Yellow", value: "#ffd45c" },
   { name: "Blue", value: "#55c6ff" },
@@ -12,6 +14,83 @@ const COLORS = [
   { name: "Pink", value: "#f27bbd" },
   { name: "Turquoise", value: "#35c7c4" },
 ];
+
+const TOOLS = {
+  pencil: {
+    name: "Pencil",
+    size: 2,
+    opacity: 0.9,
+  },
+  pen: {
+    name: "Pen",
+    size: 3.5,
+    opacity: 1,
+  },
+  brush: {
+    name: "Paintbrush",
+    size: 7,
+    opacity: 0.78,
+  },
+};
+
+function PencilIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        d="m15.2 4.2 4.6 4.6L8.1 20.5H3.5v-4.6z"
+        fill="currentColor"
+      />
+      <path
+        d="m13.6 5.8 4.6 4.6"
+        fill="none"
+        stroke="#ffffff"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        opacity=".75"
+      />
+      <path
+        d="m3.5 20.5 1.4-4.6 3.2 3.2z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+function PenIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        d="M7 19 5 21l2-5L16.5 6.5l2 2L10 18z"
+        fill="currentColor"
+      />
+      <path
+        d="m15.5 7.5 2 2M17 5l2 2"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function BrushIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        d="m14.8 4.2 5 5-8.9 8.9-5-5z"
+        fill="currentColor"
+      />
+      <path
+        d="M5.7 14.8c-2.1 1.5-2.4 3.5-1.9 5.2 1.7-.5 3.7-.2 5.2-1.9"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
 
 function EraserIcon() {
   return (
@@ -32,58 +111,188 @@ function EraserIcon() {
   );
 }
 
+const getCanvasPoint = (event, canvas) => {
+  const rect = canvas.getBoundingClientRect();
+
+  return {
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top,
+  };
+};
+
 export default function Scribbler() {
   const canvasRef = useRef(null);
-  const [selectedColor, setSelectedColor] = useState(COLORS[0].value);
+  const drawingRef = useRef(false);
+
+  const [selectedColor, setSelectedColor] = useState(
+    COLORS[0].value
+  );
   const [tool, setTool] = useState("pencil");
+
+  useLayoutEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const resizeCanvas = () => {
+      const rect = canvas.getBoundingClientRect();
+      const nextWidth = Math.max(1, Math.round(rect.width));
+      const nextHeight = Math.max(1, Math.round(rect.height));
+      const dpr = window.devicePixelRatio || 1;
+
+      if (
+        canvas.width === Math.round(nextWidth * dpr) &&
+        canvas.height === Math.round(nextHeight * dpr)
+      ) {
+        return;
+      }
+
+      const oldCanvas = document.createElement("canvas");
+      oldCanvas.width = canvas.width;
+      oldCanvas.height = canvas.height;
+
+      if (canvas.width && canvas.height) {
+        const oldContext = oldCanvas.getContext("2d");
+        oldContext.drawImage(canvas, 0, 0);
+      }
+
+      canvas.width = Math.round(nextWidth * dpr);
+      canvas.height = Math.round(nextHeight * dpr);
+
+      const context = canvas.getContext("2d");
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      if (oldCanvas.width && oldCanvas.height) {
+        context.drawImage(
+          oldCanvas,
+          0,
+          0,
+          oldCanvas.width / (window.devicePixelRatio || 1),
+          oldCanvas.height / (window.devicePixelRatio || 1),
+          0,
+          0,
+          nextWidth,
+          nextHeight
+        );
+      }
+    };
+
+    resizeCanvas();
+
+    const observer = new ResizeObserver(resizeCanvas);
+    observer.observe(canvas);
+
+    window.addEventListener("resize", resizeCanvas);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", resizeCanvas);
+    };
+  }, []);
+
+  const draw = (event) => {
+    const canvas = canvasRef.current;
+    if (!canvas || !drawingRef.current) return;
+
+    const context = canvas.getContext("2d");
+    const point = getCanvasPoint(event, canvas);
+    const settings = TOOLS[tool];
+
+    context.globalCompositeOperation = "source-over";
+    context.strokeStyle = selectedColor;
+    context.globalAlpha = settings.opacity;
+    context.lineWidth = settings.size;
+    context.lineCap = tool === "brush" ? "round" : "round";
+    context.lineJoin = "round";
+
+    context.lineTo(point.x, point.y);
+    context.stroke();
+    context.beginPath();
+    context.moveTo(point.x, point.y);
+
+    context.globalAlpha = 1;
+  };
 
   const handlePointerDown = (event) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    event.preventDefault();
     canvas.setPointerCapture(event.pointerId);
 
-    const rect = canvas.getBoundingClientRect();
+    const point = getCanvasPoint(event, canvas);
     const context = canvas.getContext("2d");
 
+    drawingRef.current = true;
+
+    context.globalCompositeOperation = "source-over";
+    context.globalAlpha =
+      tool === "eraser" ? 1 : TOOLS[tool].opacity;
+    context.strokeStyle = selectedColor;
+    context.lineWidth =
+      tool === "eraser" ? 24 : TOOLS[tool].size;
+    context.lineCap = "round";
+    context.lineJoin = "round";
+
     context.beginPath();
-    context.moveTo(event.clientX - rect.left, event.clientY - rect.top);
+    context.moveTo(point.x, point.y);
+
+    // Give taps/dots an actual mark too.
+    context.lineTo(point.x + 0.01, point.y + 0.01);
+    context.stroke();
+    context.beginPath();
+    context.moveTo(point.x, point.y);
+
+    context.globalAlpha = 1;
   };
 
   const handlePointerMove = (event) => {
-    const canvas = canvasRef.current;
-    if (!canvas || !canvas.hasPointerCapture(event.pointerId)) {
+    if (!drawingRef.current) return;
+
+    if (event.getCoalescedEvents) {
+      const events = event.getCoalescedEvents();
+
+      events.forEach((coalescedEvent) => {
+        draw(coalescedEvent);
+      });
+
       return;
     }
 
-    const rect = canvas.getBoundingClientRect();
-    const context = canvas.getContext("2d");
-
-    context.lineCap = "round";
-    context.lineJoin = "round";
-    context.lineWidth = tool === "eraser" ? 28 : 7;
-    context.strokeStyle =
-      tool === "eraser" ? "#fffdf5" : selectedColor;
-
-    context.lineTo(
-      event.clientX - rect.left,
-      event.clientY - rect.top
-    );
-    context.stroke();
+    draw(event);
   };
 
   const releasePointer = (event) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    drawingRef.current = false;
 
-    if (canvas.hasPointerCapture(event.pointerId)) {
+    if (
+      canvas &&
+      canvas.hasPointerCapture(event.pointerId)
+    ) {
       canvas.releasePointerCapture(event.pointerId);
     }
+
+    const context = canvas?.getContext("2d");
+    if (context) {
+      context.globalAlpha = 1;
+      context.globalCompositeOperation = "source-over";
+    }
+  };
+
+  const selectTool = (nextTool) => {
+    setTool(nextTool);
+  };
+
+  const erase = () => {
+    setTool("eraser");
   };
 
   return (
     <main className="scribbler-page">
-      <section className="scribbler-paper" aria-label="Writing page">
+      <section
+        className="scribbler-paper"
+        aria-label="Writing page"
+      >
         <div className="scribbler-lines" aria-hidden="true">
           {Array.from({ length: 8 }, (_, index) => (
             <div className="scribbler-line" key={index} />
@@ -92,35 +301,83 @@ export default function Scribbler() {
 
         <canvas
           ref={canvasRef}
-          className="scribbler-canvas"
+          className={`scribbler-canvas scribbler-canvas-${tool}`}
+          data-tool={tool}
           aria-label="Scribble and write on the page"
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={releasePointer}
           onPointerCancel={releasePointer}
+          onPointerLeave={() => {}}
         />
       </section>
 
       <aside className="scribbler-toolbar" aria-label="Writing tools">
+        <div className="scribbler-tool-tools">
+          <button
+            type="button"
+            className={`scribbler-tool ${
+              tool === "pencil" ? "selected" : ""
+            }`}
+            onClick={() => selectTool("pencil")}
+            aria-label="Pencil"
+            aria-pressed={tool === "pencil"}
+            title="Pencil"
+          >
+            <PencilIcon />
+          </button>
+
+          <button
+            type="button"
+            className={`scribbler-tool ${
+              tool === "pen" ? "selected" : ""
+            }`}
+            onClick={() => selectTool("pen")}
+            aria-label="Pen"
+            aria-pressed={tool === "pen"}
+            title="Pen"
+          >
+            <PenIcon />
+          </button>
+
+          <button
+            type="button"
+            className={`scribbler-tool ${
+              tool === "brush" ? "selected" : ""
+            }`}
+            onClick={() => selectTool("brush")}
+            aria-label="Paintbrush"
+            aria-pressed={tool === "brush"}
+            title="Paintbrush"
+          >
+            <BrushIcon />
+          </button>
+        </div>
+
         <div className="scribbler-color-tools">
           {COLORS.map((color) => (
             <button
               key={color.value}
               type="button"
               className={`scribbler-color ${
-                selectedColor === color.value && tool === "pencil"
+                selectedColor === color.value &&
+                tool !== "eraser"
                   ? "selected"
                   : ""
               }`}
-              style={{ "--scribbler-color": color.value }}
+              style={{
+                "--scribbler-color": color.value,
+              }}
               onClick={() => {
                 setSelectedColor(color.value);
                 setTool("pencil");
               }}
-              aria-label={`${color.name} pencil`}
+              aria-label={`${color.name} color`}
               aria-pressed={
-                selectedColor === color.value && tool === "pencil"
+                selectedColor === color.value &&
+                tool !== "eraser"
               }
+              title={color.name}
             >
               <span />
             </button>
@@ -132,9 +389,10 @@ export default function Scribbler() {
           className={`scribbler-eraser ${
             tool === "eraser" ? "selected" : ""
           }`}
-          onClick={() => setTool("eraser")}
+          onClick={erase}
           aria-label="Eraser"
           aria-pressed={tool === "eraser"}
+          title="Eraser"
         >
           <EraserIcon />
         </button>
