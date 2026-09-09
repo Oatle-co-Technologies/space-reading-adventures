@@ -15,7 +15,7 @@ import correctSound from "../sounds/correct.mp3";
 import wrongSound from "../sounds/wrong.mp3";
 import victorySound from "../sounds/victory.mp3";
 import blastoffSound from "../sounds/blastoff.mp3";
-import FingerHelper from "./FingerHelper";
+import AbacusHelper from "./AbacusHelper";
 
 const defaultProgress = {
   unlocked: 1,
@@ -422,10 +422,6 @@ function ColourMixingVisual({
   );
 }
 
-/* ---------------------------------------------------------
-   TWO-PROPERTY VISUAL CLASSIFICATION
---------------------------------------------------------- */
-
 function TwoPropertyVisual({
   question,
 }) {
@@ -450,10 +446,6 @@ function TwoPropertyVisual({
     </div>
   );
 }
-
-/* ---------------------------------------------------------
-   OPERATION INTRODUCTION
---------------------------------------------------------- */
 
 function OperationIntroductionVisual({
   question,
@@ -488,10 +480,6 @@ function OperationIntroductionVisual({
     </div>
   );
 }
-
-/* ---------------------------------------------------------
-   INTERACTIVE MATCHING / SORTING
---------------------------------------------------------- */
 
 function itemMatchesZone(
   item,
@@ -700,11 +688,6 @@ function InteractiveSortVisual({
         )
       : [];
 
-  /*
-   * Measure the actual available
-   * portrait/desktop width instead
-   * of assuming a 760px canvas.
-   */
   useEffect(() => {
     const element =
       containerRef.current;
@@ -812,11 +795,6 @@ function InteractiveSortVisual({
             38
         );
 
-  /*
-   * The destination is also portrait-first.
-   * On a small phone it becomes taller
-   * rather than wider.
-   */
   const zoneColumns =
     isSmallPhone
       ? 2
@@ -865,11 +843,6 @@ function InteractiveSortVisual({
             34
         );
 
-  /*
-   * Reset only when the question
-   * changes. A phone resize does NOT
-   * wipe the child's progress.
-   */
   useEffect(() => {
     setPlaced({});
     setPlacedPositions({});
@@ -878,11 +851,6 @@ function InteractiveSortVisual({
       null;
   }, [question]);
 
-  /*
-   * Recalculate the unplaced source
-   * positions whenever the available
-   * width changes.
-   */
   useEffect(() => {
     if (!items.length) {
       return;
@@ -951,10 +919,6 @@ function InteractiveSortVisual({
     placed,
   ]);
 
-  /*
-   * Reflow already placed objects
-   * when the phone changes width.
-   */
   useEffect(() => {
     if (!targetItems.length) {
       return;
@@ -1237,11 +1201,6 @@ function InteractiveSortVisual({
       nextPlaced
     );
 
-    /*
-     * Position the dropped shape
-     * using the actual responsive
-     * destination grid.
-     */
     const targetIndex =
       targetItems.findIndex(
         (targetItem) =>
@@ -1655,10 +1614,6 @@ function SortingVisual({
   );
 }
 
-/* ---------------------------------------------------------
-   ADDITION / SUBTRACTION VISUAL
---------------------------------------------------------- */
-
 function ArithmeticVisual({
   question,
 }) {
@@ -1694,19 +1649,6 @@ function ArithmeticVisual({
     question.color ||
     colors.blue;
 
-  /*
-   * SUBTRACTION
-   *
-   * The concrete visual teaches:
-   *
-   * starting group
-   *       −
-   * group being taken away
-   *
-   * There is deliberately NO
-   * "= ?" here. The child answers
-   * the question separately.
-   */
   if (isSubtraction) {
     return (
       <div
@@ -1824,13 +1766,6 @@ function ArithmeticVisual({
     );
   }
 
-  /*
-   * ADDITION
-   *
-   * The concrete visual shows
-   * two groups with a plus sign
-   * between them.
-   */
   return (
     <div
       className="math-arithmetic-display"
@@ -1936,10 +1871,6 @@ function ArithmeticVisual({
   );
 }
 
-/* ---------------------------------------------------------
-   NUMBER EQUATION
---------------------------------------------------------- */
-
 function NumberEquationVisual({
   question,
 }) {
@@ -1968,10 +1899,6 @@ function NumberEquationVisual({
     </div>
   );
 }
-
-/* ---------------------------------------------------------
-   EQUAL GROUPS / MULTIPLICATION
---------------------------------------------------------- */
 
 function GroupingVisual({
   question,
@@ -2108,10 +2035,6 @@ function GroupingVisual({
     </div>
   );
 }
-
-/* ---------------------------------------------------------
-   SHARING / DIVISION
---------------------------------------------------------- */
 
 function SharingVisual({
   question,
@@ -2317,9 +2240,6 @@ function OptionVisual({
   option,
   question,
 }) {
-  /*
-   * TWO-PROPERTY GROUP
-   */
   if (
     question?.twoProperties &&
     option &&
@@ -2364,9 +2284,6 @@ function OptionVisual({
     );
   }
 
-  /*
-   * COLOURS
-   */
   if (
     typeof option ===
       "string" &&
@@ -2396,9 +2313,6 @@ function OptionVisual({
     );
   }
 
-  /*
-   * PURE SHAPE
-   */
   if (
     typeof option ===
       "string" &&
@@ -2412,9 +2326,6 @@ function OptionVisual({
     );
   }
 
-  /*
-   * COLOUR + SHAPE
-   */
   if (
     typeof option ===
       "string" &&
@@ -2457,9 +2368,6 @@ function OptionVisual({
     }
   }
 
-  /*
-   * NUMBER → QUANTITY
-   */
   if (
     question?.type ===
       "matching" &&
@@ -2468,9 +2376,6 @@ function OptionVisual({
     return option;
   }
 
-  /*
-   * SORTING BY QUANTITY
-   */
   if (
     question?.type ===
       "sorting" &&
@@ -2501,9 +2406,6 @@ function OptionVisual({
     );
   }
 
-  /*
-   * SORTING BY SHAPE
-   */
   if (
     question?.type ===
       "sorting" &&
@@ -2526,9 +2428,6 @@ function OptionVisual({
     );
   }
 
-  /*
-   * ODD ONE OUT
-   */
   if (
     question?.type ===
       "sorting" &&
@@ -3322,8 +3221,13 @@ export default function MathSection({
         }
       />
 
-      {[3, 6, 7].includes(mission.id) ? (
-        <FingerHelper />
+      {/* Counting Helper
+          Only available where it is useful:
+          Mission 6 - Adding Numbers
+          Mission 7 - Taking Away
+      */}
+      {[6, 7].includes(mission.id) ? (
+        <AbacusHelper />
       ) : null}
 
       {!isInteractive ? (

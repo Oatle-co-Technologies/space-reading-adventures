@@ -1,0 +1,260 @@
+.abacus-helper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.abacus-helper-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 12px 18px;
+
+  border: 0;
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    background 0.2s ease;
+}
+
+.abacus-helper-trigger:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.abacus-helper-trigger:active {
+  transform: scale(0.96);
+}
+
+.abacus-helper-trigger-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* =========================================
+   OPEN CONTENT
+   ========================================= */
+
+.abacus-helper-content {
+  position: relative;
+
+  width: min(720px, 94vw);
+
+  padding: 24px 24px 20px;
+
+  border-radius: 24px;
+
+  background: rgba(10, 18, 40, 0.96);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.25);
+
+  box-sizing: border-box;
+}
+
+/* =========================================
+   CLOSE
+   ========================================= */
+
+.abacus-helper-close {
+  position: absolute;
+
+  top: 10px;
+  right: 12px;
+
+  width: 38px;
+  height: 38px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+
+  font-size: 1.6rem;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.abacus-helper-close:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* =========================================
+   TITLE
+   ========================================= */
+
+.abacus-helper-title {
+  margin-bottom: 20px;
+
+  text-align: center;
+
+  color: #fff;
+
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+/* =========================================
+   ABACUS
+   ========================================= */
+
+.abacus {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.abacus-frame {
+  width: 100%;
+  max-width: 640px;
+
+  padding: 34px 24px;
+
+  border-radius: 24px;
+
+  background: rgba(255, 255, 255, 0.06);
+
+  box-sizing: border-box;
+}
+
+/* =========================================
+   RAIL
+   ========================================= */
+
+.abacus-rail {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  width: 100%;
+  min-height: 76px;
+
+  padding: 10px;
+
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.12);
+
+  box-sizing: border-box;
+}
+
+/* =========================================
+   BEADS
+   ========================================= */
+
+.abacus-bead {
+  position: relative;
+
+  flex: 1;
+
+  aspect-ratio: 1;
+
+  max-width: 58px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #55c6ff;
+
+  box-shadow:
+    inset 0 -5px 0 rgba(0, 0, 0, 0.12),
+    0 5px 10px rgba(0, 0, 0, 0.18);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.abacus-bead:hover {
+  transform: scale(1.06);
+}
+
+.abacus-bead:active {
+  transform: scale(0.94);
+}
+
+.abacus-bead.moved {
+  transform: translateY(26px);
+}
+
+/* =========================================
+   BEAD HIGHLIGHT
+   ========================================= */
+
+.abacus-bead-highlight {
+  position: absolute;
+
+  top: 18%;
+  left: 22%;
+
+  width: 24%;
+  height: 16%;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.45);
+
+  transform: rotate(-25deg);
+}
+
+/* =========================================
+   LABEL
+   ========================================= */
+
+.abacus-helper-label {
+  margin-top: 16px;
+
+  text-align: center;
+
+  color: rgba(255, 255, 255, 0.7);
+
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+  .abacus-helper-content {
+    width: 96vw;
+    padding: 20px 14px 16px;
+  }
+
+  .abacus-frame {
+    padding: 24px 10px;
+  }
+
+  .abacus-rail {
+    gap: 4px;
+    padding: 7px;
+  }
+
+  .abacus-bead {
+    max-width: 48px;
+  }
+
+  .abacus-bead.moved {
+    transform: translateY(20px);
+  }
+}
