@@ -640,14 +640,14 @@
 
 .alphabet-lowercase {
   width: auto;
-  height: 94px;
+  height: 100px;
 
   margin: 0;
 
   position: relative;
 
   /* Move the lowercase a 2px upward */
-  top: 92px;
+  top: 100px;
 
   display: flex;
   align-items: flex-start;
@@ -662,7 +662,7 @@
     sans-serif;
 
   /* 10px larger */
-  font-size: 155px;
+  font-size: 170px;
 
   font-weight: 700;
 
