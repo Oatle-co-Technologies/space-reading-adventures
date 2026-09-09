@@ -974,7 +974,7 @@ function App() {
       </main>
     );
   } else if (screen === "writing") {
-    content = <Scribbler />;
+    content = <Scribbler onBack={() => setScreen("explore")} />;
   } else if (screen === "home") {
     content = (
       <main className="hero-panel">

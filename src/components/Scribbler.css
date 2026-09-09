@@ -6,22 +6,23 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  min-height: 100vh;
-  padding: 18px;
+  min-height: 100dvh;
+  padding: 10px;
+  box-sizing: border-box;
   display: flex;
-  gap: 16px;
+  gap: 8px;
   align-items: stretch;
   background: #080d28;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .scribbler-paper {
   position: relative;
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
-  min-height: calc(100vh - 36px);
+  min-height: calc(100dvh - 20px);
   overflow: hidden;
-  border-radius: 18px;
+  border-radius: 16px;
   background: #fffdf5;
   box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.22),
@@ -31,7 +32,8 @@
 .scribbler-lines {
   position: absolute;
   inset: 0;
-  padding: 10% 5% 8%;
+  padding: 10% 5% 7%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -53,100 +55,249 @@
   height: 100%;
   display: block;
   touch-action: none;
-  cursor: crosshair;
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M6 26 11 11 23 23Z' fill='%23202020' stroke='white' stroke-width='1.5'/%3E%3Cpath d='M11 11 21 7 23 23Z' fill='%23f4c542' stroke='white' stroke-width='1.5'/%3E%3C/svg%3E")
+    3 28,
+    crosshair;
 }
 
-.scribbler-toolbar {
-  flex: 0 0 76px;
-  width: 76px;
-  padding: 14px 10px;
+.scribbler-canvas-pen {
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M7 25 5 27l4-11L23 2l7 7-14 14z' fill='%23202020' stroke='white' stroke-width='1.5'/%3E%3C/svg%3E")
+    3 28,
+    crosshair;
+}
+
+.scribbler-canvas-brush {
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M20 4 28 12 14 26 6 18z' fill='%23a875e8' stroke='white' stroke-width='1.5'/%3E%3Cpath d='M8 20c-4 3-4 7-2 9 3-2 7-2 9-6' fill='none' stroke='%23202020' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E")
+    3 28,
+    crosshair;
+}
+
+.scribbler-back {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  z-index: 5;
+  padding: 7px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  background: rgba(10, 18, 40, 0.9);
+  color: #ffffff;
+  font: 800 0.82rem "Nunito", sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+}
+
+.scribbler-back:hover {
+  background: rgba(28, 40, 96, 0.96);
+}
+
+.scribbler-scroll-control {
+  flex: 0 0 24px;
+  width: 24px;
+  height: 100%;
+  min-height: 0;
+  padding: 8px 0;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  border-radius: 20px;
+  gap: 5px;
+  border-radius: 12px;
+  background: rgba(10, 18, 40, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.scribbler-scroll-button {
+  width: 22px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #ffffff;
+  font: 900 0.85rem "Nunito", sans-serif;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.scribbler-scroll-button:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.scribbler-scroll-track {
+  flex: 1;
+  width: 4px;
+  min-height: 90px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  position: relative;
+}
+
+.scribbler-scroll-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 28%;
+  min-height: 26px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.scribbler-toolbar {
+  flex: 0 0 clamp(62px, 8vw, 84px);
+  width: clamp(62px, 8vw, 84px);
+  min-width: 62px;
+  height: 100%;
+  padding: 7px 5px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border-radius: 16px;
   background: rgba(10, 18, 40, 0.96);
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.scribbler-color-tools {
+.scribbler-tool-tools {
+  width: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 3px;
 }
 
-.scribbler-color,
-.scribbler-eraser {
-  width: 50px;
-  height: 50px;
+.scribbler-tool {
+  width: 31px;
+  height: 31px;
   padding: 5px;
   border: 0;
-  border-radius: 14px;
+  border-radius: 9px;
+  background: transparent;
+  color: #f3f5fa;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.12s ease,
+    background 0.15s ease;
+}
+
+.scribbler-tool svg {
+  width: 21px;
+  height: 21px;
+  display: block;
+}
+
+.scribbler-tool:hover,
+.scribbler-eraser:hover {
+  transform: scale(1.06);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.scribbler-tool:active,
+.scribbler-eraser:active {
+  transform: scale(0.94);
+}
+
+.scribbler-tool.selected,
+.scribbler-eraser.selected {
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.55);
+}
+
+.scribbler-color-tools {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  place-items: center;
+  gap: 4px;
+}
+
+.scribbler-color {
+  width: 29px;
+  height: 29px;
+  padding: 3px;
+  border: 0;
+  border-radius: 8px;
   background: transparent;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition:
-    transform 0.15s ease,
-    background 0.2s ease;
+    transform 0.12s ease,
+    background 0.15s ease;
 }
 
-.scribbler-color:hover,
-.scribbler-eraser:hover {
-  transform: scale(1.06);
+.scribbler-color:hover {
+  transform: scale(1.07);
   background: rgba(255, 255, 255, 0.1);
 }
 
-.scribbler-color:active,
-.scribbler-eraser:active {
-  transform: scale(0.94);
+.scribbler-color:active {
+  transform: scale(0.93);
 }
 
 .scribbler-color span {
-  width: 38px;
-  height: 38px;
+  width: 22px;
+  height: 22px;
   display: block;
   border-radius: 50%;
   background: var(--scribbler-color);
   box-shadow:
-    inset 0 -5px 0 rgba(0, 0, 0, 0.12),
-    0 4px 8px rgba(0, 0, 0, 0.18);
+    inset 0 -3px 0 rgba(0, 0, 0, 0.14),
+    0 2px 5px rgba(0, 0, 0, 0.18);
 }
 
-.scribbler-color.selected,
-.scribbler-eraser.selected {
+.scribbler-color.selected {
   background: rgba(255, 255, 255, 0.16);
   box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.55);
 }
 
 .scribbler-eraser {
-  margin-top: 4px;
+  width: 34px;
+  height: 34px;
+  padding: 6px;
+  border: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 0 0 14px 14px;
-  padding-top: 12px;
+  border-radius: 8px;
+  background: transparent;
+  color: #f3f5fa;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .scribbler-eraser svg {
-  width: 34px;
-  height: 34px;
+  width: 23px;
+  height: 23px;
   display: block;
-  color: #f3f5fa;
 }
 
 @media (orientation: portrait) {
   .scribbler-page {
+    width: 100vw;
     min-height: 100dvh;
+    padding: 18px;
     align-items: center;
     justify-content: center;
-    padding: 24px;
+    overflow: hidden;
   }
 
   .scribbler-paper,
-  .scribbler-toolbar {
+  .scribbler-toolbar,
+  .scribbler-scroll-control,
+  .scribbler-back {
     display: none;
   }
 
@@ -160,45 +311,87 @@
     color: #ffffff;
     font: 800 1.4rem "Nunito", sans-serif;
     text-align: center;
+    box-sizing: border-box;
   }
 }
 
-@media (orientation: landscape) and (max-height: 600px) {
+@media (orientation: landscape) and (max-height: 500px) {
+  .scribbler-back {
+    top: 7px;
+    left: 7px;
+    padding: 5px 8px;
+    font-size: 0.72rem;
+  }
+
   .scribbler-page {
-    padding: 10px;
-    gap: 10px;
-  }
-
-  .scribbler-paper {
-    min-height: calc(100vh - 20px);
-    border-radius: 14px;
-  }
-
-  .scribbler-toolbar {
-    flex-basis: 64px;
-    width: 64px;
-    padding: 8px 6px;
-    gap: 8px;
-    border-radius: 16px;
-  }
-
-  .scribbler-color-tools {
+    padding: 6px;
     gap: 5px;
   }
 
-  .scribbler-color,
-  .scribbler-eraser {
-    width: 42px;
-    height: 42px;
+  .scribbler-paper {
+    min-height: calc(100dvh - 12px);
+    border-radius: 12px;
+  }
+
+  .scribbler-scroll-control {
+    flex-basis: 20px;
+    width: 20px;
+    padding: 5px 0;
+  }
+
+  .scribbler-scroll-button {
+    width: 19px;
+    height: 22px;
+    font-size: 0.72rem;
+  }
+
+  .scribbler-scroll-track {
+    min-height: 70px;
+  }
+
+  .scribbler-toolbar {
+    min-width: 56px;
+    width: 56px;
+    flex-basis: 56px;
+    padding: 4px 3px;
+    gap: 3px;
+    border-radius: 12px;
+  }
+
+  .scribbler-tool {
+    width: 25px;
+    height: 25px;
+    padding: 4px;
+  }
+
+  .scribbler-tool svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .scribbler-color {
+    width: 24px;
+    height: 24px;
+    padding: 2px;
   }
 
   .scribbler-color span {
-    width: 31px;
-    height: 31px;
+    width: 19px;
+    height: 19px;
+  }
+
+  .scribbler-color-tools {
+    gap: 2px;
+  }
+
+  .scribbler-eraser {
+    width: 29px;
+    height: 29px;
+    padding: 5px;
   }
 
   .scribbler-eraser svg {
-    width: 28px;
-    height: 28px;
+    width: 20px;
+    height: 20px;
   }
 }

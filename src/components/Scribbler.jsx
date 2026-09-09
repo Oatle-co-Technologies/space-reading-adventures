@@ -120,7 +120,7 @@ const getCanvasPoint = (event, canvas) => {
   };
 };
 
-export default function Scribbler() {
+export default function Scribbler({ onBack }) {
   const canvasRef = useRef(null);
   const drawingRef = useRef(false);
 
@@ -195,13 +195,15 @@ export default function Scribbler() {
 
     const context = canvas.getContext("2d");
     const point = getCanvasPoint(event, canvas);
-    const settings = TOOLS[tool];
 
-    context.globalCompositeOperation = "source-over";
+    context.globalCompositeOperation =
+      tool === "eraser" ? "destination-out" : "source-over";
     context.strokeStyle = selectedColor;
-    context.globalAlpha = settings.opacity;
-    context.lineWidth = settings.size;
-    context.lineCap = tool === "brush" ? "round" : "round";
+    context.globalAlpha =
+      tool === "eraser" ? 1 : TOOLS[tool].opacity;
+    context.lineWidth =
+      tool === "eraser" ? 18 : TOOLS[tool].size;
+    context.lineCap = "round";
     context.lineJoin = "round";
 
     context.lineTo(point.x, point.y);
@@ -224,19 +226,21 @@ export default function Scribbler() {
 
     drawingRef.current = true;
 
-    context.globalCompositeOperation = "source-over";
+    context.globalCompositeOperation =
+      tool === "eraser" ? "destination-out" : "source-over";
     context.globalAlpha =
       tool === "eraser" ? 1 : TOOLS[tool].opacity;
     context.strokeStyle = selectedColor;
     context.lineWidth =
-      tool === "eraser" ? 24 : TOOLS[tool].size;
+      tool === "eraser" ? 18 : TOOLS[tool].size;
     context.lineCap = "round";
     context.lineJoin = "round";
 
     context.beginPath();
     context.moveTo(point.x, point.y);
 
-    // Give taps/dots an actual mark too.
+    // A tiny mark makes a tap useful for writing/drawing.
+    // The eraser uses destination-out, so a tap removes instead.
     context.lineTo(point.x + 0.01, point.y + 0.01);
     context.stroke();
     context.beginPath();
@@ -289,6 +293,15 @@ export default function Scribbler() {
 
   return (
     <main className="scribbler-page">
+      <button
+        className="scribbler-back"
+        type="button"
+        onClick={onBack}
+        aria-label="Back to Explore"
+      >
+        ← Back
+      </button>
+
       <section
         className="scribbler-paper"
         aria-label="Writing page"
@@ -311,6 +324,40 @@ export default function Scribbler() {
           onPointerLeave={() => {}}
         />
       </section>
+
+      <div className="scribbler-scroll-control" aria-label="Page scrolling">
+        <button
+          type="button"
+          className="scribbler-scroll-button"
+          onClick={() =>
+            window.scrollBy({
+              top: -window.innerHeight * 0.7,
+              behavior: "smooth",
+            })
+          }
+          aria-label="Scroll up"
+        >
+          ↑
+        </button>
+
+        <div className="scribbler-scroll-track" aria-hidden="true">
+          <span className="scribbler-scroll-thumb" />
+        </div>
+
+        <button
+          type="button"
+          className="scribbler-scroll-button"
+          onClick={() =>
+            window.scrollBy({
+              top: window.innerHeight * 0.7,
+              behavior: "smooth",
+            })
+          }
+          aria-label="Scroll down"
+        >
+          ↓
+        </button>
+      </div>
 
       <aside className="scribbler-toolbar" aria-label="Writing tools">
         <div className="scribbler-tool-tools">
