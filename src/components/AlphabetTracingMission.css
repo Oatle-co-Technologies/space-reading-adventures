@@ -588,11 +588,13 @@
   position: absolute;
 
   left: 50%;
-  top: 22%;
+  top: 30%;
 
   transform: translateX(-50%);
 
-  width: min(560px, 70%);
+  width: min(520px, 70%);
+
+  height: 40%;
 
   display: flex;
   align-items: flex-start;
@@ -611,7 +613,7 @@
 
 .alphabet-uppercase {
   width: auto;
-  height: 188px;
+  height: 100%;
 
   display: flex;
   align-items: flex-start;
@@ -625,11 +627,11 @@
     "Chalkboard SE",
     sans-serif;
 
-  font-size: clamp(145px, 17vw, 185px);
+  font-size: 250px;
 
   font-weight: 700;
 
-  line-height: 1;
+  line-height: 0.65;
 
   margin: 0;
   padding: 0;
@@ -641,9 +643,9 @@
 
 .alphabet-lowercase {
   width: auto;
-  height: 94px;
+  height: 50%;
 
-  margin-top: 94px;
+  margin-top: 50%;
 
   display: flex;
   align-items: flex-start;
@@ -657,11 +659,11 @@
     "Chalkboard SE",
     sans-serif;
 
-  font-size: clamp(95px, 12vw, 130px);
+  font-size: 175px;
 
   font-weight: 700;
 
-  line-height: 0.95;
+  line-height: 0.55;
 
   margin-bottom: 0;
   padding: 0;
