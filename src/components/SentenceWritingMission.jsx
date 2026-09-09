@@ -251,6 +251,18 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
       ? name.trim().length > 0
       : Boolean(answers[current.id]);
 
+  const clearWritingCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const context = canvas.getContext("2d");
+
+    context.save();
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.restore();
+  };
+
   const handleNext = () => {
     if (!canContinue) return;
 
@@ -259,6 +271,8 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
       return;
     }
 
+    // Each sentence gets a fresh writing area.
+    clearWritingCanvas();
     setSentenceIndex((currentIndex) => currentIndex + 1);
   };
 
@@ -396,7 +410,7 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
       </aside>
 
       <p className="sentence-writing-hint">
-        Answer the question, then write the sentence.
+        Answer the question, then trace the whole sentence.
       </p>
     </main>
   );
