@@ -107,53 +107,86 @@
   overflow: hidden;
   border-radius: 24px;
 
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      #fff 0,
-      #fff 57px,
-      #cfe8f3 58px,
-      #cfe8f3 59px
-    );
+  background: #ffffff;
 
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
 }
 
+/* =========================
+   THREE HANDWRITING LINES
+   ========================= */
+
+/*
+   The writing paper has exactly THREE
+   guide lines:
+
+   1. Top line
+   2. Middle line
+   3. Baseline
+*/
+
+.alphabet-paper::before {
+  content: "";
+
+  position: absolute;
+
+  left: 6%;
+  right: 6%;
+
+  top: 30%;
+  height: 1.5px;
+
+  background: rgba(83, 166, 198, 0.32);
+
+  pointer-events: none;
+
+  z-index: 1;
+
+  box-shadow:
+    0 94px 0 rgba(83, 166, 198, 0.32),
+    0 188px 0 rgba(83, 166, 198, 0.32);
+}
 
 /* =========================
    VISIBLE TRACING LETTERS
    ========================= */
 
 /*
-   THESE are the letters the child sees.
+   These are the letters the child sees.
 
-   They are intentionally LIGHT BLUE.
-   The child's actual drawing is BLACK.
+   Light blue = tracing guide.
+   Black = child's actual writing.
 */
 
 .alphabet-target-display {
   position: absolute;
 
-  left: 50%;
-  top: 50%;
+  left: 10%;
+  right: 10%;
 
-  transform: translate(-50%, -50%);
-
-  width: 80%;
+  top: 30%;
+  height: 188px;
 
   display: flex;
+
   justify-content: space-evenly;
-  align-items: center;
+  align-items: flex-start;
 
   pointer-events: none;
 
   z-index: 2;
 }
 
-.alphabet-uppercase,
-.alphabet-lowercase {
+/* =========================
+   CAPITAL LETTER
+   ========================= */
+
+.alphabet-uppercase {
+  width: 42%;
+  height: 188px;
+
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 
   text-align: center;
@@ -166,20 +199,52 @@
     "Chalkboard SE",
     sans-serif;
 
+  font-size: clamp(115px, 15vw, 160px);
   font-weight: 700;
+
   line-height: 1;
+
+  padding: 0;
+  margin: 0;
 }
 
-.alphabet-uppercase {
-  width: 42%;
+/* =========================
+   LOWERCASE LETTER
+   ========================= */
 
-  font-size: clamp(105px, 18vw, 170px);
-}
+/*
+   Lowercase letters start on the
+   middle line and finish on the
+   baseline.
+*/
 
 .alphabet-lowercase {
   width: 42%;
+  height: 94px;
 
-  font-size: clamp(82px, 15vw, 135px);
+  margin-top: 94px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  text-align: center;
+
+  color: rgba(82, 172, 205, 0.30);
+
+  font-family:
+    "Andika",
+    "Comic Sans MS",
+    "Chalkboard SE",
+    sans-serif;
+
+  font-size: clamp(85px, 12vw, 125px);
+  font-weight: 700;
+
+  line-height: 0.95;
+
+  padding: 0;
+  margin-bottom: 0;
 }
 
 /* =========================
@@ -204,25 +269,6 @@
   -webkit-touch-callout: none;
 
   cursor: crosshair;
-}
-
-/*
-   Hidden canvas used only by the
-   tracing-completion calculation.
-*/
-
-.alphabet-target-canvas {
-  position: absolute;
-
-  inset: 0;
-
-  width: 100%;
-  height: 100%;
-
-  opacity: 0;
-  pointer-events: none;
-
-  z-index: 0;
 }
 
 /* =========================
@@ -296,6 +342,51 @@
 }
 
 /* =========================
+   NEXT BUTTON
+   ========================= */
+
+.alphabet-next-button {
+  position: absolute;
+
+  right: 18px;
+  bottom: 18px;
+
+  z-index: 11;
+
+  width: 54px;
+  height: 54px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.94);
+  color: #263b82;
+
+  display: grid;
+  place-items: center;
+
+  font-family: Arial, sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.18);
+
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+}
+
+.alphabet-next-button:hover {
+  transform: scale(1.05);
+}
+
+.alphabet-next-button:active {
+  transform: scale(0.94);
+}
+
+/* =========================
    INSTRUCTION
    ========================= */
 
@@ -307,34 +398,6 @@
   color: rgba(255, 255, 255, 0.78);
 
   font-size: 1rem;
-}
-
-/* =========================
-   PROGRESS
-   ========================= */
-
-.alphabet-tracing-progress {
-  width: min(500px, 80%);
-
-  height: 7px;
-
-  margin: 12px auto 0;
-
-  overflow: hidden;
-
-  border-radius: 999px;
-
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.alphabet-tracing-progress-fill {
-  height: 100%;
-
-  border-radius: inherit;
-
-  background: #55c6ff;
-
-  transition: width 0.15s ease;
 }
 
 /* =========================
@@ -387,18 +450,46 @@
     border-radius: 18px;
   }
 
+  /*
+     Three lines remain evenly positioned
+     on the mobile paper.
+  */
+
+  .alphabet-paper::before {
+    left: 6%;
+    right: 6%;
+
+    top: 30%;
+
+    box-shadow:
+      0 22% 0 rgba(83, 166, 198, 0.32),
+      0 44% 0 rgba(83, 166, 198, 0.32);
+  }
+
   .alphabet-target-display {
-    width: 90%;
+    left: 8%;
+    right: 8%;
+
+    top: 30%;
+    height: 44%;
+
+    align-items: flex-start;
   }
 
   .alphabet-uppercase {
     width: 44%;
-    font-size: clamp(85px, 24vw, 145px);
+    height: 44%;
+
+    font-size: clamp(85px, 22vw, 135px);
   }
 
   .alphabet-lowercase {
     width: 44%;
-    font-size: clamp(70px, 20vw, 115px);
+    height: 22%;
+
+    margin-top: 22%;
+
+    font-size: clamp(68px, 18vw, 110px);
   }
 
   .alphabet-tool-bar {
@@ -420,12 +511,18 @@
     height: 27px;
   }
 
-  .alphabet-mission-hint {
-    font-size: 0.85rem;
+  .alphabet-next-button {
+    right: 12px;
+    bottom: 12px;
+
+    width: 48px;
+    height: 48px;
+
+    font-size: 1.7rem;
   }
 
-  .alphabet-tracing-progress {
-    width: 75%;
+  .alphabet-mission-hint {
+    font-size: 0.85rem;
   }
 }
 
@@ -459,5 +556,12 @@
     width: 24px;
     height: 24px;
   }
-}
 
+  .alphabet-next-button {
+    right: 9px;
+    bottom: 9px;
+
+    width: 44px;
+    height: 44px;
+  }
+}
