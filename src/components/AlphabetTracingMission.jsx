@@ -158,14 +158,11 @@ export default function AlphabetTracingMission({
   onComplete,
 }) {
   const canvasRef = useRef(null);
-  const targetCanvasRef = useRef(null);
 
   const drawingRef = useRef(false);
-  const completedRef = useRef(false);
   const lastPointRef = useRef(null);
 
   const [letterIndex, setLetterIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
   const [tool, setTool] = useState("pencil");
 
   const letter = LETTERS[letterIndex];
@@ -176,11 +173,10 @@ export default function AlphabetTracingMission({
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const targetCanvas = targetCanvasRef.current;
 
-    if (!canvas || !targetCanvas) return;
+    if (!canvas) return;
 
-    const resizeCanvases = () => {
+    const setupCanvas = () => {
       const rect = canvas.getBoundingClientRect();
 
       if (!rect.width || !rect.height) return;
@@ -190,62 +186,65 @@ export default function AlphabetTracingMission({
       canvas.width = Math.round(rect.width * dpr);
       canvas.height = Math.round(rect.height * dpr);
 
-      targetCanvas.width = Math.round(rect.width * dpr);
-      targetCanvas.height = Math.round(rect.height * dpr);
-
       const ctx = canvas.getContext("2d");
-      const targetCtx = targetCanvas.getContext("2d");
 
-      if (!ctx || !targetCtx) return;
+      if (!ctx) return;
 
+      /*
+       * The canvas is displayed in CSS pixels,
+       * but rendered at device resolution for
+       * crisp drawing on phones and tablets.
+       */
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      targetCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
       ctx.clearRect(0, 0, rect.width, rect.height);
-      targetCtx.clearRect(0, 0, rect.width, rect.height);
-
-      drawTargetLetters(targetCtx, rect.width, rect.height);
     };
 
-    resizeCanvases();
+    setupCanvas();
 
-    window.addEventListener("resize", resizeCanvases);
+    window.addEventListener("resize", setupCanvas);
 
     return () => {
-      window.removeEventListener("resize", resizeCanvases);
+      window.removeEventListener("resize", setupCanvas);
     };
   }, [letterIndex]);
 
   /* =========================
-     TARGET LETTERS
+     CLEAR CANVAS
      ========================= */
 
-  function drawTargetLetters(ctx, width, height) {
-    ctx.clearRect(0, 0, width, height);
+  function clearCanvas() {
+    const canvas = canvasRef.current;
 
-    const letterSize = Math.min(width * 0.34, 210);
+    if (!canvas) return;
 
-    ctx.font = `${letterSize}px "Andika", "Comic Sans MS", "Chalkboard SE", sans-serif`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    const ctx = canvas.getContext("2d");
 
-    const centerY = height * 0.48;
+    if (!ctx) return;
 
-    const leftX = width * 0.35;
-    const rightX = width * 0.65;
+    const rect = canvas.getBoundingClientRect();
+
+    const dpr = window.devicePixelRatio || 1;
+
+    ctx.clearRect(
+      0,
+      0,
+      rect.width,
+      rect.height
+    );
 
     /*
-      The target is intentionally invisible to the child.
-      It exists only as a mask for checking tracing coverage.
-    */
-    ctx.fillStyle = "#000000";
-
-    ctx.fillText(letter, leftX, centerY);
-
-    ctx.font = `${letterSize * 0.78}px "Andika", "Comic Sans MS", "Chalkboard SE", sans-serif`;
-
-    ctx.fillText(letter.toLowerCase(), rightX, centerY);
+     * Re-establish the high-DPI transform
+     * after clearing.
+     */
+    ctx.setTransform(
+      dpr,
+      0,
+      0,
+      dpr,
+      0,
+      0
+    );
   }
 
   /* =========================
@@ -255,18 +254,32 @@ export default function AlphabetTracingMission({
   function getCanvasPoint(event, canvas) {
     const rect = canvas.getBoundingClientRect();
 
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-
-    /*
-      The canvas already has a high-DPI backing resolution,
-      so these coordinates are converted directly into
-      canvas coordinates. We do NOT multiply them by dpr again.
-    */
     return {
-      x: (event.clientX - rect.left) * scaleX,
-      y: (event.clientY - rect.top) * scaleY,
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
     };
+  }
+
+  /* =========================
+     DRAW SETTINGS
+     ========================= */
+
+  function configureDrawing(ctx) {
+    const currentTool = TOOLS[tool];
+
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    if (tool === "eraser") {
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.globalAlpha = 1;
+      ctx.lineWidth = currentTool.size;
+    } else {
+      ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = currentTool.opacity;
+      ctx.strokeStyle = DEFAULT_COLOR;
+      ctx.lineWidth = currentTool.size;
+    }
   }
 
   /* =========================
@@ -280,8 +293,6 @@ export default function AlphabetTracingMission({
 
     if (!canvas) return;
 
-    if (completedRef.current) return;
-
     canvas.setPointerCapture?.(event.pointerId);
 
     drawingRef.current = true;
@@ -290,11 +301,37 @@ export default function AlphabetTracingMission({
 
     lastPointRef.current = point;
 
-    drawPoint(point);
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) return;
+
+    configureDrawing(ctx);
+
+    ctx.beginPath();
+    ctx.moveTo(point.x, point.y);
+
+    /*
+     * Make sure a single tap creates a visible dot.
+     */
+    ctx.arc(
+      point.x,
+      point.y,
+      ctx.lineWidth / 2,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.fillStyle = DEFAULT_COLOR;
+
+    if (tool === "eraser") {
+      ctx.globalCompositeOperation = "destination-out";
+    }
+
+    ctx.fill();
   }
 
   /* =========================
-     DRAW
+     DRAWING
      ========================= */
 
   function handlePointerMove(event) {
@@ -315,123 +352,25 @@ export default function AlphabetTracingMission({
       return;
     }
 
-    drawLine(lastPoint, point);
-
-    lastPointRef.current = point;
-
-    /*
-      Check frequently while drawing so the child
-      doesn't have to release their finger in a
-      particular place.
-    */
-    checkTracingProgress();
-  }
-
-  /* =========================
-     DRAW POINT
-     ========================= */
-
-  function drawPoint(point) {
-    const canvas = canvasRef.current;
-
-    if (!canvas) return;
-
     const ctx = canvas.getContext("2d");
 
     if (!ctx) return;
 
-    const dpr = window.devicePixelRatio || 1;
-
-    const currentTool = TOOLS[tool];
-
-    ctx.save();
-
-    if (tool === "eraser") {
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.globalAlpha = 1;
-    } else {
-      ctx.globalCompositeOperation = "source-over";
-      ctx.globalAlpha = currentTool.opacity;
-      ctx.strokeStyle = DEFAULT_COLOR;
-    }
-
-    ctx.lineWidth = currentTool.size * dpr;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-
-    /*
-      Because the canvas context has already been scaled
-      to dpr, the actual drawing coordinates are normal
-      CSS-space coordinates.
-    */
-    const x = point.x / dpr;
-    const y = point.y / dpr;
+    configureDrawing(ctx);
 
     ctx.beginPath();
-    ctx.arc(x, y, ctx.lineWidth / dpr / 2, 0, Math.PI * 2);
-
-    if (tool === "eraser") {
-      ctx.fillStyle = "#000000";
-      ctx.fill();
-    } else {
-      ctx.fillStyle = DEFAULT_COLOR;
-      ctx.fill();
-    }
-
-    ctx.restore();
-  }
-
-  /* =========================
-     DRAW LINE
-     ========================= */
-
-  function drawLine(from, to) {
-    const canvas = canvasRef.current;
-
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-
-    if (!ctx) return;
-
-    const dpr = window.devicePixelRatio || 1;
-
-    const currentTool = TOOLS[tool];
-
-    ctx.save();
-
-    if (tool === "eraser") {
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.globalAlpha = 1;
-    } else {
-      ctx.globalCompositeOperation = "source-over";
-      ctx.globalAlpha = currentTool.opacity;
-      ctx.strokeStyle = DEFAULT_COLOR;
-    }
-
-    ctx.lineWidth = currentTool.size * dpr;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-
-    const fromX = from.x / dpr;
-    const fromY = from.y / dpr;
-
-    const toX = to.x / dpr;
-    const toY = to.y / dpr;
-
-    ctx.beginPath();
-    ctx.moveTo(fromX, fromY);
-    ctx.lineTo(toX, toY);
+    ctx.moveTo(lastPoint.x, lastPoint.y);
+    ctx.lineTo(point.x, point.y);
     ctx.stroke();
 
-    ctx.restore();
+    lastPointRef.current = point;
   }
 
   /* =========================
      STOP DRAWING
      ========================= */
 
-  function releasePointer(event) {
+  function handlePointerUp(event) {
     event.preventDefault();
 
     drawingRef.current = false;
@@ -439,152 +378,41 @@ export default function AlphabetTracingMission({
 
     if (event?.pointerId != null) {
       try {
-        canvasRef.current?.releasePointerCapture?.(event.pointerId);
+        canvasRef.current?.releasePointerCapture?.(
+          event.pointerId
+        );
       } catch {
-        // Pointer may already have been released.
+        // Pointer capture may already be released.
       }
     }
-
-    checkTracingProgress();
   }
 
   /* =========================
-     CHECK PROGRESS
+     NEXT LETTER
      ========================= */
 
-  function checkTracingProgress() {
-    const canvas = canvasRef.current;
-    const targetCanvas = targetCanvasRef.current;
-
-    if (!canvas || !targetCanvas) return;
-
-    if (completedRef.current) return;
-
-    const rect = canvas.getBoundingClientRect();
-
-    if (!rect.width || !rect.height) return;
-
-    const dpr = window.devicePixelRatio || 1;
-
-    const targetCtx = targetCanvas.getContext("2d", {
-      willReadFrequently: true,
-    });
-
-    const drawingCtx = canvas.getContext("2d", {
-      willReadFrequently: true,
-    });
-
-    if (!targetCtx || !drawingCtx) return;
-
-    const width = Math.round(rect.width * dpr);
-    const height = Math.round(rect.height * dpr);
-
-    const targetData = targetCtx.getImageData(
-      0,
-      0,
-      width,
-      height
-    ).data;
-
-    const drawingData = drawingCtx.getImageData(
-      0,
-      0,
-      width,
-      height
-    ).data;
-
-    let targetPixels = 0;
-    let coveredPixels = 0;
+  function handleNext() {
+    /*
+     * Last letter: Z
+     * Finish the mission.
+     */
+    if (letterIndex === LETTERS.length - 1) {
+      onComplete?.();
+      return;
+    }
 
     /*
-      We sample every 4th pixel for performance.
-      This is more than enough for tracing detection
-      and keeps mobile devices responsive.
-    */
-    const step = 4;
-
-    for (let y = 0; y < height; y += step) {
-      for (let x = 0; x < width; x += step) {
-        const index = (y * width + x) * 4;
-
-        const targetAlpha = targetData[index + 3];
-
-        if (targetAlpha > 30) {
-          targetPixels++;
-
-          const drawingAlpha = drawingData[index + 3];
-
-          if (drawingAlpha > 30) {
-            coveredPixels++;
-          }
-        }
-      }
-    }
-
-    if (targetPixels === 0) return;
-
-    const coverage = coveredPixels / targetPixels;
-
-    const percentage = Math.min(
-      100,
-      Math.round(coverage * 100)
-    );
-
-    setProgress(percentage);
+     * Move to the next letter.
+     */
+    setLetterIndex((current) => current + 1);
 
     /*
-      10% coverage is enough to recognise that the
-      child has meaningfully traced the letter.
-
-      This prevents the mission from getting stuck
-      because a child doesn't perfectly fill the
-      entire letter.
-    */
-    if (coverage >= 0.10) {
-      completeLetter();
-    }
+     * Clear the child's previous writing.
+     */
+    window.requestAnimationFrame(() => {
+      clearCanvas();
+    });
   }
-
-  /* =========================
-     COMPLETE LETTER
-     ========================= */
-
-  function completeLetter() {
-    if (completedRef.current) return;
-
-    completedRef.current = true;
-
-    setProgress(100);
-
-    window.setTimeout(() => {
-      if (letterIndex >= LETTERS.length - 1) {
-        onComplete?.();
-        return;
-      }
-
-      /*
-        Move from:
-        A → B → C → ... → Z
-      */
-      setLetterIndex((current) => current + 1);
-
-      completedRef.current = false;
-      drawingRef.current = false;
-      lastPointRef.current = null;
-      setProgress(0);
-    }, 650);
-  }
-
-  /* =========================
-     RESET WHEN LETTER CHANGES
-     ========================= */
-
-  useEffect(() => {
-    completedRef.current = false;
-    drawingRef.current = false;
-    lastPointRef.current = null;
-    setProgress(0);
-  }, [letterIndex]);
 
   /* =========================
      TOOL
@@ -600,7 +428,13 @@ export default function AlphabetTracingMission({
 
   return (
     <div className="alphabet-tracing-mission">
+
+      {/* =========================
+          HEADER
+         ========================= */}
+
       <div className="alphabet-mission-header">
+
         <button
           type="button"
           className="alphabet-back-button"
@@ -611,38 +445,43 @@ export default function AlphabetTracingMission({
         </button>
 
         <div className="alphabet-mission-title">
+
           <div className="alphabet-mission-kicker">
             Writing Mission 1
           </div>
 
-          <h1>Trace the Alphabet</h1>
+          <h1>
+            Trace the Alphabet
+          </h1>
+
         </div>
 
         <div className="alphabet-mission-progress">
           {letter} / 26
         </div>
+
       </div>
 
+      {/* =========================
+          CONTENT
+         ========================= */}
+
       <main className="alphabet-mission-content">
+
         <div className="alphabet-paper-area">
 
           {/* =========================
               PAPER
-              ========================= */}
+             ========================= */}
 
           <div className="alphabet-paper">
 
-            <div className="alphabet-paper-lines">
-              <div className="alphabet-line top" />
-              <div className="alphabet-line middle" />
-              <div className="alphabet-line bottom" />
-            </div>
-
             {/* =========================
-                VISIBLE LETTERS
-                ========================= */}
+                TRACING LETTERS
+               ========================= */}
 
             <div className="alphabet-target-display">
+
               <div className="alphabet-uppercase">
                 {letter}
               </div>
@@ -650,117 +489,158 @@ export default function AlphabetTracingMission({
               <div className="alphabet-lowercase">
                 {letter.toLowerCase()}
               </div>
+
             </div>
 
             {/* =========================
-                DRAWING CANVAS
-                ========================= */}
+                CHILD DRAWING CANVAS
+               ========================= */}
 
             <canvas
               ref={canvasRef}
               className="alphabet-tracing-canvas"
+
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}
-              onPointerUp={releasePointer}
-              onPointerCancel={releasePointer}
-              onPointerLeave={releasePointer}
-            />
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
 
-            {/* Hidden target mask */}
-            <canvas
-              ref={targetCanvasRef}
-              className="alphabet-target-canvas"
-              aria-hidden="true"
+              onContextMenu={(event) => {
+                event.preventDefault();
+              }}
             />
 
             {/* =========================
                 TOOLS
-                ========================= */}
+               ========================= */}
 
             <aside
               className="alphabet-tool-bar"
               aria-label="Writing tools"
             >
+
+              {/* Pencil */}
+
               <button
                 type="button"
                 className={`alphabet-tool ${
-                  tool === "pencil" ? "selected" : ""
+                  tool === "pencil"
+                    ? "selected"
+                    : ""
                 }`}
-                onClick={() => selectTool("pencil")}
+                onClick={() =>
+                  selectTool("pencil")
+                }
                 aria-label="Pencil"
               >
                 <PencilIcon />
               </button>
 
+              {/* Brush */}
+
               <button
                 type="button"
                 className={`alphabet-tool ${
-                  tool === "brush" ? "selected" : ""
+                  tool === "brush"
+                    ? "selected"
+                    : ""
                 }`}
-                onClick={() => selectTool("brush")}
+                onClick={() =>
+                  selectTool("brush")
+                }
                 aria-label="Paintbrush"
               >
                 <BrushIcon />
               </button>
 
+              {/* Pen */}
+
               <button
                 type="button"
                 className={`alphabet-tool ${
-                  tool === "pen" ? "selected" : ""
+                  tool === "pen"
+                    ? "selected"
+                    : ""
                 }`}
-                onClick={() => selectTool("pen")}
+                onClick={() =>
+                  selectTool("pen")
+                }
                 aria-label="Pen"
               >
                 <PenIcon />
               </button>
 
+              {/* Eraser */}
+
               <button
                 type="button"
                 className={`alphabet-tool ${
-                  tool === "eraser" ? "selected" : ""
+                  tool === "eraser"
+                    ? "selected"
+                    : ""
                 }`}
-                onClick={() => selectTool("eraser")}
+                onClick={() =>
+                  selectTool("eraser")
+                }
                 aria-label="Eraser"
               >
                 <EraserIcon />
               </button>
+
             </aside>
+
+            {/* =========================
+                NEXT BUTTON
+               ========================= */}
+
+            <button
+              type="button"
+              className="alphabet-next-button"
+              onClick={handleNext}
+              aria-label={
+                letterIndex === LETTERS.length - 1
+                  ? "Finish"
+                  : "Next letter"
+              }
+            >
+              →
+            </button>
+
           </div>
 
           {/* =========================
               INSTRUCTION
-              ========================= */}
+             ========================= */}
 
           <div className="alphabet-mission-hint">
             Trace the big letter and the little letter.
           </div>
 
-          {/* =========================
-              PROGRESS
-              ========================= */}
-
-          <div className="alphabet-tracing-progress">
-            <div
-              className="alphabet-tracing-progress-fill"
-              style={{
-                width: `${progress}%`,
-              }}
-            />
-          </div>
         </div>
+
       </main>
 
       {/* =========================
-         PORTRAIT MESSAGE
+          PORTRAIT MESSAGE
          ========================= */}
 
       <div className="alphabet-portrait-message">
-        <div className="alphabet-portrait-icon">↔</div>
-        <h2>Turn your device sideways</h2>
+
+        <div className="alphabet-portrait-icon">
+          ↔
+        </div>
+
+        <h2>
+          Turn your device sideways
+        </h2>
+
         <p>
-          This writing adventure works best in landscape mode.
+          This writing adventure works best in
+          landscape mode.
         </p>
+
       </div>
+
     </div>
   );
 }
