@@ -6,19 +6,25 @@
 
 .alphabet-tracing-mission {
   min-height: 100dvh;
-  padding: 24px;
+  height: auto;
+  padding: 24px 24px 110px;
   box-sizing: border-box;
-
   background:
-    radial-gradient(
-      circle at 50% 20%,
-      #253b82 0%,
-      #101738 55%,
-      #080d22 100%
-    );
-
+    radial-gradient(circle at 50% 20%, #253b82 0%, #101738 55%, #080d22 100%);
   color: #fff;
   font-family: "Pixelify Sans", sans-serif;
+  overflow: visible;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* =========================
@@ -28,7 +34,6 @@
 .alphabet-mission-header {
   width: min(1100px, 100%);
   margin: 0 auto;
-
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -38,16 +43,12 @@
 .alphabet-back-button {
   width: 44px;
   height: 44px;
-
   border: 0;
   border-radius: 12px;
-
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
-
   display: grid;
   place-items: center;
-
   font-size: 1.3rem;
   cursor: pointer;
 }
@@ -68,7 +69,6 @@
 
 .alphabet-mission-title h1 {
   margin: 0;
-
   font-size: clamp(1.35rem, 3vw, 2rem);
   line-height: 1.1;
 }
@@ -98,16 +98,12 @@
 
 .alphabet-paper {
   position: relative;
-
   width: 100%;
   height: min(58vh, 470px);
   min-height: 290px;
-
   overflow: hidden;
   border-radius: 24px;
-
   background: #fff;
-
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
 }
 
@@ -115,135 +111,77 @@
    THREE HANDWRITING LINES
    ========================= */
 
-/*
-   Exactly three lines:
-
-   TOP
-   MIDDLE
-   BASELINE
-*/
-
 .alphabet-paper::before {
   content: "";
-
   position: absolute;
-
   left: 6%;
   right: 6%;
-
   top: 30%;
-
   height: 1.5px;
-
   background: rgba(83, 166, 198, 0.32);
-
   pointer-events: none;
-
   z-index: 1;
-
   box-shadow:
     0 94px 0 rgba(83, 166, 198, 0.32),
     0 188px 0 rgba(83, 166, 198, 0.32);
 }
 
 /* =========================
-   TRACING LETTER AREA
+   TRACING LETTERS
    ========================= */
 
 .alphabet-target-display {
   position: absolute;
-
-  left: 10%;
-  right: 10%;
-
+  left: 50%;
   top: 30%;
-
+  transform: translateX(-50%);
+  width: min(520px, 70%);
   height: 188px;
-
   display: flex;
-
-  justify-content: space-evenly;
   align-items: flex-start;
-
+  justify-content: center;
+  gap: 18px;
   pointer-events: none;
-
   z-index: 2;
 }
 
-/* =========================
-   CAPITAL LETTER
-   ========================= */
-
-/*
-   Capital letters should visually
-   reach from the TOP line down
-   to the BASELINE.
-*/
-
 .alphabet-uppercase {
-  width: 42%;
+  width: auto;
   height: 188px;
-
   display: flex;
   align-items: flex-start;
   justify-content: center;
-
   color: rgba(82, 172, 205, 0.30);
-
   font-family:
     "Andika",
     "Comic Sans MS",
     "Chalkboard SE",
     sans-serif;
-
-  /*
-     Larger than before so the actual
-     glyph fills the handwriting area.
-  */
-  font-size: clamp(170px, 18vw, 205px);
-
+  font-size: 250px;
   font-weight: 700;
-
-  line-height: 0.95;
-
-  padding: 0;
+  line-height: 0.65;
   margin: 0;
+  padding: 0;
 }
 
-/* =========================
-   LOWERCASE LETTER
-   ========================= */
-
-/*
-   Lowercase letters begin at the
-   MIDDLE line and end at the
-   BASELINE.
-*/
-
 .alphabet-lowercase {
-  width: 42%;
-  height: 94px;
-
-  margin-top: 94px;
-
+  width: auto;
+  height: 100px;
+  margin: 0;
+  position: relative;
+  top: 73px;
   display: flex;
   align-items: flex-start;
   justify-content: center;
-
   color: rgba(82, 172, 205, 0.30);
-
   font-family:
     "Andika",
     "Comic Sans MS",
     "Chalkboard SE",
     sans-serif;
-
-  font-size: clamp(115px, 13vw, 145px);
-
+  font-size: 170px;
   font-weight: 700;
-
-  line-height: 0.95;
-
+  line-height: 0.55;
   padding: 0;
 }
 
@@ -253,65 +191,48 @@
 
 .alphabet-tracing-canvas {
   position: absolute;
-
   inset: 0;
-
   z-index: 3;
-
   width: 100%;
   height: 100%;
-
   touch-action: none;
-
   -webkit-user-select: none;
   user-select: none;
-
   -webkit-touch-callout: none;
-
   cursor: crosshair;
 }
 
 /* =========================
    TOOL BAR
+   =========================
+   IMPORTANT:
+   The toolbar belongs OUTSIDE
+   .alphabet-paper in the JSX.
    ========================= */
 
 .alphabet-tool-bar {
-  position: absolute;
-
-  right: 14px;
-  top: 50%;
-
-  transform: translateY(-50%);
-
-  z-index: 10;
-
+  width: max-content;
+  margin: 12px auto 0;
   display: grid;
-
   grid-template-columns: repeat(2, 42px);
   grid-template-rows: repeat(2, 42px);
-
   gap: 6px;
+  position: relative;
+  z-index: 10;
 }
 
 .alphabet-tool {
   width: 42px;
   height: 42px;
-
   padding: 7px;
-
   border: 0;
   border-radius: 12px;
-
   background: rgba(255, 255, 255, 0.9);
   color: #202020;
-
   display: grid;
   place-items: center;
-
   cursor: pointer;
-
   box-sizing: border-box;
-
   transition:
     transform 0.15s ease,
     background 0.15s ease,
@@ -329,13 +250,11 @@
 .alphabet-tool svg {
   width: 27px;
   height: 27px;
-
   display: block;
 }
 
 .alphabet-tool.selected {
   background: #dff6ff;
-
   box-shadow:
     0 0 0 2px #55c6ff,
     0 4px 12px rgba(0, 0, 0, 0.12);
@@ -347,34 +266,22 @@
 
 .alphabet-next-button {
   position: absolute;
-
   right: 18px;
   bottom: 18px;
-
   z-index: 11;
-
   width: 54px;
   height: 54px;
-
   border: 0;
   border-radius: 50%;
-
   background: rgba(255, 255, 255, 0.94);
-
   color: #263b82;
-
   display: grid;
   place-items: center;
-
   font-family: Arial, sans-serif;
-
   font-size: 2rem;
   font-weight: 700;
-
   cursor: pointer;
-
   box-shadow: 0 5px 14px rgba(0, 0, 0, 0.18);
-
   transition:
     transform 0.15s ease,
     background 0.15s ease;
@@ -394,11 +301,8 @@
 
 .alphabet-mission-hint {
   margin: 12px 0 0;
-
   text-align: center;
-
   color: rgba(255, 255, 255, 0.78);
-
   font-size: 1rem;
 }
 
@@ -411,13 +315,17 @@
 }
 
 /* =========================
-   MOBILE
+   MOBILE PORTRAIT
    ========================= */
 
-@media (max-width: 700px) {
+@media (max-width: 700px) and (orientation: portrait) {
 
   .alphabet-tracing-mission {
-    padding: 12px;
+    min-height: 100dvh;
+    height: auto;
+    padding: 12px 12px 110px;
+    box-sizing: border-box;
+    overflow: visible;
   }
 
   .alphabet-mission-header {
@@ -427,9 +335,7 @@
   .alphabet-back-button {
     width: 38px;
     height: 38px;
-
     border-radius: 10px;
-
     font-size: 1.1rem;
   }
 
@@ -445,305 +351,186 @@
     font-size: 0.9rem;
   }
 
-  .alphabet-paper {
-    height: calc(100dvh - 170px);
-    min-height: 250px;
-
-    border-radius: 18px;
-  }
-
-  /* Three lines */
-
-  .alphabet-paper::before {
-    left: 6%;
-    right: 6%;
-
-    top: 30%;
-
-    box-shadow:
-      0 22% 0 rgba(83, 166, 198, 0.32),
-      0 44% 0 rgba(83, 166, 198, 0.32);
-  }
-
-  /* Letter area */
-
-  .alphabet-target-display {
-    left: 8%;
-    right: 8%;
-
-    top: 30%;
-
-    height: 44%;
-
-    align-items: flex-start;
-  }
-
-  /* Capital */
-
-  .alphabet-uppercase {
-    width: 44%;
-    height: 44%;
-
-    font-size: clamp(115px, 28vw, 165px);
-
-    line-height: 0.95;
-  }
-
-  /* Lowercase */
-
-  .alphabet-lowercase {
-    width: 44%;
-    height: 22%;
-
-    margin-top: 22%;
-
-    font-size: clamp(82px, 22vw, 125px);
-
-    line-height: 0.95;
-  }
-
-  /* Tools */
-
-  .alphabet-tool-bar {
-    right: 10px;
-
-    grid-template-columns: repeat(2, 42px);
-    grid-template-rows: repeat(2, 42px);
-
-    gap: 5px;
-  }
-
-  .alphabet-tool {
-    width: 42px;
-    height: 42px;
-  }
-
-  .alphabet-tool svg {
-    width: 27px;
-    height: 27px;
-  }
-
-  /* Next */
-
-  .alphabet-next-button {
-    right: 12px;
-    bottom: 12px;
-
-    width: 48px;
-    height: 48px;
-
-    font-size: 1.7rem;
-  }
-
-  .alphabet-mission-hint {
-    font-size: 0.85rem;
-  }
-}
-
-/* =========================
-   VERY SMALL PHONES
-   ========================= */
-
-@media (max-width: 420px) {
-
-  .alphabet-tracing-mission {
-    padding: 8px;
-  }
-
-  .alphabet-paper {
-    height: calc(100dvh - 150px);
-    min-height: 230px;
-  }
-
-  .alphabet-tool-bar {
-    right: 7px;
-  }
-
-  .alphabet-tool {
-    width: 38px;
-    height: 38px;
-
-    padding: 6px;
-  }
-
-  .alphabet-tool svg {
-    width: 24px;
-    height: 24px;
-  }
-
-  .alphabet-next-button {
-    right: 9px;
-    bottom: 9px;
-
-    width: 44px;
-    height: 44px;
-  }
-}
-
-/* =========================
-   TRACING LETTERS
-   ========================= */
-
-.alphabet-target-display {
-  position: absolute;
-
-  left: 50%;
-  top: 30%;
-
-  transform: translateX(-50%);
-
-  width: min(520px, 70%);
-  height: 188px;
-
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-
-  gap: 18px;
-
-  pointer-events: none;
-  z-index: 2;
-}
-
-/* =========================
-   CAPITAL A
-   ========================= */
-
-.alphabet-uppercase {
-  width: auto;
-  height: 188px;
-
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-
-  color: rgba(82, 172, 205, 0.30);
-
-  font-family:
-    "Andika",
-    "Comic Sans MS",
-    "Chalkboard SE",
-    sans-serif;
-
-  font-size: 250px;
-  font-weight: 700;
-
-  line-height: 0.65;
-
-  margin: 0;
-  padding: 0;
-}
-
-/* =========================
-   LOWERCASE a
-   ========================= */
-
-.alphabet-lowercase {
-  width: auto;
-  height: 100px;
-
-  margin: 0;
-
-  position: relative;
-
-  /* Move the lowercase a 2px upward */
-  top: 73px;
-
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-
-  color: rgba(82, 172, 205, 0.30);
-
-  font-family:
-    "Andika",
-    "Comic Sans MS",
-    "Chalkboard SE",
-    sans-serif;
-
-  /* 10px larger */
-  font-size: 170px;
-
-  font-weight: 700;
-
-  line-height: 0.55;
-
-  padding: 0;
-}
-
-/* =========================
-   PORTRAIT-ONLY WRITING
-   ========================= */
-
-/*
-   Writing missions are designed for
-   portrait phone use.
-
-   When the phone is turned sideways,
-   hide the writing interface and show
-   the portrait message instead.
-*/
-
-@media (max-width: 700px) {
-
-  .alphabet-tracing-mission {
-    min-height: 100dvh;
-    height: auto;
-    padding: 12px 12px 110px;
-    box-sizing: border-box;
-    overflow: visible;
-  }
-
   .alphabet-mission-content {
     width: 100%;
     margin: 18px auto 0;
   }
 
-  .alphabet-paper-area {
-    width: 100%;
-  }
-
   .alphabet-paper {
     width: 100%;
-
-    /* Let the page determine the height naturally */
     height: 620px;
     min-height: 620px;
-
-    overflow: hidden;
-
     border-radius: 18px;
   }
 
+  .alphabet-paper::before {
+    left: 6%;
+    right: 6%;
+    top: 30%;
+    box-shadow:
+      0 94px 0 rgba(83, 166, 198, 0.32),
+      0 188px 0 rgba(83, 166, 198, 0.32);
+  }
+
+  /* Keep the finalized A/a positioning. */
+  .alphabet-target-display {
+    left: 50%;
+    top: 30%;
+    width: 72%;
+    height: 188px;
+    gap: 10px;
+  }
+
+  .alphabet-uppercase {
+    width: auto;
+    height: 188px;
+    font-size: 205px;
+    line-height: 0.65;
+    margin: 0;
+  }
+
+  .alphabet-lowercase {
+    width: auto;
+    height: 100px;
+    margin: 0;
+    position: relative;
+    top: 73px;
+    font-size: 170px;
+    line-height: 0.55;
+  }
+
+  /* Toolbar is BELOW the paper. */
+  .alphabet-tool-bar {
+    width: max-content;
+    margin: 14px auto 0;
+    grid-template-columns: repeat(2, 48px);
+    grid-template-rows: repeat(2, 48px);
+    gap: 8px;
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    transform: none;
+  }
+
+  .alphabet-tool {
+    width: 48px;
+    height: 48px;
+    border-radius: 13px;
+  }
+
+  .alphabet-tool svg {
+    width: 29px;
+    height: 29px;
+  }
+
+  .alphabet-next-button {
+    right: 12px;
+    bottom: 12px;
+    width: 48px;
+    height: 48px;
+    font-size: 1.7rem;
+  }
+
   .alphabet-mission-hint {
-    margin-bottom: 20px;
+    margin: 12px 0 20px;
     font-size: 0.85rem;
   }
 }
 
-@media (max-width: 420px) {
+/* =========================
+   MOBILE LANDSCAPE
+   ========================= */
+
+@media (max-width: 700px) and (orientation: landscape) {
 
   .alphabet-tracing-mission {
-    padding-bottom: 110px;
+    min-height: 100dvh;
+    height: auto;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .alphabet-mission-header,
+  .alphabet-mission-content,
+  .alphabet-tool-bar,
+  .alphabet-mission-hint {
+    display: none;
+  }
+
+  .alphabet-portrait-message {
+    min-height: calc(100dvh - 40px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+
+  .alphabet-portrait-message h2 {
+    margin: 0 0 10px;
+    font-family: "Pixelify Sans", sans-serif;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    color: #fff;
+  }
+
+  .alphabet-portrait-message p {
+    margin: 0;
+    max-width: 420px;
+    font-family: "Andika", sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.75);
+  }
+}
+
+/* =========================
+   VERY SMALL PORTRAIT PHONES
+   ========================= */
+
+@media (max-width: 420px) and (orientation: portrait) {
+
+  .alphabet-tracing-mission {
+    padding: 8px 8px 110px;
   }
 
   .alphabet-paper {
     height: 560px;
     min-height: 560px;
   }
-}
 
-html,
-body,
-#root {
-  min-height: 100%;
-}
+  .alphabet-target-display {
+    width: 76%;
+    gap: 7px;
+  }
 
-body {
-  overflow-x: hidden;
-  overflow-y: auto;
-}
+  .alphabet-tool-bar {
+    margin-top: 12px;
+    grid-template-columns: repeat(2, 44px);
+    grid-template-rows: repeat(2, 44px);
+    gap: 7px;
+  }
 
-.alphabet-tracing-mission {
-  overflow: visible;
+  .alphabet-tool {
+    width: 44px;
+    height: 44px;
+    padding: 6px;
+  }
+
+  .alphabet-tool svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .alphabet-next-button {
+    right: 9px;
+    bottom: 9px;
+    width: 44px;
+    height: 44px;
+  }
 }

@@ -407,11 +407,9 @@ export default function AlphabetTracingMission({
     setLetterIndex((current) => current + 1);
 
     /*
-     * Clear the child's previous writing.
+     * The canvas is cleared automatically when
+     * the new letter is rendered.
      */
-    window.requestAnimationFrame(() => {
-      clearCanvas();
-    });
   }
 
   /* =========================
@@ -510,6 +508,26 @@ export default function AlphabetTracingMission({
               }}
             />
 
+
+            {/* =========================
+                NEXT BUTTON
+               ========================= */}
+
+            <button
+              type="button"
+              className="alphabet-next-button"
+              onClick={handleNext}
+              aria-label={
+                letterIndex === LETTERS.length - 1
+                  ? "Finish"
+                  : "Next letter"
+              }
+            >
+              →
+            </button>
+
+          </div>
+
             {/* =========================
                 TOOLS
                ========================= */}
@@ -589,25 +607,6 @@ export default function AlphabetTracingMission({
 
             </aside>
 
-            {/* =========================
-                NEXT BUTTON
-               ========================= */}
-
-            <button
-              type="button"
-              className="alphabet-next-button"
-              onClick={handleNext}
-              aria-label={
-                letterIndex === LETTERS.length - 1
-                  ? "Finish"
-                  : "Next letter"
-              }
-            >
-              →
-            </button>
-
-          </div>
-
           {/* =========================
               INSTRUCTION
              ========================= */}
@@ -631,12 +630,11 @@ export default function AlphabetTracingMission({
         </div>
 
         <h2>
-          Turn your device sideways
+          Turn your device upright
         </h2>
 
         <p>
-          This writing adventure works best in
-          landscape mode.
+          This writing adventure works in portrait mode.
         </p>
 
       </div>
