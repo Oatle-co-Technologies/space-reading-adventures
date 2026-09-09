@@ -40,6 +40,20 @@ const STICKERS = [
   { name: "Sun", type: "sun", color: "#ff9f43" },
   { name: "Moon", type: "moon", color: "#a875e8" },
   { name: "Cloud", type: "cloud", color: "#55c6ff" },
+  { name: "Tree", type: "tree", color: "#66d17a" },
+  { name: "Sunflower", type: "sunflower", color: "#ffd45c" },
+  { name: "Leaf", type: "leaf", color: "#66d17a" },
+  { name: "Rainbow", type: "rainbow", color: "#ef5b5b" },
+  { name: "Mushroom", type: "mushroom", color: "#ef5b5b" },
+  { name: "Cactus", type: "cactus", color: "#66d17a" },
+  { name: "Butterfly", type: "butterfly", color: "#a875e8" },
+  { name: "Bee", type: "bee", color: "#ffd45c" },
+  { name: "Car", type: "car", color: "#ef5b5b" },
+  { name: "Dinosaur", type: "dinosaur", color: "#66d17a" },
+  { name: "Rocket", type: "rocket", color: "#55c6ff" },
+  { name: "Robot", type: "robot", color: "#777777" },
+  { name: "UFO", type: "ufo", color: "#35c7c4" },
+  { name: "Ball", type: "ball", color: "#ff9f43" },
 ];
 
 function StickerShape({ type, color }) {
@@ -57,6 +71,115 @@ function StickerShape({ type, color }) {
   }
   if (type === "moon") {
     return <svg viewBox="0 0 48 48" aria-hidden="true"><path fill={color} d="M35.8 31.5A17 17 0 0 1 16.5 12.2 17 17 0 1 0 35.8 31.5Z" /></svg>;
+  }
+  if (type === "tree") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#8f2d56" d="M21 28h6v15h-6z" />
+      <path fill={color} d="M24 5 17 15h4l-7 9h6l-8 10h24l-8-10h6l-7-9h4z" />
+    </svg>;
+  }
+  if (type === "sunflower") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true">
+      <g fill={color}>
+        <circle cx="24" cy="10" r="5"/><circle cx="34" cy="14" r="5"/><circle cx="38" cy="24" r="5"/>
+        <circle cx="34" cy="34" r="5"/><circle cx="24" cy="38" r="5"/><circle cx="14" cy="34" r="5"/>
+        <circle cx="10" cy="24" r="5"/><circle cx="14" cy="14" r="5"/>
+      </g>
+      <circle cx="24" cy="24" r="8" fill="#8f2d56"/>
+      <path d="M24 31v13" stroke="#66d17a" strokeWidth="4" strokeLinecap="round"/>
+    </svg>;
+  }
+  if (type === "leaf") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true">
+      <path fill={color} d="M39 8C20 8 9 17 9 31c0 5 3 9 8 9 14 0 22-11 22-32Z"/>
+      <path d="M11 38 34 14" stroke="#fff" strokeWidth="2" opacity=".55"/>
+    </svg>;
+  }
+  if (type === "rainbow") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true">
+      <path d="M7 37a17 17 0 0 1 34 0" fill="none" stroke="#ef5b5b" strokeWidth="5" strokeLinecap="round"/>
+      <path d="M12 37a12 12 0 0 1 24 0" fill="none" stroke="#ffd45c" strokeWidth="5" strokeLinecap="round"/>
+      <path d="M17 37a7 7 0 0 1 14 0" fill="none" stroke="#55c6ff" strokeWidth="5" strokeLinecap="round"/>
+    </svg>;
+  }
+  if (type === "mushroom") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#fff" d="M17 27h14v15H17z"/>
+      <path fill={color} d="M8 25c0-10 7-16 16-16s16 6 16 16H8Z"/>
+      <circle cx="18" cy="17" r="2.5" fill="#fff"/><circle cx="30" cy="14" r="2.5" fill="#fff"/>
+    </svg>;
+  }
+  if (type === "cactus") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true">
+      <path fill={color} d="M18 41V18a6 6 0 0 1 12 0v5h4v-5a4 4 0 0 1 8 0v9a6 6 0 0 1-6 6h-6v8z"/>
+      <path d="M13 25v-6a4 4 0 0 1 8 0v4" fill="none" stroke={color} strokeWidth="6" strokeLinecap="round"/>
+    </svg>;
+  }
+  if (type === "butterfly") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true">
+      <path fill={color} d="M23 23c-5-13-16-14-17-7-1 6 5 11 14 13-8 2-12 7-8 11 5 4 11-3 13-10z"/>
+      <path fill="#55c6ff" d="M25 23c5-13 16-14 17-7 1 6-5 11-14 13 8 2 12 7 8 11-5 4-11-3-13-10z"/>
+      <rect x="22" y="19" width="4" height="17" rx="2" fill="#202020"/>
+    </svg>;
+  }
+  if (type === "bee") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true">
+      <ellipse cx="17" cy="16" rx="7" ry="5" fill="#55c6ff" opacity=".75"/>
+      <ellipse cx="31" cy="16" rx="7" ry="5" fill="#55c6ff" opacity=".75"/>
+      <ellipse cx="24" cy="27" rx="11" ry="9" fill={color}/>
+      <path d="M16 24h16M15 29h18" stroke="#202020" strokeWidth="3"/>
+      <circle cx="20" cy="25" r="1.5" fill="#202020"/><circle cx="28" cy="25" r="1.5" fill="#202020"/>
+      <path d="M21 34h6" stroke="#202020" strokeWidth="2" strokeLinecap="round"/>
+    </svg>;
+  }
+  if (type === "ufo") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#55c6ff" d="M17 25c0-7 3-11 7-11s7 4 7 11z"/>
+      <ellipse cx="24" cy="27" rx="18" ry="7" fill={color}/>
+      <circle cx="15" cy="27" r="2" fill="#ffd45c"/><circle cx="24" cy="29" r="2" fill="#ffd45c"/><circle cx="33" cy="27" r="2" fill="#ffd45c"/>
+    </svg>;
+  }
+  if (type === "ball") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true">
+      <circle cx="24" cy="24" r="17" fill={color}/>
+      <path d="m24 16 5 4-2 6h-6l-2-6zM24 16l-4-6M29 20l7-2M27 26l4 7M21 26l-4 7M19 20l-7-2" fill="none" stroke="#fff" strokeWidth="2" opacity=".8"/>
+    </svg>;
+  }
+  if (type === "car") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true">
+      <path fill={color} d="M8 27.5 12.2 17h23.6L40 27.5v8H8z" />
+      <path fill="#55c6ff" d="m14.5 19.5-2.3 6h23.6l-2.3-6z" />
+      <circle cx="15" cy="36" r="4" fill="#202020" />
+      <circle cx="33" cy="36" r="4" fill="#202020" />
+      <circle cx="15" cy="36" r="1.5" fill="#ffd45c" />
+      <circle cx="33" cy="36" r="1.5" fill="#ffd45c" />
+    </svg>;
+  }
+  if (type === "dinosaur") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true">
+      <path fill={color} d="M9 34c0-6 3-10 8-12V14c0-5 4-8 9-8 5 0 9 3 9 8v4h6v7h-9v9h-6v-6h-7v6H13v-4z" />
+      <circle cx="29" cy="13" r="1.8" fill="#202020" />
+      <path d="m18 20-3-4m8 2-2-5m8 5-1-5" stroke="#fff" strokeWidth="2" strokeLinecap="round" opacity=".7" />
+    </svg>;
+  }
+  if (type === "rocket") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true">
+      <path fill={color} d="M28 5c8 2 12 8 10 17l-9 12-12-12 12-9c-1-3-1-6-1-8Z" />
+      <circle cx="31" cy="14" r="3" fill="#fff" opacity=".8" />
+      <path fill="#ef5b5b" d="m17 24-8 2 7 7 2-8zM22 30l-2 10 7-8z" />
+      <path fill="#ffd45c" d="m19 32-2 7 6-5z" />
+    </svg>;
+  }
+  if (type === "robot") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true">
+      <rect x="9" y="12" width="30" height="27" rx="7" fill={color} />
+      <rect x="14" y="19" width="20" height="12" rx="4" fill="#55c6ff" />
+      <circle cx="20" cy="25" r="2.2" fill="#202020" />
+      <circle cx="28" cy="25" r="2.2" fill="#202020" />
+      <path d="M24 12V7" stroke="#777" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="24" cy="6" r="2.5" fill="#ffd45c" />
+      <path d="M5 22v9m38-9v9" stroke={color} strokeWidth="4" strokeLinecap="round" />
+    </svg>;
   }
   return <svg viewBox="0 0 48 48" aria-hidden="true"><path fill={color} d="M10 34h28a8 8 0 0 0 0-16 12 12 0 0 0-22.5 2.5A6.8 6.8 0 0 0 10 34Z" /></svg>;
 }
