@@ -9,7 +9,6 @@ import { readingQuestions } from "./data/readingQuestions";
 import { sentenceQuestions } from "./data/sentenceQuestions";
 import { missingLettersQuestions } from "./data/missingLettersQuestions";
 
-
 import { generateOptions } from "./utils/generateOptions";
 import { generateReadingOptions } from "./utils/generateReadingOptions";
 import { generateSentenceOptions } from "./utils/generateSentenceOptions";
@@ -20,7 +19,7 @@ import Scribbler from "./components/Scribbler";
 import AlphabetTracingMission from "./components/AlphabetTracingMission";
 import NumberTracingMission from "./components/NumberTracingMission";
 import ShapeTracingMission from "./components/ShapeTracingMission";
-
+import SentenceWritingMission from "./components/SentenceWritingMission";
 
 import mercuryImage from "./assets/images/planets/mercury.png";
 import venusImage from "./assets/images/planets/venus.png";
@@ -317,6 +316,7 @@ function HomeIcon() {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+
       <path
         d="M5.5 9.5V21h13V9.5M9 21v-6h6v6"
         fill="none"
@@ -419,8 +419,9 @@ function BookIcon() {
         strokeWidth="2"
         strokeLinejoin="round"
       />
+
       <path
-        d="M20 5.5c-2.8-.8-5.5-.2-8 1.5v12c2.5-1.7 5.2-2.3 8-1.5z"
+        d="M20 5.5c-2.8-.8-5.5-.2-8 1.5v12c2.5-1.7 5.2-2.3-8-1.5z"
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
@@ -444,6 +445,7 @@ function PencilIcon() {
         strokeWidth="2"
         strokeLinejoin="round"
       />
+
       <path
         d="m14 7 3 3"
         fill="none"
@@ -455,7 +457,12 @@ function PencilIcon() {
   );
 }
 
-function AppNav({ onHome, onExplore, onSettings, activeScreen }) {
+function AppNav({
+  onHome,
+  onExplore,
+  onSettings,
+  activeScreen,
+}) {
   const items = [
     {
       label: "Home",
@@ -479,7 +486,8 @@ function AppNav({ onHome, onExplore, onSettings, activeScreen }) {
         activeScreen === "scribbler" ||
         activeScreen === "writingMission1" ||
         activeScreen === "writingMission2" ||
-        activeScreen === "writingMission3",
+        activeScreen === "writingMission3" ||
+        activeScreen === "writingMission4",
     },
     {
       label: "Settings",
@@ -490,7 +498,10 @@ function AppNav({ onHome, onExplore, onSettings, activeScreen }) {
   ];
 
   return (
-    <nav className="bottom-nav" aria-label="Main navigation">
+    <nav
+      className="bottom-nav"
+      aria-label="Main navigation"
+    >
       {items.map((item) => (
         <button
           key={item.label}
@@ -500,7 +511,9 @@ function AppNav({ onHome, onExplore, onSettings, activeScreen }) {
           onClick={item.action}
           type="button"
           aria-label={item.label}
-          aria-current={item.active ? "page" : undefined}
+          aria-current={
+            item.active ? "page" : undefined
+          }
         >
           <span className="bottom-nav-icon">
             {item.icon}
@@ -515,7 +528,10 @@ function AppNav({ onHome, onExplore, onSettings, activeScreen }) {
   );
 }
 
-function PlanetVisual({ planet, className = "" }) {
+function PlanetVisual({
+  planet,
+  className = "",
+}) {
   return planet.image ? (
     <img
       className={className}
@@ -535,19 +551,26 @@ function PlanetVisual({ planet, className = "" }) {
 
 function App() {
   const [progress, setProgress] = useState(savedGame);
+
   const [writingProgress, setWritingProgress] =
     useState(savedWritingProgress);
+
   const [screen, setScreen] = useState("home");
-  const [assessmentResults, setAssessmentResults] = useState(
-    savedAssessmentResults
-  );
+
+  const [assessmentResults, setAssessmentResults] =
+    useState(savedAssessmentResults);
+
   const [assessmentScores, setAssessmentScores] =
     useState(emptyPlutoResults);
+
   const [soundOn, setSoundOn] = useState(true);
   const [feedback, setFeedback] = useState("");
-  const [builtSentence, setBuiltSentence] = useState([]);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [revealedAnswer, setRevealedAnswer] = useState("");
+  const [builtSentence, setBuiltSentence] =
+    useState([]);
+  const [isProcessing, setIsProcessing] =
+    useState(false);
+  const [revealedAnswer, setRevealedAnswer] =
+    useState("");
 
   const advanceTimer = useRef(null);
 
@@ -579,7 +602,9 @@ function App() {
       planet.id === 5 ||
       question.type === "reading"
     ) {
-      return generateReadingOptions(question.answer);
+      return generateReadingOptions(
+        question.answer
+      );
     }
 
     if (
@@ -649,7 +674,9 @@ function App() {
     setRevealedAnswer("");
 
     if (id === 9) {
-      setAssessmentScores(emptyPlutoResults());
+      setAssessmentScores(
+        emptyPlutoResults()
+      );
     }
 
     if (advanceTimer.current) {
@@ -665,7 +692,10 @@ function App() {
       question: 0,
     }));
 
-    setAssessmentScores(emptyPlutoResults());
+    setAssessmentScores(
+      emptyPlutoResults()
+    );
+
     setBuiltSentence([]);
     setFeedback("");
     setIsProcessing(false);
@@ -730,7 +760,8 @@ function App() {
 
     setBuiltSentence((current) =>
       current.filter(
-        (_, wordIndex) => wordIndex !== index
+        (_, wordIndex) =>
+          wordIndex !== index
       )
     );
 
@@ -740,13 +771,16 @@ function App() {
   const selectSentenceWord = (word) => {
     if (
       isProcessing ||
-      builtSentence.length >= question.words.length
+      builtSentence.length >=
+        question.words.length
     ) {
       return;
     }
 
     const expectedWord =
-      question.words[builtSentence.length];
+      question.words[
+        builtSentence.length
+      ];
 
     const correctWord =
       word === expectedWord;
@@ -806,7 +840,9 @@ function App() {
       }
 
       if (planet.id === 9) {
-        finishPlutoAssessment(nextScores);
+        finishPlutoAssessment(
+          nextScores
+        );
       } else {
         playSound(victorySound);
         setScreen("celebration");
@@ -850,7 +886,9 @@ function App() {
       question.type === "reading"
     ) {
       setIsProcessing(true);
-      setRevealedAnswer(selectedAnswer);
+      setRevealedAnswer(
+        selectedAnswer
+      );
 
       advanceTimer.current = setTimeout(() => {
         if (
@@ -859,7 +897,8 @@ function App() {
         ) {
           setProgress((current) => ({
             ...current,
-            question: current.question + 1,
+            question:
+              current.question + 1,
           }));
 
           setRevealedAnswer("");
@@ -869,7 +908,9 @@ function App() {
         }
 
         if (planet.id === 9) {
-          finishPlutoAssessment(nextScores);
+          finishPlutoAssessment(
+            nextScores
+          );
         } else {
           playSound(victorySound);
           setScreen("celebration");
@@ -894,14 +935,23 @@ function App() {
     }
 
     if (planet.id === 9) {
-      finishPlutoAssessment(nextScores);
+      finishPlutoAssessment(
+        nextScores
+      );
     } else {
       playSound(victorySound);
       setScreen("celebration");
     }
   };
 
-  const completeWritingMission = (missionId) => {
+  // Writing missions:
+  // 1 = Alphabet
+  // 2 = Numbers
+  // 3 = Shapes
+  // 4 = Sentences
+  const completeWritingMission = (
+    missionId
+  ) => {
     const nextMission = missionId + 1;
 
     setWritingProgress((current) => ({
@@ -916,13 +966,19 @@ function App() {
   };
 
   const unlockNext = () => {
-    const nextPlanetId = planet.id + 1;
+    const nextPlanetId =
+      planet.id + 1;
 
-    const unlockedPlanet = planets.find(
-      (item) => item.id === nextPlanetId
-    );
+    const unlockedPlanet =
+      planets.find(
+        (item) =>
+          item.id === nextPlanetId
+      );
 
-    if (nextPlanetId > planets.length) {
+    if (
+      nextPlanetId >
+      planets.length
+    ) {
       setScreen("map");
       return;
     }
@@ -940,7 +996,9 @@ function App() {
     }));
 
     setScreen(
-      unlockedPlanet ? "planet" : "map"
+      unlockedPlanet
+        ? "planet"
+        : "map"
     );
   };
 
@@ -977,12 +1035,17 @@ function App() {
   if (screen === "explore") {
     content = (
       <main className="page adventure-hub">
-        <p className="eyebrow">LET'S EXPLORE</p>
+        <p className="eyebrow">
+          LET'S EXPLORE
+        </p>
 
-        <h1>What shall we explore?</h1>
+        <h1>
+          What shall we explore?
+        </h1>
 
         <p className="page-intro">
-          Pick an adventure and let's go!
+          Pick an adventure and
+          let's go!
         </p>
 
         <div className="adventure-grid">
@@ -997,55 +1060,88 @@ function App() {
             <span className="adventure-card-icon">
               <BookIcon />
             </span>
-            <strong>Reading</strong>
+
+            <strong>
+              Reading
+            </strong>
           </button>
 
           <button
             className="adventure-card"
-            onClick={() => setScreen("math")}
+            onClick={() =>
+              setScreen("math")
+            }
             type="button"
           >
             <span className="adventure-card-icon">
               <NumberIcon />
             </span>
-            <strong>Counting</strong>
+
+            <strong>
+              Counting
+            </strong>
           </button>
 
           <button
             className="adventure-card"
-            onClick={() => setScreen("writingMap")}
+            onClick={() =>
+              setScreen("writingMap")
+            }
             type="button"
           >
             <span className="adventure-card-icon">
               <PencilIcon />
             </span>
-            <strong>Writing</strong>
+
+            <strong>
+              Writing
+            </strong>
           </button>
         </div>
       </main>
     );
-  } else if (screen === "writingMap") {
+  } else if (
+    screen === "writingMap"
+  ) {
     content = (
       <main className="page writing-map-page">
-        <p className="eyebrow">YOUR JOURNEY</p>
+        <p className="eyebrow">
+          YOUR JOURNEY
+        </p>
 
-        <h1>Writing Map</h1>
+        <h1>
+          Writing Map
+        </h1>
 
         <p className="page-intro">
-          Choose a writing adventure and explore at your own pace.
+          Choose a writing adventure
+          and explore at your own pace.
         </p>
 
         <div className="planet-map writing-map">
+          {/* SCRIBBLER */}
           <button
             className="planet-card writing-map-free"
             type="button"
-            onClick={() => setScreen("scribbler")}
+            onClick={() =>
+              setScreen("scribbler")
+            }
           >
-            <span className="writing-map-icon">✏️</span>
-            <strong>Scribbler</strong>
-            <small>Write, draw and explore freely.</small>
+            <span className="writing-map-icon">
+              ✏️
+            </span>
+
+            <strong>
+              Scribbler
+            </strong>
+
+            <small>
+              Write, draw and explore
+              freely.
+            </small>
           </button>
 
+          {/* MISSION 1 */}
           <button
             className={`planet-card ${
               writingProgress.unlocked >= 1
@@ -1053,14 +1149,27 @@ function App() {
                 : "writing-map-locked"
             }`}
             type="button"
-            onClick={() => setScreen("writingMission1")}
-            disabled={writingProgress.unlocked < 1}
+            onClick={() =>
+              setScreen("writingMission1")
+            }
+            disabled={
+              writingProgress.unlocked < 1
+            }
           >
-            <span className="writing-map-icon">🔤</span>
-            <strong>Trace the Alphabet</strong>
-            <small>Trace A to Z.</small>
+            <span className="writing-map-icon">
+              🔤
+            </span>
+
+            <strong>
+              Trace the Alphabet
+            </strong>
+
+            <small>
+              Trace A to Z.
+            </small>
           </button>
 
+          {/* MISSION 2 */}
           <button
             className={`planet-card ${
               writingProgress.unlocked >= 2
@@ -1068,22 +1177,36 @@ function App() {
                 : "writing-map-locked"
             }`}
             type="button"
-            onClick={() => setScreen("writingMission2")}
-            disabled={writingProgress.unlocked < 2}
+            onClick={() =>
+              setScreen("writingMission2")
+            }
+            disabled={
+              writingProgress.unlocked < 2
+            }
           >
             {writingProgress.unlocked >= 2 ? (
-              <span className="writing-map-icon">123</span>
+              <span className="writing-map-icon">
+                123
+              </span>
             ) : (
-              <span className="writing-map-lock">🔒</span>
+              <span className="writing-map-lock">
+                🔒
+              </span>
             )}
-            <strong>Trace the Numbers</strong>
+
+            <strong>
+              Trace the Numbers
+            </strong>
+
             <small>
-              {writingProgress.unlocked >= 2
+              {writingProgress.unlocked >=
+              2
                 ? "Trace 0 to 20."
                 : "Complete the previous mission."}
             </small>
           </button>
 
+          {/* MISSION 3 */}
           <button
             className={`planet-card ${
               writingProgress.unlocked >= 3
@@ -1091,64 +1214,139 @@ function App() {
                 : "writing-map-locked"
             }`}
             type="button"
-            onClick={() => setScreen("writingMission3")}
-            disabled={writingProgress.unlocked < 3}
+            onClick={() =>
+              setScreen("writingMission3")
+            }
+            disabled={
+              writingProgress.unlocked < 3
+            }
           >
             {writingProgress.unlocked >= 3 ? (
-              <span className="writing-map-icon">△</span>
+              <span className="writing-map-icon">
+                △
+              </span>
             ) : (
-              <span className="writing-map-lock">🔒</span>
+              <span className="writing-map-lock">
+                🔒
+              </span>
             )}
-            <strong>Trace the Shapes</strong>
+
+            <strong>
+              Trace the Shapes
+            </strong>
+
             <small>
-              {writingProgress.unlocked >= 3
+              {writingProgress.unlocked >=
+              3
                 ? "Trace simple shapes."
                 : "Complete the previous mission."}
             </small>
           </button>
 
+          {/* MISSION 4 */}
           <button
-            className="planet-card writing-map-locked"
+            className={`planet-card ${
+              writingProgress.unlocked >= 4
+                ? "writing-map-active"
+                : "writing-map-locked"
+            }`}
             type="button"
-            disabled
+            onClick={() =>
+              setScreen("writingMission4")
+            }
+            disabled={
+              writingProgress.unlocked < 4
+            }
           >
-            <span className="writing-map-lock">🔒</span>
-            <strong>Write Sentences</strong>
-            <small>Complete the previous mission.</small>
+            {writingProgress.unlocked >= 4 ? (
+              <span className="writing-map-icon">
+                ✍️
+              </span>
+            ) : (
+              <span className="writing-map-lock">
+                🔒
+              </span>
+            )}
+
+            <strong>
+              Write Sentences
+            </strong>
+
+            <small>
+              {writingProgress.unlocked >=
+              4
+                ? "Write your own sentences."
+                : "Complete the previous mission."}
+            </small>
           </button>
         </div>
       </main>
     );
-  } else if (screen === "scribbler") {
-    content = <Scribbler onBack={() => setScreen("writingMap")} />;
-  } else if (screen === "writingMission1") {
+  } else if (
+    screen === "scribbler"
+  ) {
+    content = (
+      <Scribbler
+        onBack={() =>
+          setScreen("writingMap")
+        }
+      />
+    );
+  } else if (
+    screen === "writingMission1"
+  ) {
     content = (
       <AlphabetTracingMission
-        onBack={() => setScreen("writingMap")}
+        onBack={() =>
+          setScreen("writingMap")
+        }
         onComplete={() =>
           completeWritingMission(1)
         }
       />
     );
-  } else if (screen === "writingMission2") {
+  } else if (
+    screen === "writingMission2"
+  ) {
     content = (
       <NumberTracingMission
-        onBack={() => setScreen("writingMap")}
+        onBack={() =>
+          setScreen("writingMap")
+        }
         onComplete={() =>
           completeWritingMission(2)
         }
       />
     );
-  } else if (screen === "writingMission3") {
+  } else if (
+    screen === "writingMission3"
+  ) {
     content = (
       <ShapeTracingMission
-        onBack={() => setScreen("writingMap")}
+        onBack={() =>
+          setScreen("writingMap")
+        }
         onComplete={() =>
           completeWritingMission(3)
         }
       />
     );
-  } else if (screen === "home") {
+  } else if (
+    screen === "writingMission4"
+  ) {
+    content = (
+      <SentenceWritingMission
+        onBack={() =>
+          setScreen("writingMap")
+        }
+        onComplete={() =>
+          completeWritingMission(4)
+        }
+      />
+    );
+  } else if (
+    screen === "home"
+  ) {
     content = (
       <main className="hero-panel">
         <span className="hero-rocket">
@@ -1160,38 +1358,49 @@ function App() {
         </p>
 
         <h1>
-          Ready for a stellar adventure?
+          Ready for a stellar
+          adventure?
         </h1>
 
         <p>
-          Explore learning adventures across
-          letters, reading, maths, and the
+          Explore learning
+          adventures across
+          letters, reading,
+          maths, and the
           planets.
         </p>
 
         <div className="button-row">
           {action(
             "Explore",
-            () => setScreen("explore")
+            () =>
+              setScreen("explore")
           )}
 
           {assessmentResults &&
             action(
               "Parent Results",
-              () => setScreen("results"),
+              () =>
+                setScreen("results"),
               "secondary-button"
             )}
         </div>
       </main>
     );
-  } else if (screen === "math") {
+  } else if (
+    screen === "math"
+  ) {
     content = (
       <MathSection
-        onHome={() => setScreen("home")}
+        onHome={() =>
+          setScreen("home")
+        }
         soundOn={soundOn}
       />
     );
-  } else if (screen === "launch") {
+  } else if (
+    screen === "launch"
+  ) {
     content = (
       <main className="launch-panel">
         <div className="countdown-orbit">
@@ -1210,52 +1419,65 @@ function App() {
         </h1>
 
         <p>
-          Choose a planet to begin your next
-          learning mission.
+          Choose a planet to begin
+          your next learning mission.
         </p>
 
         {action(
           "View planet map",
-          () => setScreen("map")
+          () =>
+            setScreen("map")
         )}
       </main>
     );
-  } else if (screen === "map") {
+  } else if (
+    screen === "map"
+  ) {
     content = (
       <main className="page">
         <p className="eyebrow">
           YOUR JOURNEY
         </p>
 
-        <h1>Planet Map</h1>
+        <h1>
+          Planet Map
+        </h1>
 
         <p className="page-intro">
-          Complete each planet to unlock the
-          next destination.
+          Complete each planet to
+          unlock the next destination.
         </p>
 
         <div className="planet-map">
           {planets.map((item) => {
             const locked =
-              item.id > progress.unlocked;
+              item.id >
+              progress.unlocked;
 
             return (
               <button
                 key={item.id}
                 className={`planet-card ${
-                  locked ? "locked" : ""
+                  locked
+                    ? "locked"
+                    : ""
                 }`}
                 style={{
-                  "--planet": item.color,
+                  "--planet":
+                    item.color,
                 }}
                 disabled={locked}
                 onClick={() =>
-                  goToPlanet(item.id)
+                  goToPlanet(
+                    item.id
+                  )
                 }
                 type="button"
               >
                 {locked ? (
-                  <span>🔒</span>
+                  <span>
+                    🔒
+                  </span>
                 ) : (
                   <PlanetVisual
                     planet={item}
@@ -1263,7 +1485,9 @@ function App() {
                   />
                 )}
 
-                <strong>{item.name}</strong>
+                <strong>
+                  {item.name}
+                </strong>
 
                 <small>
                   {locked
@@ -1276,7 +1500,9 @@ function App() {
         </div>
       </main>
     );
-  } else if (screen === "planet") {
+  } else if (
+    screen === "planet"
+  ) {
     content = (
       <main className="planet-overview">
         <PlanetVisual
@@ -1289,7 +1515,8 @@ function App() {
         </p>
 
         <h1>
-          Welcome to Planet {planet.name}
+          Welcome to Planet{" "}
+          {planet.name}
         </h1>
 
         <p>
@@ -1305,7 +1532,9 @@ function App() {
               ? "Start assessment"
               : "Start mission",
           () => {
-            playSound(blastoffSound);
+            playSound(
+              blastoffSound
+            );
 
             if (planet.id === 9) {
               startPlutoAssessment();
@@ -1320,7 +1549,9 @@ function App() {
         )}
       </main>
     );
-  } else if (screen === "mission") {
+  } else if (
+    screen === "mission"
+  ) {
     const journeyPercent =
       (progress.question /
         missionQuestions.length) *
@@ -1346,7 +1577,9 @@ function App() {
               : planet.id === 9
                 ? "Question"
                 : "Star"}{" "}
-            {progress.question + 1} of{" "}
+            {progress.question +
+              1}{" "}
+            of{" "}
             {missionQuestions.length}
           </span>
         </div>
@@ -1384,11 +1617,15 @@ function App() {
                 style={{
                   minHeight: "540px",
                   display: "flex",
-                  flexDirection: "column",
+                  flexDirection:
+                    "column",
                 }}
               >
                 <div className="story-page-number">
-                  Page {progress.question + 1} of{" "}
+                  Page{" "}
+                  {progress.question +
+                    1}{" "}
+                  of{" "}
                   {missionQuestions.length}
                 </div>
 
@@ -1397,20 +1634,26 @@ function App() {
                   style={{
                     width: "100%",
                     height: "300px",
-                    margin: "0 auto 14px",
+                    margin:
+                      "0 auto 14px",
                     display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    alignItems:
+                      "center",
+                    justifyContent:
+                      "center",
                   }}
                 >
                   <img
-                    src={question.image}
+                    src={
+                      question.image
+                    }
                     alt=""
                     className="story-image"
                     style={{
                       width: "100%",
                       height: "100%",
-                      objectFit: "contain",
+                      objectFit:
+                        "contain",
                     }}
                   />
                 </div>
@@ -1420,12 +1663,17 @@ function App() {
                   style={{
                     minHeight: "85px",
                     display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
+                    flexDirection:
+                      "column",
+                    justifyContent:
+                      "center",
                   }}
                 >
                   {question.text.map(
-                    (line, index) => (
+                    (
+                      line,
+                      index
+                    ) => (
                       <p key={index}>
                         {line}
                       </p>
@@ -1442,7 +1690,8 @@ function App() {
                   previousStoryPage
                 }
                 disabled={
-                  progress.question === 0
+                  progress.question ===
+                  0
                 }
                 type="button"
               >
@@ -1451,18 +1700,22 @@ function App() {
 
               <button
                 className="primary-button story-button"
-                onClick={nextStoryPage}
+                onClick={
+                  nextStoryPage
+                }
                 type="button"
               >
                 {progress.question ===
-                missionQuestions.length - 1
+                missionQuestions.length -
+                  1
                   ? "Finish Book 🚀"
                   : "Next Page →"}
               </button>
             </div>
           </>
         ) : planet.id === 5 ||
-          question.type === "reading" ? (
+          question.type ===
+            "reading" ? (
           <>
             <p className="eyebrow">
               WHAT IS THIS?
@@ -1470,30 +1723,37 @@ function App() {
 
             <div className="reading-image-container">
               <img
-                src={question.image}
+                src={
+                  question.image
+                }
                 alt="Picture clue"
                 className="reading-image"
               />
             </div>
 
             <div className="answer-grid">
-              {options.map((word) => (
-                <button
-                  key={word}
-                  className="word-button"
-                  onClick={() =>
-                    answer(word)
-                  }
-                  disabled={isProcessing}
-                  type="button"
-                >
-                  {word}
-                </button>
-              ))}
+              {options.map(
+                (word) => (
+                  <button
+                    key={word}
+                    className="word-button"
+                    onClick={() =>
+                      answer(word)
+                    }
+                    disabled={
+                      isProcessing
+                    }
+                    type="button"
+                  >
+                    {word}
+                  </button>
+                )
+              )}
             </div>
           </>
         ) : planet.id === 6 ||
-          question.type === "missing" ? (
+          question.type ===
+            "missing" ? (
           <>
             <p className="eyebrow">
               FILL IN THE MISSING LETTER
@@ -1506,23 +1766,28 @@ function App() {
             </div>
 
             <div className="answer-grid">
-              {options.map((letter) => (
-                <button
-                  key={letter}
-                  className="letter-button"
-                  onClick={() =>
-                    answer(letter)
-                  }
-                  disabled={isProcessing}
-                  type="button"
-                >
-                  {letter}
-                </button>
-              ))}
+              {options.map(
+                (letter) => (
+                  <button
+                    key={letter}
+                    className="letter-button"
+                    onClick={() =>
+                      answer(letter)
+                    }
+                    disabled={
+                      isProcessing
+                    }
+                    type="button"
+                  >
+                    {letter}
+                  </button>
+                )
+              )}
             </div>
           </>
         ) : planet.id === 7 ||
-          question.type === "sentences" ? (
+          question.type ===
+            "sentences" ? (
           <>
             <p className="eyebrow">
               BUILD THE SENTENCE
@@ -1532,10 +1797,14 @@ function App() {
               className="sentence-target"
               aria-live="polite"
             >
-              {builtSentence.length > 0 ? (
+              {builtSentence.length >
+              0 ? (
                 <>
                   {builtSentence.map(
-                    (word, index) => (
+                    (
+                      word,
+                      index
+                    ) => (
                       <button
                         key={`${word}-${index}`}
                         className="sentence-word"
@@ -1556,20 +1825,24 @@ function App() {
                   )}
 
                   <span className="sentence-hint">
-                    Tap a word to remove it.
+                    Tap a word to remove
+                    it.
                   </span>
                 </>
               ) : (
                 <span className="sentence-placeholder">
-                  Tap the words in the right
-                  order
+                  Tap the words in the
+                  right order
                 </span>
               )}
             </div>
 
             <div className="answer-grid sentence-options">
               {options.map(
-                (word, index) => (
+                (
+                  word,
+                  index
+                ) => (
                   <button
                     key={`${word}-${index}`}
                     className="word-button"
@@ -1615,19 +1888,23 @@ function App() {
             )}
 
             <div className="answer-grid">
-              {options.map((letter) => (
-                <button
-                  key={letter}
-                  className="letter-button"
-                  onClick={() =>
-                    answer(letter)
-                  }
-                  disabled={isProcessing}
-                  type="button"
-                >
-                  {letter}
-                </button>
-              ))}
+              {options.map(
+                (letter) => (
+                  <button
+                    key={letter}
+                    className="letter-button"
+                    onClick={() =>
+                      answer(letter)
+                    }
+                    disabled={
+                      isProcessing
+                    }
+                    type="button"
+                  >
+                    {letter}
+                  </button>
+                )
+              )}
             </div>
           </>
         )}
@@ -1640,7 +1917,9 @@ function App() {
         </p>
       </main>
     );
-  } else if (screen === "celebration") {
+  } else if (
+    screen === "celebration"
+  ) {
     content = (
       <main className="celebration-panel">
         <span>🎉</span>
@@ -1664,71 +1943,93 @@ function App() {
         {planet.id === 9
           ? action(
               "See Parent Results",
-              () => setScreen("results")
+              () =>
+                setScreen(
+                  "results"
+                )
             )
-          : planet.id < planets.length
+          : planet.id <
+              planets.length
             ? action(
                 "Unlock next planet",
                 unlockNext
               )
             : action(
                 "Return to planet map",
-                () => setScreen("map")
+                () =>
+                  setScreen("map")
               )}
       </main>
     );
-  } else if (screen === "results") {
-    const resultEntries = plutoSkills.map(
-      (skill) => {
-        const result =
-          assessmentResults?.[skill.id] || {
-            correct: 0,
-            total: 4,
+  } else if (
+    screen === "results"
+  ) {
+    const resultEntries =
+      plutoSkills.map(
+        (skill) => {
+          const result =
+            assessmentResults?.[
+              skill.id
+            ] || {
+              correct: 0,
+              total: 4,
+            };
+
+          const percentage =
+            Math.round(
+              (result.correct /
+                result.total) *
+                100
+            );
+
+          const status =
+            percentage >= 90
+              ? "Strong"
+              : percentage >= 70
+                ? "Developing"
+                : "Keep Practicing";
+
+          return {
+            ...skill,
+            ...result,
+            percentage,
+            status,
           };
-
-        const percentage = Math.round(
-          (result.correct / result.total) *
-            100
-        );
-
-        const status =
-          percentage >= 90
-            ? "Strong"
-            : percentage >= 70
-              ? "Developing"
-              : "Keep Practicing";
-
-        return {
-          ...skill,
-          ...result,
-          percentage,
-          status,
-        };
-      }
-    );
+        }
+      );
 
     const overallCorrect =
       resultEntries.reduce(
-        (total, result) =>
-          total + result.correct,
+        (
+          total,
+          result
+        ) =>
+          total +
+          result.correct,
         0
       );
 
     const overallTotal =
       resultEntries.reduce(
-        (total, result) =>
-          total + result.total,
+        (
+          total,
+          result
+        ) =>
+          total +
+          result.total,
         0
       );
 
     const doingWell =
       resultEntries.filter(
-        (result) => result.percentage >= 70
+        (result) =>
+          result.percentage >= 70
       );
 
     const keepPracticing =
       resultEntries.filter(
-        (result) => result.percentage < 70
+        (result) =>
+          result.percentage < 70
       );
 
     content = (
@@ -1737,18 +2038,23 @@ function App() {
           ATLI SPACE GAME
         </p>
 
-        <h1>Parent Results</h1>
+        <h1>
+          Parent Results
+        </h1>
 
         <p className="page-intro">
-          Results from the final Pluto assessment
-          in Atli Space Game.
+          Results from the final Pluto
+          assessment in Atli Space Game.
         </p>
 
         <div className="result-summary">
-          <h2>Overall score</h2>
+          <h2>
+            Overall score
+          </h2>
 
           <strong>
-            {overallCorrect}/{overallTotal}
+            {overallCorrect}/
+            {overallTotal}
           </strong>
 
           <span>
@@ -1762,36 +2068,47 @@ function App() {
         </div>
 
         <div className="result-list">
-          {resultEntries.map((result) => (
-            <div
-              className="result-row"
-              key={result.id}
-            >
-              <strong>{result.name}</strong>
+          {resultEntries.map(
+            (result) => (
+              <div
+                className="result-row"
+                key={result.id}
+              >
+                <strong>
+                  {result.name}
+                </strong>
 
-              <span>
-                {result.correct}/
-                {result.total}
-              </span>
+                <span>
+                  {result.correct}/
+                  {result.total}
+                </span>
 
-              <span>
-                {result.percentage}%
-              </span>
+                <span>
+                  {result.percentage}%
+                </span>
 
-              <span>{result.status}</span>
-            </div>
-          ))}
+                <span>
+                  {result.status}
+                </span>
+              </div>
+            )
+          )}
         </div>
 
         <div className="result-columns">
           <section>
-            <h2>Doing well</h2>
+            <h2>
+              Doing well
+            </h2>
 
             <p>
-              {doingWell.length > 0
+              {doingWell.length >
+              0
                 ? doingWell
                     .map(
-                      (result) =>
+                      (
+                        result
+                      ) =>
                         result.name
                     )
                     .join(", ")
@@ -1800,13 +2117,18 @@ function App() {
           </section>
 
           <section>
-            <h2>Keep practicing</h2>
+            <h2>
+              Keep practicing
+            </h2>
 
             <p>
-              {keepPracticing.length > 0
+              {keepPracticing.length >
+              0
                 ? keepPracticing
                     .map(
-                      (result) =>
+                      (
+                        result
+                      ) =>
                         result.name
                     )
                     .join(", ")
@@ -1817,7 +2139,8 @@ function App() {
 
         {action(
           "Return home",
-          () => setScreen("home"),
+          () =>
+            setScreen("home"),
           "secondary-button"
         )}
       </main>
@@ -1829,26 +2152,35 @@ function App() {
           MISSION CONTROL
         </p>
 
-        <h1>Settings</h1>
+        <h1>
+          Settings
+        </h1>
 
         <label className="setting-row">
-          Sound effects and spoken prompts
+          Sound effects and spoken
+          prompts
 
           <button
             className="toggle"
             aria-pressed={soundOn}
             onClick={() =>
-              setSoundOn((on) => !on)
+              setSoundOn(
+                (on) => !on
+              )
             }
             type="button"
           >
-            {soundOn ? "On" : "Off"}
+            {soundOn
+              ? "On"
+              : "Off"}
           </button>
         </label>
 
         <button
           className="danger-button"
-          onClick={resetProgress}
+          onClick={
+            resetProgress
+          }
           type="button"
         >
           Reset game progress
@@ -1861,10 +2193,15 @@ function App() {
     <div className="app">
       {content}
 
-      {screen !== "scribbler" && (
+      {screen !==
+        "scribbler" && (
         <AppNav
-          onHome={() => setScreen("home")}
-          onExplore={() => setScreen("explore")}
+          onHome={() =>
+            setScreen("home")
+          }
+          onExplore={() =>
+            setScreen("explore")
+          }
           onSettings={() =>
             setScreen("settings")
           }

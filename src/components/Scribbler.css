@@ -1313,3 +1313,29 @@
   }
 }
 
+.scribbler-refresh {
+  width: 42px;
+  height: 42px;
+  padding: 8px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.scribbler-refresh svg {
+  width: 26px;
+  height: 26px;
+}
+
+.scribbler-refresh:hover {
+  transform: rotate(-20deg);
+}
+
+.scribbler-refresh:active {
+  transform: scale(0.92);
+}
