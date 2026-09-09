@@ -321,11 +321,23 @@ body {
 @media (max-width: 700px) and (orientation: portrait) {
 
   .alphabet-tracing-mission {
+    height: 100dvh;
     min-height: 100dvh;
-    height: auto;
-    padding: 12px 12px 110px;
+    max-height: 100dvh;
+
+    padding: 12px 12px 150px;
     box-sizing: border-box;
-    overflow: visible;
+
+    /*
+     * The mission itself owns the scroll area.
+     * This keeps the paper and toolbar together
+     * even if the main app wrapper has overflow rules.
+     */
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
   }
 
   .alphabet-mission-header {
@@ -354,6 +366,7 @@ body {
   .alphabet-mission-content {
     width: 100%;
     margin: 18px auto 0;
+    padding-bottom: 8px;
   }
 
   .alphabet-paper {
@@ -372,29 +385,45 @@ body {
       0 188px 0 rgba(83, 166, 198, 0.32);
   }
 
-  /* Keep the finalized A/a positioning. */
+  /*
+     Use the SAME vertical letter styling as the
+     working desktop/dashboard version.
+
+     Do not let the taller mobile paper change
+     the letter's internal alignment.
+  */
   .alphabet-target-display {
     left: 50%;
     top: 30%;
-    width: 72%;
+    width: min(520px, 88%);
     height: 188px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+
     gap: 10px;
   }
 
   .alphabet-uppercase {
     width: auto;
     height: 188px;
-    font-size: 205px;
+
+    font-size: 250px;
     line-height: 0.65;
+
     margin: 0;
   }
 
   .alphabet-lowercase {
     width: auto;
     height: 100px;
+
     margin: 0;
+
     position: relative;
     top: 73px;
+
     font-size: 170px;
     line-height: 0.55;
   }
@@ -402,15 +431,24 @@ body {
   /* Toolbar is BELOW the paper. */
   .alphabet-tool-bar {
     width: max-content;
+    height: max-content;
+
     margin: 14px auto 0;
+
+    display: grid;
     grid-template-columns: repeat(2, 48px);
     grid-template-rows: repeat(2, 48px);
     gap: 8px;
+
     position: relative;
     left: auto;
     right: auto;
     top: auto;
+    bottom: auto;
+
     transform: none;
+
+    flex-shrink: 0;
   }
 
   .alphabet-tool {
@@ -446,8 +484,9 @@ body {
 
   .alphabet-tracing-mission {
     min-height: 100dvh;
-    height: auto;
+    height: 100dvh;
     padding: 20px;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -496,7 +535,7 @@ body {
 @media (max-width: 420px) and (orientation: portrait) {
 
   .alphabet-tracing-mission {
-    padding: 8px 8px 110px;
+    padding: 8px 8px 150px;
   }
 
   .alphabet-paper {
