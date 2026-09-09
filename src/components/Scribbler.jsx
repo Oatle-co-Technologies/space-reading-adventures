@@ -33,25 +33,41 @@ const TOOLS = {
   },
 };
 
+const STICKERS = [
+  { name: "Star", type: "star", color: "#ffd45c" },
+  { name: "Heart", type: "heart", color: "#ef5b5b" },
+  { name: "Flower", type: "flower", color: "#f27bbd" },
+  { name: "Sun", type: "sun", color: "#ff9f43" },
+  { name: "Moon", type: "moon", color: "#a875e8" },
+  { name: "Cloud", type: "cloud", color: "#55c6ff" },
+];
+
+function StickerShape({ type, color }) {
+  if (type === "star") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true"><path fill={color} d="m24 4 5.7 11.6 12.8 1.9-9.2 9 2.2 12.7L24 33.2 12.5 39.2l2.2-12.7-9.2-9 12.8-1.9z" /></svg>;
+  }
+  if (type === "heart") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true"><path fill={color} d="M24 40S7 30 7 18.8C7 12.8 11.2 9 16.5 9c3.2 0 5.9 1.6 7.5 4.1C25.6 10.6 28.3 9 31.5 9 36.8 9 41 12.8 41 18.8 41 30 24 40 24 40Z" /></svg>;
+  }
+  if (type === "flower") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true"><path fill={color} d="M24 20c-5-10-14-7.4-12 1.1-8.5-2-11.1 7-1.1 9.9-5 7.2 3.2 13.5 9.1 6.7 4.7 7.5 13.7 2.2 10-6.2 8.5-3 5.9-12.8-4-10.5 1.8-8.4-6.6-12-12-1Z" /><circle cx="24" cy="24" r="5" fill="#ffd45c" /></svg>;
+  }
+  if (type === "sun") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="10" fill={color} /><path fill={color} d="M21.5 3h5v8h-5zm0 34h5v8h-5zM3 21.5h8v5H3zm34 0h8v5h-8zM8.1 11.6l3.5-3.5 5.7 5.7-3.5 3.5zm22.6 22.6 3.5-3.5 5.7 5.7-3.5 3.5zM32.2 13.8l5.7-5.7 3.5 3.5-5.7 5.7zM8.1 36.4l5.7-5.7 3.5 3.5-5.7 5.7z" /></svg>;
+  }
+  if (type === "moon") {
+    return <svg viewBox="0 0 48 48" aria-hidden="true"><path fill={color} d="M35.8 31.5A17 17 0 0 1 16.5 12.2 17 17 0 1 0 35.8 31.5Z" /></svg>;
+  }
+  return <svg viewBox="0 0 48 48" aria-hidden="true"><path fill={color} d="M10 34h28a8 8 0 0 0 0-16 12 12 0 0 0-22.5 2.5A6.8 6.8 0 0 0 10 34Z" /></svg>;
+}
+
 function PencilIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path
-        d="m15.2 4.2 4.6 4.6L8.1 20.5H3.5v-4.6z"
-        fill="currentColor"
-      />
-      <path
-        d="m13.6 5.8 4.6 4.6"
-        fill="none"
-        stroke="#ffffff"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        opacity=".75"
-      />
-      <path
-        d="m3.5 20.5 1.4-4.6 3.2 3.2z"
-        fill="currentColor"
-      />
+      <path d="M4 17.8 15.8 6l3.2 3.2L7.2 21H4z" fill="#ffd45c" />
+      <path d="m15.8 6 1.6-1.6a1.5 1.5 0 0 1 2.1 0l.1.1a1.5 1.5 0 0 1 0 2.1L19 7.8z" fill="#ef5b5b" />
+      <path d="m4 17.8 3.2 3.2H4z" fill="#202020" />
+      <path d="m6.2 15.6 3.2 3.2" stroke="#fff" strokeWidth="1.2" opacity=".55" />
     </svg>
   );
 }
@@ -59,17 +75,10 @@ function PencilIcon() {
 function PenIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path
-        d="M7 19 5 21l2-5L16.5 6.5l2 2L10 18z"
-        fill="currentColor"
-      />
-      <path
-        d="m15.5 7.5 2 2M17 5l2 2"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
+      <path d="M7.2 18.2 16.5 4.9l2.6 2.6-9.3 13.3-4 1.4z" fill="#55c6ff" />
+      <path d="m16.5 4.9 1.1-1.1a1.7 1.7 0 0 1 2.4 0l.2.2a1.7 1.7 0 0 1 0 2.4l-1.1 1.1z" fill="#234a8a" />
+      <path d="m7.2 18.2-1.4 4 4-1.4z" fill="#202020" />
+      <path d="m9.3 17.1 2.6 1.8" stroke="#fff" strokeWidth="1.2" opacity=".6" />
     </svg>
   );
 }
@@ -77,17 +86,10 @@ function PenIcon() {
 function BrushIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path
-        d="m14.8 4.2 5 5-8.9 8.9-5-5z"
-        fill="currentColor"
-      />
-      <path
-        d="M5.7 14.8c-2.1 1.5-2.4 3.5-1.9 5.2 1.7-.5 3.7-.2 5.2-1.9"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
+      <path d="m14.5 3.5 6 6-8.3 8.3-6-6z" fill="#a875e8" />
+      <path d="m6.1 11.8 6 6-2.5 2.5-6-6z" fill="#ff9f43" />
+      <path d="M3.6 14.3c-2 2-1.7 5.1.5 6.1 1-.1 2.4-.7 3.5-2.1z" fill="#ffd45c" />
+      <path d="m14.5 3.5 6 6" stroke="#fff" strokeWidth="1.2" opacity=".5" />
     </svg>
   );
 }
@@ -128,6 +130,8 @@ export default function Scribbler({ onBack }) {
     COLORS[0].value
   );
   const [tool, setTool] = useState("pencil");
+  const [selectedSticker, setSelectedSticker] = useState(null);
+  const [stickers, setStickers] = useState([]);
 
   useLayoutEffect(() => {
     const canvas = canvasRef.current;
@@ -222,6 +226,21 @@ export default function Scribbler({ onBack }) {
     canvas.setPointerCapture(event.pointerId);
 
     const point = getCanvasPoint(event, canvas);
+
+    if (selectedSticker) {
+      setStickers((current) => [
+        ...current,
+        {
+          id: `${selectedSticker.type}-${Date.now()}-${Math.random()}`,
+          type: selectedSticker.type,
+          color: selectedSticker.color,
+          x: point.x,
+          y: point.y,
+        },
+      ]);
+      return;
+    }
+
     const context = canvas.getContext("2d");
 
     drawingRef.current = true;
@@ -285,6 +304,7 @@ export default function Scribbler({ onBack }) {
 
   const selectTool = (nextTool) => {
     setTool(nextTool);
+    setSelectedSticker(null);
   };
 
   const erase = () => {
@@ -312,9 +332,26 @@ export default function Scribbler({ onBack }) {
           ))}
         </div>
 
+        <div className="scribbler-sticker-layer" aria-hidden="true">
+          {stickers.map((sticker) => (
+            <span
+              key={sticker.id}
+              className="scribbler-sticker-on-page"
+              style={{
+                left: sticker.x,
+                top: sticker.y,
+              }}
+            >
+              <StickerShape type={sticker.type} color={sticker.color} />
+            </span>
+          ))}
+        </div>
+
         <canvas
           ref={canvasRef}
-          className={`scribbler-canvas scribbler-canvas-${tool}`}
+          className={`scribbler-canvas scribbler-canvas-${tool} ${
+            selectedSticker ? "scribbler-canvas-sticker-mode" : ""
+          }`}
           data-tool={tool}
           aria-label="Scribble and write on the page"
           onPointerDown={handlePointerDown}
@@ -427,6 +464,27 @@ export default function Scribbler({ onBack }) {
               title={color.name}
             >
               <span />
+            </button>
+          ))}
+        </div>
+
+        <div className="scribbler-sticker-tools" aria-label="Stickers">
+          {STICKERS.map((sticker) => (
+            <button
+              key={sticker.type}
+              type="button"
+              className={`scribbler-sticker ${
+                selectedSticker?.type === sticker.type ? "selected" : ""
+              }`}
+              onClick={() => {
+                setSelectedSticker(sticker);
+                setTool("pencil");
+              }}
+              aria-label={`${sticker.name} sticker`}
+              aria-pressed={selectedSticker?.type === sticker.type}
+              title={sticker.name}
+            >
+              <StickerShape type={sticker.type} color={sticker.color} />
             </button>
           ))}
         </div>

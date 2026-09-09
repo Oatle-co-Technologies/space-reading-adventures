@@ -395,3 +395,86 @@
     height: 20px;
   }
 }
+/* Sticker section */
+.scribbler-sticker-tools {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  padding-top: 6px;
+  margin-top: 4px;
+  border-top: 1px solid rgba(255,255,255,.16);
+}
+
+.scribbler-sticker {
+  width: 34px;
+  height: 34px;
+  padding: 4px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: rgba(255,255,255,.08);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scribbler-sticker:hover,
+.scribbler-sticker.selected {
+  border-color: #ffd45c;
+  background: rgba(255,255,255,.18);
+}
+
+.scribbler-sticker svg {
+  width: 25px;
+  height: 25px;
+  display: block;
+}
+
+.scribbler-sticker-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.scribbler-sticker-on-page {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  transform: translate(-50%, -50%);
+  display: block;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.12));
+}
+
+.scribbler-sticker-on-page svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.scribbler-canvas {
+  position: relative;
+  z-index: 3;
+}
+
+.scribbler-canvas-sticker-mode {
+  cursor: crosshair;
+}
+
+@media (max-width: 700px) {
+  .scribbler-sticker-tools {
+    gap: 4px;
+  }
+
+  .scribbler-sticker {
+    width: 31px;
+    height: 31px;
+    padding: 3px;
+  }
+
+  .scribbler-sticker svg {
+    width: 23px;
+    height: 23px;
+  }
+}
