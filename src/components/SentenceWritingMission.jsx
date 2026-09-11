@@ -3,8 +3,8 @@ import "./Scribbler.css";
 import "./SentenceWritingMission.css";
 
 const SENTENCES = [
-  { id: "name", build: ({ name }) => name ? `My name is ${name}.` : "My name is Oatlile." },
-  { id: "age", build: ({ age }) => age ? `I am ${age} years old.` : "I am 5 years old." },
+  { id: "name", build: ({ name }) => name ? `My name is ${name}.` : "My name is Oadile." },
+  { id: "age", build: ({ age }) => age ? `I am ${age} years old.` : "I am 4 years old." },
   { id: "like", text: "I like to play." },
   { id: "colour", text: "My favourite colour is blue." },
   { id: "family", text: "I have two brothers." },
@@ -267,11 +267,14 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
   };
 
   useEffect(() => {
-    let frameId = null;
+    let frameId;
 
     const setup = () => {
       if (frameId) cancelAnimationFrame(frameId);
-      frameId = requestAnimationFrame(() => prepareCanvases());
+
+      frameId = requestAnimationFrame(() => {
+        prepareCanvases();
+      });
     };
 
     setup();
@@ -546,7 +549,7 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
           type="button"
           className="sentence-next-button"
           onClick={handleNext}
-          disabled={progress < 28}
+          disabled={!hasDrawingRef.current}
           aria-label={
             sentenceIndex === SENTENCES.length - 1
               ? "Complete writing mission"
