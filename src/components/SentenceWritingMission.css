@@ -326,13 +326,13 @@
   .sentence-uppercase {
     height: 188px;
     top: clamp(31px, 3.64vw, 40px);
-    font-size: clamp(115px, 14.5vw, 160px);
+    font-size: clamp(100px, 14vw, 150px);
   }
 
   .sentence-lowercase {
     height: 100px;
     top: clamp(62px, 7.27vw, 80px);
-    font-size: clamp(81px, 10.15vw, 112px);
+    font-size: clamp(75px, 9.5vw, 100px);
   }
 
   .sentence-next-button {
