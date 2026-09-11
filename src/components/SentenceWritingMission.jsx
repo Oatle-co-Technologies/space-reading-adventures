@@ -32,7 +32,6 @@ const DEFAULT_COLOR = "#000000";
   paper stays available as additional preschool writing rows.
 */
 const ROWS = 4;
-const LINE_GAP = 0;
 
 function PencilIcon() {
   return (
@@ -95,7 +94,7 @@ function ToolIcon({ type }) {
 export default function SentenceWritingMission({ onBack, onComplete }) {
   const canvasRef = useRef(null);
   const targetCanvasRef = useRef(null);
-  const guideCanvasRef = useRef(null);
+  const guideDisplayRef = useRef(null);
 
   const drawingRef = useRef(false);
   const lastPointRef = useRef(null);
@@ -128,12 +127,44 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
     };
   };
 
-  const prepareCanvases = () => {
+  /*
+    The visible sentence guide is HTML, just like the Alphabet
+    tracing activity. This means the uppercase/lowercase geometry
+    is controlled by CSS instead of being approximated inside canvas.
+  */
+  const renderSentenceCharacters = () => {
+    return [...sentence].map((character, index) => {
+      const isUppercase =
+        character !== character.toLowerCase() &&
+        character === character.toUpperCase();
+
+      const className = isUppercase
+        ? "sentence-uppercase"
+        : "sentence-lowercase";
+
+      return (
+        <span
+          key={`${character}-${index}`}
+          className={className}
+          aria-hidden="true"
+        >
+          {character === " " ? "\u00A0" : character}
+        </span>
+      );
+    });
+  };
+
+  /*
+    The target canvas mirrors the actual HTML guide positions.
+    We read each rendered character's DOM rectangle and font,
+    then paint the same glyph into the hidden tracing mask.
+  */
+  const prepareTargetCanvas = () => {
     const drawingCanvas = canvasRef.current;
     const targetCanvas = targetCanvasRef.current;
-    const guideCanvas = guideCanvasRef.current;
+    const guideDisplay = guideDisplayRef.current;
 
-    if (!drawingCanvas || !targetCanvas || !guideCanvas) return;
+    if (!drawingCanvas || !targetCanvas || !guideDisplay) return;
 
     const rect = drawingCanvas.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
@@ -142,288 +173,96 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
     const width = Math.max(1, Math.round(rect.width * dpr));
     const height = Math.max(1, Math.round(rect.height * dpr));
 
-    [drawingCanvas, targetCanvas, guideCanvas].forEach((canvas) => {
-      canvas.width = width;
-      canvas.height = height;
-    });
+    targetCanvas.width = width;
+    targetCanvas.height = height;
 
-    const drawContext = drawingCanvas.getContext("2d");
-    if (drawContext) {
-      drawContext.setTransform(1, 0, 0, 1, 0, 0);
-      drawContext.clearRect(0, 0, width, height);
-    }
-
-    drawSentenceWorkbookGuide(guideCanvas, targetCanvas, rect.width, rect.height, dpr);
-  };
-
-  const drawSentenceWorkbookGuide = (
-    guideCanvas,
-    targetCanvas,
-    cssWidth,
-    cssHeight,
-    dpr
-  ) => {
-    const guideCtx = guideCanvas.getContext("2d");
     const targetCtx = targetCanvas.getContext("2d", {
       willReadFrequently: true,
     });
 
-    if (!guideCtx || !targetCtx) return;
+    if (!targetCtx) return;
 
-    guideCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
     targetCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    targetCtx.clearRect(0, 0, rect.width, rect.height);
+    targetCtx.fillStyle = "#000000";
+    targetCtx.textAlign = "center";
+    targetCtx.textBaseline = "alphabetic";
 
-    guideCtx.clearRect(0, 0, cssWidth, cssHeight);
-    targetCtx.clearRect(0, 0, cssWidth, cssHeight);
-
-    /*
-      This is the IMPORTANT part of Mission 4.
-
-      We are using the Alphabet mission's handwriting geometry:
-        uppercase = 250px
-        lowercase = 170px
-        lowercase starts 73px below the uppercase top
-
-      The sentence is simply placed inside the FIRST workbook row.
-      The workbook itself supplies many repeated rows underneath.
-
-      We scale the complete sentence uniformly only when the available
-      row is physically too small. This preserves the exact proportions
-      between uppercase/lowercase letters and their three guide lines.
-    */
-    const rowHeight = cssHeight / ROWS;
-
-    const topLine = 0;
-    const middleLine = rowHeight * 0.5;
-    const baseline = rowHeight;
-
-    const UPPERCASE_SIZE = 250;
-    const LOWERCASE_SIZE = 170;
-    const LOWERCASE_OFFSET = 73;
-
-    const weight = "700";
-
-    /*
-      Build the sentence using the same two sizes as Alphabet Tracing.
-      Spaces and punctuation use the lowercase size for their metrics.
-    */
-    const characters = [...sentence];
-
-    const measureCharacter = (character) => {
-      const isUpper =
-        character !== character.toLowerCase() &&
-        character !== character.toUpperCase();
-
-      const uppercase =
-        character.toUpperCase() === character &&
-        character.toLowerCase() !== character;
-
-      const size = uppercase
-        ? UPPERCASE_SIZE
-        : LOWERCASE_SIZE;
-
-      const font = `${weight} ${size}px ${FONT_FAMILY}`;
-      guideCtx.font = font;
-
-      return {
-        character,
-        uppercase,
-        size,
-        width: guideCtx.measureText(character).width,
-      };
-    };
-
-    const glyphs = characters.map(measureCharacter);
-
-    const naturalWidth = glyphs.reduce(
-      (total, glyph) => total + glyph.width,
-      0
+    const guideRect = guideDisplay.getBoundingClientRect();
+    const characters = guideDisplay.querySelectorAll(
+      ".sentence-uppercase, .sentence-lowercase"
     );
 
-    const horizontalPadding = Math.max(
-      24,
-      cssWidth * 0.025
-    );
+    characters.forEach((element) => {
+      const character = element.textContent || "";
+      if (!character || character === "\u00A0") return;
 
-    const availableWidth =
-      cssWidth - horizontalPadding * 2;
+      const elementRect = element.getBoundingClientRect();
+      const computed = window.getComputedStyle(element);
 
-    /*
-      The Alphabet sizes remain the source values.
-      If a long sentence cannot physically fit, compress only the
-      horizontal presentation. Vertical letter size and vertical
-      positioning remain tied to the Alphabet geometry.
-    */
-    const scaleX = Math.min(
-      1,
-      availableWidth / Math.max(1, naturalWidth)
-    );
+      const fontSize = parseFloat(computed.fontSize) || 170;
+      const fontWeight = computed.fontWeight || "700";
+      const fontFamily = computed.fontFamily || FONT_FAMILY;
+      const lineHeight = computed.lineHeight;
 
-    const naturalHeight = 250;
-    const verticalScale = Math.min(
-      1,
-      rowHeight / naturalHeight
-    );
-
-    /*
-      One scale keeps the complete handwriting system together.
-      On a normal desktop row this is 1, so the values are literally
-      250px / 170px / 73px just like Alphabet Tracing.
-    */
-    const scale = Math.min(
-      1,
-      verticalScale
-    );
-
-    const finalScaleX = scaleX;
-    const finalScaleY = scale;
-
-    /*
-      The Alphabet mission's lowercase block begins 73px below the
-      uppercase block. Scale that exact relationship with the row.
-    */
-    const firstRowTop = topLine;
-
-    /*
-      Use the font's real metrics to put:
-        uppercase cap top -> top line
-        lowercase x-height -> middle line
-        descenders -> baseline / below it where the font requires
-
-      This is more faithful than vertically centering ordinary text.
-    */
-    const drawGlyph = (
-      ctx,
-      glyph,
-      x,
-      scaleXForGlyph,
-      scaleYForGlyph
-    ) => {
-      const { character, uppercase, size } = glyph;
-
-      if (character === " ") {
-        return;
-      }
-
-      ctx.save();
+      targetCtx.font =
+        `${fontWeight} ${fontSize}px ${fontFamily}`;
 
       /*
-        Horizontal scaling is applied around the glyph's center only.
-        The actual font sizes remain 250px / 170px.
+        The HTML element's top/height is the source of truth.
+        Use its actual bounding box so the hidden target follows
+        the CSS geometry exactly.
       */
-      ctx.translate(x, 0);
-      ctx.scale(scaleXForGlyph, scaleYForGlyph);
+      const x =
+        elementRect.left -
+        rect.left +
+        elementRect.width / 2;
 
-      ctx.font = `${weight} ${size}px ${FONT_FAMILY}`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "alphabetic";
+      const top =
+        elementRect.top -
+        rect.top;
 
-      const referenceCharacter = uppercase ? "H" : "x";
-      const metrics = ctx.measureText(referenceCharacter);
+      const metrics = targetCtx.measureText(character);
 
       const ascent =
         metrics.actualBoundingBoxAscent ||
-        (uppercase ? size * 0.72 : size * 0.52);
+        fontSize * 0.75;
 
       /*
-        Match the Alphabet layout:
-          uppercase begins at the top of its 188px block
-          lowercase is shifted down by 73px
+        The glyph is drawn so its top aligns with the top of the
+        corresponding CSS handwriting block.
       */
-      const desiredTop =
-        uppercase
-          ? firstRowTop
-          : firstRowTop + LOWERCASE_OFFSET;
+      const baseline =
+        top + ascent;
 
-      const baselineY =
-        desiredTop + ascent;
-
-      ctx.fillText(
-        character,
-        0,
-        baselineY
-      );
-
-      ctx.restore();
-    };
-
-    const drawSentence = (ctx) => {
-      ctx.fillStyle = GUIDE_COLOR;
-
-      /*
-        First calculate the x positions using the natural glyph widths.
-        The sentence is centered as one complete handwriting phrase.
-      */
-      let cursor =
-        cssWidth / 2 -
-        (naturalWidth * finalScaleX) / 2;
-
-      glyphs.forEach((glyph) => {
-        const centerX =
-          cursor + glyph.width / 2;
-
-        drawGlyph(
-          ctx,
-          glyph,
-          centerX,
-          finalScaleX,
-          finalScaleY
-        );
-
-        cursor += glyph.width;
-      });
-    };
-
-    const drawTarget = (ctx) => {
-      ctx.fillStyle = "#000000";
-
-      let cursor =
-        cssWidth / 2 -
-        (naturalWidth * finalScaleX) / 2;
-
-      glyphs.forEach((glyph) => {
-        const centerX =
-          cursor + glyph.width / 2;
-
-        drawGlyph(
-          ctx,
-          glyph,
-          centerX,
-          finalScaleX,
-          finalScaleY
-        );
-
-        cursor += glyph.width;
-      });
-    };
-
-    drawSentence(guideCtx);
-    drawTarget(targetCtx);
+      targetCtx.fillText(character, x, baseline);
+    });
   };
 
-  useEffect(() => {
-    let frame = 0;
-    let observer;
+  const prepareCanvases = () => {
+    const drawingCanvas = canvasRef.current;
+    const targetCanvas = targetCanvasRef.current;
 
-    const setup = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(prepareCanvases);
-    };
+    if (!drawingCanvas || !targetCanvas) return;
 
-    setup();
-    window.addEventListener("resize", setup);
+    const rect = drawingCanvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
 
-    if (canvasRef.current && typeof ResizeObserver !== "undefined") {
-      observer = new ResizeObserver(setup);
-      observer.observe(canvasRef.current);
-    }
+    const dpr = window.devicePixelRatio || 1;
+    const width = Math.max(1, Math.round(rect.width * dpr));
+    const height = Math.max(1, Math.round(rect.height * dpr));
 
-    return () => {
-      cancelAnimationFrame(frame);
-      observer?.disconnect();
-      window.removeEventListener("resize", setup);
-    };
-  }, [sentenceIndex, sentence]);
+    drawingCanvas.width = width;
+    drawingCanvas.height = height;
+
+    /*
+      Give the DOM guide one frame to lay itself out, then build
+      the hidden tracing target from those exact positions.
+    */
+    requestAnimationFrame(() => {
+      prepareTargetCanvas();
+    });
+  };
 
   const coverageReached = () => {
     const drawingCanvas = canvasRef.current;
@@ -646,11 +485,13 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
               ))}
             </div>
 
-            <canvas
-              ref={guideCanvasRef}
-              className="sentence-guide-canvas"
+            <div
+              ref={guideDisplayRef}
+              className="sentence-target-display"
               aria-hidden="true"
-            />
+            >
+              {renderSentenceCharacters()}
+            </div>
 
             <canvas
               ref={canvasRef}
