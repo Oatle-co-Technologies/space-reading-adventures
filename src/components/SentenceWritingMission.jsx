@@ -99,6 +99,7 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
   const drawingRef = useRef(false);
   const lastPointRef = useRef(null);
   const completedRef = useRef(false);
+  const hasDrawingRef = useRef(false);
 
   const [sentenceIndex, setSentenceIndex] = useState(0);
   const [tool, setTool] = useState("pencil");
@@ -255,14 +256,34 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
     drawingCanvas.width = width;
     drawingCanvas.height = height;
 
-    /*
-      Give the DOM guide one frame to lay itself out, then build
-      the hidden tracing target from those exact positions.
-    */
+    const drawingCtx = drawingCanvas.getContext("2d");
+    if (drawingCtx) {
+      drawingCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
     requestAnimationFrame(() => {
       prepareTargetCanvas();
     });
   };
+
+  useEffect(() => {
+    let frameId = null;
+
+    const setup = () => {
+      if (frameId) cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(() => prepareCanvases());
+    };
+
+    setup();
+    window.addEventListener("resize", setup);
+    window.addEventListener("orientationchange", setup);
+
+    return () => {
+      if (frameId) cancelAnimationFrame(frameId);
+      window.removeEventListener("resize", setup);
+      window.removeEventListener("orientationchange", setup);
+    };
+  }, [sentenceIndex]);
 
   const coverageReached = () => {
     const drawingCanvas = canvasRef.current;
@@ -380,7 +401,8 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
     const point = getCanvasPoint(event, canvas);
     lastPointRef.current = point;
     drawPoint(point);
-    checkTracingProgress();
+    hasDrawingRef.current = true;
+    setProgress(100);
   };
 
   const handlePointerMove = (event) => {
@@ -407,7 +429,9 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
       lastPointRef.current = point;
     });
 
-    checkTracingProgress();
+    if (hasDrawingRef.current) {
+      setProgress(100);
+    }
   };
 
   const releasePointer = (event) => {
@@ -434,16 +458,21 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
     const context = canvas.getContext("2d");
     if (!context) return;
 
+    const dpr = window.devicePixelRatio || 1;
+
     context.save();
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.restore();
 
+    context.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    hasDrawingRef.current = false;
     setProgress(0);
   };
 
   const handleNext = () => {
-    if (progress < 28) return;
+    if (!hasDrawingRef.current) return;
 
     if (sentenceIndex === SENTENCES.length - 1) {
       onComplete?.();
