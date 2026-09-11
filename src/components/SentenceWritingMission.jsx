@@ -335,10 +335,6 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
             </div>
           )}
 
-          <div className="sentence-model" aria-live="polite">
-            {sentence}
-          </div>
-
           <div className="sentence-writing-area">
             <div className="scribbler-lines" aria-hidden="true">
               {Array.from({ length: 4 }, (_, index) => (
@@ -346,11 +342,15 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
               ))}
             </div>
 
+            <div className="sentence-model" aria-live="polite">
+              {sentence}
+            </div>
+
             <canvas
               ref={canvasRef}
               className={`scribbler-canvas scribbler-canvas-${tool}`}
               data-tool={tool}
-              aria-label="Write the sentence"
+              aria-label="Trace the sentence"
               onPointerDown={startDrawing}
               onPointerMove={draw}
               onPointerUp={stopDrawing}
@@ -410,7 +410,7 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
       </aside>
 
       <p className="sentence-writing-hint">
-        Answer the question, then trace the whole sentence.
+        Trace the whole sentence.
       </p>
     </main>
   );
