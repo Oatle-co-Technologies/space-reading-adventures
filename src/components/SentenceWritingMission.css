@@ -94,18 +94,20 @@
 }
 
 /* =========================================
-   PRESCHOOL HANDWRITING LINES
-   =========================================
+   PRESCHOOL HANDWRITING WORKBOOK
+   ========================================= */
 
-   4 writing rows.
-   Each row is represented by 3 guide lines:
-   1. top line
-   2. middle line
-   3. baseline
+/*
+   The workbook contains repeated handwriting
+   rows rather than one giant text area.
 
-   The letters themselves are positioned by the
-   Mission 4 tracing renderer using the same
-   handwriting geometry as Alphabet Tracing.
+   Each row has:
+   TOP
+   MIDDLE
+   BASELINE
+
+   The three-line geometry is the same geometry
+   used by Alphabet Tracing.
 */
 
 .sentence-workbook-lines {
@@ -113,7 +115,16 @@
   inset: 0;
   z-index: 1;
   display: grid;
-  grid-template-rows: repeat(12, 1px);
+
+  /*
+     Four handwriting rows.
+     Three lines per row.
+  */
+  grid-template-rows:
+    repeat(4, 1px)
+    repeat(4, 1px)
+    repeat(4, 1px);
+
   align-content: space-between;
   pointer-events: none;
 }
@@ -127,7 +138,113 @@
 }
 
 /* =========================================
-   SENTENCE GUIDE
+   SENTENCE TRACING LETTER GEOMETRY
+   =========================================
+
+   These values are copied directly from the
+   Alphabet Tracing Mission.
+
+   UPPERCASE:
+   250px
+   188px block
+   line-height .65
+
+   LOWERCASE:
+   170px
+   100px block
+   top: 73px
+   line-height .55
+
+   Do not change these unless intentionally
+   changing the handwriting model.
+*/
+
+/* The complete sentence guide container. */
+.sentence-target-display {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: min(94%, 1400px);
+  height: 188px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Capital letters use the EXACT Alphabet geometry. */
+.sentence-uppercase {
+  width: auto;
+  height: 188px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  color: rgba(82, 172, 205, 0.30);
+
+  font-family:
+    "Andika",
+    "Comic Sans MS",
+    "Chalkboard SE",
+    sans-serif;
+
+  font-size: 250px;
+  font-weight: 700;
+  line-height: 0.65;
+
+  margin: 0;
+  padding: 0;
+}
+
+/* Lowercase letters use the EXACT Alphabet geometry. */
+.sentence-lowercase {
+  width: auto;
+  height: 100px;
+
+  margin: 0;
+
+  position: relative;
+  top: 73px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  color: rgba(82, 172, 205, 0.30);
+
+  font-family:
+    "Andika",
+    "Comic Sans MS",
+    "Chalkboard SE",
+    sans-serif;
+
+  font-size: 170px;
+  font-weight: 700;
+  line-height: 0.55;
+
+  padding: 0;
+}
+
+/*
+   When individual characters are rendered,
+   preserve the Alphabet font exactly.
+*/
+.sentence-uppercase *,
+.sentence-lowercase * {
+  font-family:
+    "Andika",
+    "Comic Sans MS",
+    "Chalkboard SE",
+    sans-serif;
+
+  font-weight: 700;
+}
+
+/* =========================================
+   CANVAS GUIDE
    ========================================= */
 
 .sentence-guide-canvas {
@@ -140,10 +257,9 @@
   pointer-events: none;
 }
 
-/*
-   The visible guide must remain underneath the
-   child's black tracing strokes.
-*/
+/* =========================================
+   CHILD'S TRACING CANVAS
+   ========================================= */
 
 .sentence-writing-area .scribbler-canvas {
   position: absolute;
@@ -153,17 +269,20 @@
   height: 100%;
   display: block;
   background: transparent;
+
   touch-action: none;
+
   -webkit-user-select: none;
   user-select: none;
+
   -webkit-touch-callout: none;
+
   cursor: crosshair;
 }
 
-/*
-   Hidden tracing mask.
-   It is never visible and never receives pointer input.
-*/
+/* =========================================
+   HIDDEN TRACING TARGET
+   ========================================= */
 
 .sentence-target-canvas {
   position: absolute;
@@ -172,6 +291,7 @@
   width: 100%;
   height: 100%;
   display: block;
+
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -186,16 +306,23 @@
   right: 18px;
   bottom: 16px;
   z-index: 10;
+
   width: 52px;
   height: 52px;
+
   border: 0;
   border-radius: 50%;
+
   background: #fff;
   color: #234a8a;
+
   font-size: 28px;
   line-height: 1;
+
   cursor: pointer;
-  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.14);
+
+  box-shadow:
+    0 5px 14px rgba(0, 0, 0, 0.14);
 }
 
 .sentence-next-button:disabled {
@@ -210,6 +337,7 @@
 .sentence-writing-toolbar {
   grid-column: 2;
   grid-row: 2;
+
   width: 100%;
   height: 100%;
   min-width: 0;
@@ -222,9 +350,12 @@
 
 .sentence-writing-hint {
   grid-column: 1 / -1;
+
   margin: 0;
+
   color: #fff;
   text-align: center;
+
   font-size: 15px;
   font-weight: 600;
 }
@@ -232,11 +363,6 @@
 /* =========================================
    LANDSCAPE ONLY
    ========================================= */
-
-/*
-   Mission 4 does not have a portrait version.
-   If the device is upright, the mission is not rendered.
-*/
 
 @media (orientation: portrait) {
   .sentence-writing-page {
