@@ -233,6 +233,12 @@
 }
 
 @media (orientation: portrait) {
+  /* Scribbler.css has its own portrait ::before message.
+     Mission 4 uses its own portrait screen, so hide the generic one. */
+  .sentence-writing-page::before {
+    display: none;
+  }
+
   .sentence-writing-page {
     display: flex;
     width: 100vw;
