@@ -380,3 +380,15 @@
   }
 
 }
+
+.sentence-writing-area .scribbler-canvas {
+  pointer-events: auto;
+  z-index: 3;
+}
+
+.sentence-workbook-lines,
+.sentence-target-display,
+.sentence-target-canvas {
+  pointer-events: none;
+}
+
