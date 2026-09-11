@@ -150,7 +150,7 @@
 .sentence-target-display {
   position: absolute;
   left: 50%;
-  top: 0;
+  top: 10px;
   transform: translateX(-50%);
 
   width: max-content;
