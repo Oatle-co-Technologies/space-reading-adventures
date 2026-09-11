@@ -4,10 +4,15 @@
    LANDSCAPE ONLY
    ========================================= */
 
+/*
+   Mission 4 owns the workbook page layout.
+   Scribbler.css owns the shared writing tools.
+*/
+
 .sentence-writing-page {
   width: 100%;
-  min-height: 100dvh;
   height: 100dvh;
+  min-height: 100dvh;
   padding: 54px 5vw 18px;
   box-sizing: border-box;
   display: grid;
@@ -52,6 +57,10 @@
   white-space: nowrap;
 }
 
+/* =========================================
+   WRITING PAPER
+   ========================================= */
+
 .sentence-writing-paper {
   grid-column: 1;
   grid-row: 2;
@@ -84,16 +93,21 @@
   background: #fff;
 }
 
-/*
-   The paper is divided into repeated preschool handwriting rows.
+/* =========================================
+   PRESCHOOL HANDWRITING LINES
+   =========================================
 
-   Every row has:
+   4 writing rows.
+   Each row is represented by 3 guide lines:
    1. top line
    2. middle line
    3. baseline
 
-   Four rows = twelve horizontal lines.
+   The letters themselves are positioned by the
+   Mission 4 tracing renderer using the same
+   handwriting geometry as Alphabet Tracing.
 */
+
 .sentence-workbook-lines {
   position: absolute;
   inset: 0;
@@ -109,14 +123,13 @@
   height: 1.5px;
   background: rgba(83, 166, 198, 0.32);
   transform: translateY(-0.25px);
+  pointer-events: none;
 }
 
-/*
-   The guide sentence is drawn directly onto the same coordinate
-   system as the tracing target.
+/* =========================================
+   SENTENCE GUIDE
+   ========================================= */
 
-   It occupies the FIRST preschool handwriting row only.
-*/
 .sentence-guide-canvas {
   position: absolute;
   inset: 0;
@@ -127,7 +140,11 @@
   pointer-events: none;
 }
 
-/* Child's writing sits above the pale guide. */
+/*
+   The visible guide must remain underneath the
+   child's black tracing strokes.
+*/
+
 .sentence-writing-area .scribbler-canvas {
   position: absolute;
   inset: 0;
@@ -137,9 +154,17 @@
   display: block;
   background: transparent;
   touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  cursor: crosshair;
 }
 
-/* Target is a tracing mask only. It must never be visible or interactive. */
+/*
+   Hidden tracing mask.
+   It is never visible and never receives pointer input.
+*/
+
 .sentence-target-canvas {
   position: absolute;
   inset: 0;
@@ -151,6 +176,10 @@
   visibility: hidden;
   pointer-events: none;
 }
+
+/* =========================================
+   NEXT
+   ========================================= */
 
 .sentence-next-button {
   position: absolute;
@@ -174,6 +203,10 @@
   cursor: not-allowed;
 }
 
+/* =========================================
+   TOOLBAR
+   ========================================= */
+
 .sentence-writing-toolbar {
   grid-column: 2;
   grid-row: 2;
@@ -182,6 +215,10 @@
   min-width: 0;
   margin: 0;
 }
+
+/* =========================================
+   HINT
+   ========================================= */
 
 .sentence-writing-hint {
   grid-column: 1 / -1;
@@ -192,17 +229,25 @@
   font-weight: 600;
 }
 
+/* =========================================
+   LANDSCAPE ONLY
+   ========================================= */
+
 /*
-   Mission 4 is deliberately landscape-only.
-   There is NO portrait layout and NO portrait fallback.
+   Mission 4 does not have a portrait version.
+   If the device is upright, the mission is not rendered.
 */
+
 @media (orientation: portrait) {
   .sentence-writing-page {
     display: none;
   }
 }
 
-/* Smaller landscape devices. */
+/* =========================================
+   SMALL LANDSCAPE DEVICES
+   ========================================= */
+
 @media (orientation: landscape) and (max-height: 700px) {
   .sentence-writing-page {
     padding: 34px 3vw 10px;

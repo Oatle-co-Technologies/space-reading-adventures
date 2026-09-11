@@ -177,70 +177,228 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
     targetCtx.clearRect(0, 0, cssWidth, cssHeight);
 
     /*
-      The first workbook row occupies the upper portion of the paper.
-      Three guides define its handwriting geometry. More rows continue
-      below it exactly like a preschool writing book.
+      This is the IMPORTANT part of Mission 4.
+
+      We are using the Alphabet mission's handwriting geometry:
+        uppercase = 250px
+        lowercase = 170px
+        lowercase starts 73px below the uppercase top
+
+      The sentence is simply placed inside the FIRST workbook row.
+      The workbook itself supplies many repeated rows underneath.
+
+      We scale the complete sentence uniformly only when the available
+      row is physically too small. This preserves the exact proportions
+      between uppercase/lowercase letters and their three guide lines.
     */
     const rowHeight = cssHeight / ROWS;
-    const top = 8;
-    const middle = top + rowHeight * 0.50;
-    const baseline = top + rowHeight - 8;
 
-    /*
-      Match the visual scale of the Alphabet mission while allowing
-      the complete sentence to fit horizontally.
-    */
-    const horizontalPadding = Math.max(24, cssWidth * 0.035);
-    const availableWidth = cssWidth - horizontalPadding * 2;
+    const topLine = 0;
+    const middleLine = rowHeight * 0.5;
+    const baseline = rowHeight;
 
-    let fontSize = Math.min(112, rowHeight * 1.25);
+    const UPPERCASE_SIZE = 250;
+    const LOWERCASE_SIZE = 170;
+    const LOWERCASE_OFFSET = 73;
+
     const weight = "700";
 
-    guideCtx.font = `${weight} ${fontSize}px ${FONT_FAMILY}`;
-    let measured = guideCtx.measureText(sentence).width;
+    /*
+      Build the sentence using the same two sizes as Alphabet Tracing.
+      Spaces and punctuation use the lowercase size for their metrics.
+    */
+    const characters = [...sentence];
 
-    if (measured > availableWidth) {
-      fontSize *= availableWidth / measured;
-    }
+    const measureCharacter = (character) => {
+      const isUpper =
+        character !== character.toLowerCase() &&
+        character !== character.toUpperCase();
+
+      const uppercase =
+        character.toUpperCase() === character &&
+        character.toLowerCase() !== character;
+
+      const size = uppercase
+        ? UPPERCASE_SIZE
+        : LOWERCASE_SIZE;
+
+      const font = `${weight} ${size}px ${FONT_FAMILY}`;
+      guideCtx.font = font;
+
+      return {
+        character,
+        uppercase,
+        size,
+        width: guideCtx.measureText(character).width,
+      };
+    };
+
+    const glyphs = characters.map(measureCharacter);
+
+    const naturalWidth = glyphs.reduce(
+      (total, glyph) => total + glyph.width,
+      0
+    );
+
+    const horizontalPadding = Math.max(
+      24,
+      cssWidth * 0.025
+    );
+
+    const availableWidth =
+      cssWidth - horizontalPadding * 2;
 
     /*
-      Never shrink the vertical handwriting proportions more than
-      necessary. The sentence is allowed to use the wide landscape row.
+      The Alphabet sizes remain the source values.
+      If a long sentence cannot physically fit, compress only the
+      horizontal presentation. Vertical letter size and vertical
+      positioning remain tied to the Alphabet geometry.
     */
-    fontSize = Math.max(42, fontSize);
+    const scaleX = Math.min(
+      1,
+      availableWidth / Math.max(1, naturalWidth)
+    );
 
-    guideCtx.font = `${weight} ${fontSize}px ${FONT_FAMILY}`;
-    targetCtx.font = `${weight} ${fontSize}px ${FONT_FAMILY}`;
+    const naturalHeight = 250;
+    const verticalScale = Math.min(
+      1,
+      rowHeight / naturalHeight
+    );
 
     /*
-      Canvas text is positioned by baseline. Using the font metrics lets
-      the capital height sit against the top guide and lowercase letters
-      sit around the middle guide, instead of vertically centering text.
+      One scale keeps the complete handwriting system together.
+      On a normal desktop row this is 1, so the values are literally
+      250px / 170px / 73px just like Alphabet Tracing.
     */
-    const metrics = guideCtx.measureText("H");
-    const ascent = metrics.actualBoundingBoxAscent || fontSize * 0.72;
-    const descent = metrics.actualBoundingBoxDescent || fontSize * 0.18;
+    const scale = Math.min(
+      1,
+      verticalScale
+    );
 
-    let baselineY = baseline - descent;
+    const finalScaleX = scaleX;
+    const finalScaleY = scale;
 
     /*
-      For a preschool workbook, the cap height should reach close to the
-      top line. If the font's metrics leave a gap, move the baseline up.
+      The Alphabet mission's lowercase block begins 73px below the
+      uppercase block. Scale that exact relationship with the row.
     */
-    const capTop = baselineY - ascent;
-    const desiredCapTop = top;
-    baselineY += desiredCapTop - capTop;
+    const firstRowTop = topLine;
 
-    guideCtx.textAlign = "center";
-    guideCtx.textBaseline = "alphabetic";
-    targetCtx.textAlign = "center";
-    targetCtx.textBaseline = "alphabetic";
+    /*
+      Use the font's real metrics to put:
+        uppercase cap top -> top line
+        lowercase x-height -> middle line
+        descenders -> baseline / below it where the font requires
 
-    guideCtx.fillStyle = GUIDE_COLOR;
-    targetCtx.fillStyle = "#000000";
+      This is more faithful than vertically centering ordinary text.
+    */
+    const drawGlyph = (
+      ctx,
+      glyph,
+      x,
+      scaleXForGlyph,
+      scaleYForGlyph
+    ) => {
+      const { character, uppercase, size } = glyph;
 
-    guideCtx.fillText(sentence, cssWidth / 2, baselineY);
-    targetCtx.fillText(sentence, cssWidth / 2, baselineY);
+      if (character === " ") {
+        return;
+      }
+
+      ctx.save();
+
+      /*
+        Horizontal scaling is applied around the glyph's center only.
+        The actual font sizes remain 250px / 170px.
+      */
+      ctx.translate(x, 0);
+      ctx.scale(scaleXForGlyph, scaleYForGlyph);
+
+      ctx.font = `${weight} ${size}px ${FONT_FAMILY}`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "alphabetic";
+
+      const referenceCharacter = uppercase ? "H" : "x";
+      const metrics = ctx.measureText(referenceCharacter);
+
+      const ascent =
+        metrics.actualBoundingBoxAscent ||
+        (uppercase ? size * 0.72 : size * 0.52);
+
+      /*
+        Match the Alphabet layout:
+          uppercase begins at the top of its 188px block
+          lowercase is shifted down by 73px
+      */
+      const desiredTop =
+        uppercase
+          ? firstRowTop
+          : firstRowTop + LOWERCASE_OFFSET;
+
+      const baselineY =
+        desiredTop + ascent;
+
+      ctx.fillText(
+        character,
+        0,
+        baselineY
+      );
+
+      ctx.restore();
+    };
+
+    const drawSentence = (ctx) => {
+      ctx.fillStyle = GUIDE_COLOR;
+
+      /*
+        First calculate the x positions using the natural glyph widths.
+        The sentence is centered as one complete handwriting phrase.
+      */
+      let cursor =
+        cssWidth / 2 -
+        (naturalWidth * finalScaleX) / 2;
+
+      glyphs.forEach((glyph) => {
+        const centerX =
+          cursor + glyph.width / 2;
+
+        drawGlyph(
+          ctx,
+          glyph,
+          centerX,
+          finalScaleX,
+          finalScaleY
+        );
+
+        cursor += glyph.width;
+      });
+    };
+
+    const drawTarget = (ctx) => {
+      ctx.fillStyle = "#000000";
+
+      let cursor =
+        cssWidth / 2 -
+        (naturalWidth * finalScaleX) / 2;
+
+      glyphs.forEach((glyph) => {
+        const centerX =
+          cursor + glyph.width / 2;
+
+        drawGlyph(
+          ctx,
+          glyph,
+          centerX,
+          finalScaleX,
+          finalScaleY
+        );
+
+        cursor += glyph.width;
+      });
+    };
+
+    drawSentence(guideCtx);
+    drawTarget(targetCtx);
   };
 
   useEffect(() => {
