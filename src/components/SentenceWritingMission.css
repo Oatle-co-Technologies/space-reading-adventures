@@ -300,11 +300,11 @@
 
   /* Scribbler-style spacious lines on mobile/tablet. */
   .sentence-workbook-lines {
-    padding: 10% 2% 7%;
+    padding: 7% 2% 4%;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 35px;
   }
 
   .sentence-workbook-line {
