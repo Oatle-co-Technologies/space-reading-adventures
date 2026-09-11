@@ -378,4 +378,14 @@
   .sentence-target-display {
     transform: translateX(-50%) scaleX(0.6);
   }
+
+  @media (orientation: landscape) and (max-width: 1100px) {
+  .sentence-uppercase {
+    line-height: 0.55;
+  }
+
+  .sentence-lowercase {
+    line-height: 0.48;
+  }
+}
 }
