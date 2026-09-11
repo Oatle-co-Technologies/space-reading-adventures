@@ -95,18 +95,7 @@
 
 /* =========================================
    PRESCHOOL HANDWRITING LINES
-   =========================================
-
-   4 writing rows.
-   Each row is represented by 3 guide lines:
-   1. top line
-   2. middle line
-   3. baseline
-
-   The letters themselves are positioned by the
-   Mission 4 tracing renderer using the same
-   handwriting geometry as Alphabet Tracing.
-*/
+   ========================================= */
 
 .sentence-workbook-lines {
   position: absolute;
@@ -128,23 +117,13 @@
 
 /* =========================================
    SENTENCE TRACING LETTERS
-   =========================================
+   ========================================= */
 
-   Same tracing foundation as Alphabet Tracing.
-
-   UPPERCASE:
-   height: 188px
-   font-size: 250px
-   line-height: 0.65
-
-   LOWERCASE:
-   height: 100px
-   font-size: 170px
-   top: 73px
-   line-height: 0.55
-
-   Mission 4 keeps its own workbook layout;
-   these values are only the letter geometry.
+/*
+   These are the Sentence Mission's tuned values.
+   They preserve the same handwriting relationship
+   established by Alphabet Tracing while allowing
+   the sentence to fit the workbook row.
 */
 
 .sentence-target-display {
@@ -152,83 +131,93 @@
   left: 50%;
   top: 10px;
   transform: translateX(-50%);
-
   width: max-content;
   max-width: none;
   height: 188px;
-
   display: flex;
   align-items: flex-start;
   justify-content: center;
   gap: 0;
-
   pointer-events: none;
   z-index: 2;
-
   white-space: nowrap;
 }
 
-/* EXACT Alphabet uppercase geometry. */
 .sentence-uppercase {
   width: auto;
   height: 188px;
   flex: 0 0 auto;
-  position:relative;
+  position: relative;
   top: 50px;
-
   display: flex;
   align-items: flex-start;
   justify-content: center;
-   margin: 0;
-  
-
+  margin: 0;
   color: rgba(82, 172, 205, 0.30);
-
   font-family:
     "Andika",
     "Comic Sans MS",
     "Chalkboard SE",
     sans-serif;
-
   font-size: 185px;
   font-weight: 500;
   line-height: 0.65;
-
   padding: 0;
 }
 
-/* EXACT Alphabet lowercase geometry. */
 .sentence-lowercase {
   width: auto;
   height: 100px;
   flex: 0 0 auto;
-
   margin: 0;
   position: relative;
   top: 100px;
-
   display: flex;
   align-items: flex-start;
   justify-content: center;
-
   color: rgba(82, 172, 205, 0.30);
-
   font-family:
     "Andika",
     "Comic Sans MS",
     "Chalkboard SE",
     sans-serif;
-
   font-size: 130px;
   font-weight: 500;
   line-height: 0.55;
-
   padding: 0;
 }
 
 /* =========================================
    DRAWING CANVAS
    ========================================= */
+
+.sentence-writing-area .scribbler-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: transparent;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  cursor: crosshair;
+}
+
+/* Hidden tracing mask. */
+.sentence-target-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
 
 /* =========================================
    NEXT
@@ -286,11 +275,6 @@
    LANDSCAPE ONLY
    ========================================= */
 
-/*
-   Mission 4 does not have a portrait version.
-   If the device is upright, the mission is not rendered.
-*/
-
 @media (orientation: portrait) {
   .sentence-writing-page {
     display: none;
@@ -326,6 +310,28 @@
 
   .sentence-writing-content {
     padding: 12px 3% 16px;
+  }
+
+  /*
+     Mobile keeps the same handwriting proportions,
+     but scales the letters down so the first row
+     fits comfortably inside a short landscape screen.
+  */
+  .sentence-target-display {
+    top: 6px;
+    height: 142px;
+  }
+
+  .sentence-uppercase {
+    height: 142px;
+    top: 36px;
+    font-size: 135px;
+  }
+
+  .sentence-lowercase {
+    height: 76px;
+    top: 70px;
+    font-size: 95px;
   }
 
   .sentence-next-button {
