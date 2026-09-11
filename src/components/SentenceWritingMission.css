@@ -351,7 +351,7 @@
   .sentence-workbook-lines {
     position: absolute;
     inset: 0;
-    padding: 10% 5% 7%;
+    padding: 10% 0% 7%;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
