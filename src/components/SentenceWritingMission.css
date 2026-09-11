@@ -324,13 +324,13 @@
       ~700px: 115px / 81px
   */
   .sentence-uppercase {
-    height: 180px;
+    height: 170px;
     top: clamp(31px, 3.64vw, 40px);
     font-size: clamp(115px, 14.5vw, 160px);
   }
 
   .sentence-lowercase {
-    height: 96px;
+    height: 90px;
     top: clamp(62px, 7.27vw, 80px);
     font-size: clamp(81px, 10.15vw, 112px);
   }
