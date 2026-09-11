@@ -140,11 +140,9 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
 
   const getCanvasPoint = (event, canvas) => {
     const rect = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-
     return {
-      x: (event.clientX - rect.left) * dpr,
-      y: (event.clientY - rect.top) * dpr,
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
     };
   };
 
@@ -408,7 +406,6 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
 
     if (!context) return;
 
-    const dpr = window.devicePixelRatio || 1;
     const currentTool = TOOLS[tool];
 
     context.save();
@@ -426,13 +423,12 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
         DEFAULT_COLOR;
     }
 
-    context.lineWidth =
-      currentTool.size * dpr;
+    context.lineWidth = currentTool.size;
     context.lineCap = "round";
     context.lineJoin = "round";
 
-    const x = point.x / dpr;
-    const y = point.y / dpr;
+    const x = point.x;
+    const y = point.y;
 
     context.beginPath();
     context.arc(
@@ -464,7 +460,6 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
 
     if (!context) return;
 
-    const dpr = window.devicePixelRatio || 1;
     const currentTool = TOOLS[tool];
 
     context.save();
@@ -482,16 +477,15 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
         DEFAULT_COLOR;
     }
 
-    context.lineWidth =
-      currentTool.size * dpr;
+    context.lineWidth = currentTool.size;
     context.lineCap = "round";
     context.lineJoin = "round";
 
-    const fromX = from.x / dpr;
-    const fromY = from.y / dpr;
+    const fromX = from.x;
+    const fromY = from.y;
 
-    const toX = to.x / dpr;
-    const toY = to.y / dpr;
+    const toX = to.x;
+    const toY = to.y;
 
     context.beginPath();
     context.moveTo(fromX, fromY);
