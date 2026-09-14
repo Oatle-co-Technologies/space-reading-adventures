@@ -16,6 +16,7 @@ import wrongSound from "../sounds/wrong.mp3";
 import victorySound from "../sounds/victory.mp3";
 import blastoffSound from "../sounds/blastoff.mp3";
 import AbacusHelper from "./AbacusHelper";
+import { speak } from "../utils/speech";
 
 const defaultProgress = {
   unlocked: 1,
@@ -2622,6 +2623,40 @@ export default function MathSection({
       progress.question
     ] ||
     questions[0];
+
+  /*
+   * Accessibility speech for Maths.
+   *
+   * Every Maths question gets TTS when it appears.
+   * The question prompt is spoken, but the answer is
+   * never spoken automatically.
+   *
+   * The trigger is tied to the question number rather
+   * than the question object so narration is deterministic.
+   */
+  useEffect(() => {
+    if (
+      !soundOn ||
+      screen !== "mission" ||
+      !question ||
+      !question.prompt
+    ) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      speak(question.prompt);
+    }, 250);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [
+    screen,
+    mission.id,
+    progress.question,
+    soundOn,
+  ]);
 
   const shuffledOptions =
     useMemo(() => {
