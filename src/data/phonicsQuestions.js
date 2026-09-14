@@ -31,6 +31,7 @@ export const phonicsQuestions = phonicsData.map(
   ([letter, phoneme]) => ({
     letter,
     phoneme,
+    soundText: phoneme,
     answer: letter,
   })
 );
