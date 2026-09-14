@@ -253,8 +253,6 @@ const savedAssessmentResults = () => {
   }
 };
 
-
-
 function shuffleArray(items) {
   const shuffled = [...items];
 
@@ -303,6 +301,118 @@ const savedWritingProgress = () => {
     };
   }
 };
+
+/*
+ * Accessibility speech for reading missions.
+ *
+ * TTS is used for instructions/questions only.
+ * It does not narrate greetings, labels, praise, correct/wrong
+ * feedback, or answers.
+ *
+ * Neptune is intentionally silent because the child is meant
+ * to read the story independently.
+ */
+function getSpeechText(planetId, question) {
+  if (!question) {
+    return null;
+  }
+
+  switch (planetId) {
+    case 1:
+      // Mercury — capital letters
+      return question.target
+        ? `Find ${question.target}.`
+        : null;
+
+    case 2:
+      // Venus — lowercase letters
+      return question.target
+        ? `Find ${question.target}.`
+        : null;
+
+    case 3:
+      // Earth — uppercase/lowercase matching
+      if (
+        question.target &&
+        question.target === question.target.toUpperCase()
+      ) {
+        return "Match the uppercase letter to its lowercase letter.";
+      }
+
+      return "Match the lowercase letter to its uppercase letter.";
+
+    case 4:
+      // Mars — phonics
+      return question.soundText
+        ? `Which letter makes the ${question.soundText} sound?`
+        : null;
+
+    case 5:
+      // Jupiter — reading
+      // Never speak the answer. The child must read the choices.
+      return "What is this?";
+
+    case 6:
+      // Saturn — missing letters
+      return "Find the missing letter.";
+
+    case 7:
+      // Uranus — sentence building
+      return "Build the sentence.";
+
+    case 8:
+      // Neptune — independent reading
+      return null;
+
+    case 9:
+      // Pluto — final assessment
+      if (
+        question.skill === "reading" ||
+        question.type === "reading"
+      ) {
+        return null;
+      }
+
+      switch (question.skill) {
+        case "capital":
+          return question.target
+            ? `Find ${question.target}.`
+            : null;
+
+        case "lowercase":
+          return question.target
+            ? `Find ${question.target}.`
+            : null;
+
+        case "matching":
+          if (
+            question.target &&
+            question.target === question.target.toUpperCase()
+          ) {
+            return "Match the uppercase letter to its lowercase letter.";
+          }
+
+          return "Match the lowercase letter to its uppercase letter.";
+
+        case "phonics":
+          return question.soundText
+            ? `Which letter makes the ${question.soundText} sound?`
+            : null;
+
+        case "missing":
+          return "Find the missing letter.";
+
+        case "sentences":
+          return "Build the sentence.";
+
+        default:
+          return null;
+      }
+
+    default:
+      return null;
+  }
+}
 
 function HomeIcon() {
   return (
@@ -377,7 +487,7 @@ function SettingsIcon() {
       />
 
       <path
-        d="m19.4 15.2 1.2 1-.2 1.2-1.8 1.8-1.2.2-1-1.2-1.6.7-.2 1.5-1 .8h-2.6l-1-.8-.2-1.5-1.6-.7-1 1.2-1.2-.2-1.8-1.8-.2-1.2 1.2-1-.7-1.6-1.5-.2-.8-1V9.8l.8-1 1.5-.2.7-1.6-1.2-1 .2-1.2L6 3l1.2-.2 1 1.2 1.6-.7.2-1.5 1-.8h2.6l1 .8.2 1.5 1.6.7 1-1.2L19 3l1.8 1.8.2 1.2-1.2 1 .7 1.6 1.5.2.8 1v2.6l-.8 1-1.5.2-.7 1.6Z"
+        d="m19.4 15.2 1.2 1-.2 1.2-1.8 1.8-1.2.2-1-1.2-1.6.7-.2 1.5-1 .8h-2.6l-1-.8-.2-1.5-1.6-.7-1 1.2-1 1.2-1.2-.2-1.8-1.8-.2-1.2 1.2-1-.7-1.6-1.5-.2-.8-1V9.8l.8-1 1.5-.2.7-1.6-1.2-1 .2-1.2L6 3l1.2-.2 1 1.2 1.6-.7.2-1.5 1-.8h2.6l1 .8.2 1.5 1.6.7 1-1.2L19 3l1.8 1.8.2 1.2-1.2 1 .7 1.6 1.5.2.8 1v2.6l-.8 1-1.5.2-.7 1.6Z"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.5"
@@ -424,7 +534,7 @@ function BookIcon() {
       />
 
       <path
-        d="M20 5.5c-2.8-.8-5.5-.2-8 1.5v12c2.5-1.7 5.2-2.3-8-1.5z"
+        d="M20 5.5c-2.8-.8-5.5-.2-8 1.5v12c-2.5-1.7-5.2-2.3-8-1.5z"
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
@@ -654,26 +764,40 @@ function App() {
     }
   }, [assessmentResults]);
 
-  // Reading Mission 1: speak only the current action.
+  /*
+   * Central reading TTS.
+   *
+   * Automatically speaks once when a new mission question appears.
+   * Replay can use the same getSpeechText() + speak() pair later.
+   */
   useEffect(() => {
     if (
       !soundOn ||
       screen !== "mission" ||
-      planet.id !== 1 ||
-      !question?.target
+      !question
     ) {
       return;
     }
 
+    const speechText = getSpeechText(
+      planet.id,
+      question
+    );
+
+    // Neptune and Pluto reading questions return null.
+    if (!speechText) {
+      return;
+    }
+
     const timer = setTimeout(() => {
-      speak(`Find ${question.target}.`);
+      speak(speechText);
     }, 200);
 
     return () => clearTimeout(timer);
   }, [
     screen,
     planet.id,
-    question?.target,
+    question,
     soundOn,
   ]);
 
@@ -1145,7 +1269,6 @@ function App() {
         </p>
 
         <div className="planet-map writing-map">
-          {/* SCRIBBLER */}
           <button
             className="planet-card writing-map-free"
             type="button"
@@ -1167,7 +1290,6 @@ function App() {
             </small>
           </button>
 
-          {/* MISSION 1 */}
           <button
             className={`planet-card ${
               writingProgress.unlocked >= 1
@@ -1195,7 +1317,6 @@ function App() {
             </small>
           </button>
 
-          {/* MISSION 2 */}
           <button
             className={`planet-card ${
               writingProgress.unlocked >= 2
@@ -1232,7 +1353,6 @@ function App() {
             </small>
           </button>
 
-          {/* MISSION 3 */}
           <button
             className={`planet-card ${
               writingProgress.unlocked >= 3
@@ -1269,7 +1389,6 @@ function App() {
             </small>
           </button>
 
-          {/* MISSION 4 */}
           <button
             className={`planet-card ${
               writingProgress.unlocked >= 4
