@@ -342,11 +342,9 @@ function getSpeechText(planetId, question) {
       return "Match the lowercase letter to its uppercase letter.";
 
     case 4:
-      // Mars — phonics
-      // Speak only the phonics sound. The child finds the letter.
-      return question.soundText
-        ? question.soundText
-        : null;
+      // Mars — phonics uses real recorded phonics audio.
+      // Do not send phonemes through TTS.
+      return null;
 
     case 5:
       // Jupiter — reading
@@ -396,10 +394,8 @@ function getSpeechText(planetId, question) {
           return "Match the lowercase letter to its uppercase letter.";
 
         case "phonics":
-          // Speak only the phonics sound.
-          return question.soundText
-            ? question.soundText
-            : null;
+          // Pluto phonics uses the recorded phonics audio.
+          return null;
 
         case "missing":
           return "Find the missing letter.";
@@ -767,10 +763,11 @@ function App() {
   }, [assessmentResults]);
 
   /*
-   * Central reading TTS.
+   * Central reading speech.
    *
-   * Automatically speaks once when a new mission question appears.
-   * Replay can use the same getSpeechText() + speak() pair later.
+   * Mars and Pluto phonics use real recorded phonics audio.
+   * Everything else that needs spoken accessibility prompts
+   * continues to use the existing TTS voice.
    */
   useEffect(() => {
     if (
@@ -779,6 +776,21 @@ function App() {
       !question
     ) {
       return;
+    }
+
+    const isPhonics =
+      planet.id === 4 ||
+      (planet.id === 9 &&
+        question.skill === "phonics");
+
+    if (isPhonics) {
+      const timer = setTimeout(() => {
+        playPhonicsSound(
+          question.audioSrc
+        );
+      }, 200);
+
+      return () => clearTimeout(timer);
     }
 
     const speechText = getSpeechText(
@@ -809,6 +821,14 @@ function App() {
     const effect = new Audio(sound);
     effect.volume = 0.55;
     effect.play().catch(() => {});
+  };
+
+  const playPhonicsSound = (audioSrc) => {
+    if (!soundOn || !audioSrc) return;
+
+    const phonicsAudio = new Audio(audioSrc);
+    phonicsAudio.volume = 1;
+    phonicsAudio.play().catch(() => {});
   };
 
   const goToPlanet = (id) => {
@@ -2015,16 +2035,28 @@ function App() {
         ) : (
           <>
             <p className="eyebrow">
-              {question.soundText
+              {planet.id === 4 ||
+              (planet.id === 9 &&
+                question.skill === "phonics")
                 ? "LISTEN AND CHOOSE"
                 : "FIND THE LETTER"}
             </p>
 
-            {question.soundText ? (
+            {planet.id === 4 ||
+            (planet.id === 9 &&
+              question.skill === "phonics") ? (
               <button
                 className="sound-target"
                 type="button"
-                disabled
+                onClick={() =>
+                  playPhonicsSound(
+                    question.audioSrc
+                  )
+                }
+                disabled={
+                  !question.audioSrc ||
+                  !soundOn
+                }
               >
                 🔊 Hear the sound
               </button>

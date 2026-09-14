@@ -27,11 +27,25 @@ const phonicsData = [
   ["Z", "/z/"],
 ];
 
+const phonicsAudio = import.meta.glob(
+  "../sounds/phonics/*-phonics.mp3",
+  {
+    eager: true,
+    query: "?url",
+    import: "default",
+  }
+);
+
 export const phonicsQuestions = phonicsData.map(
-  ([letter, phoneme]) => ({
-    letter,
-    phoneme,
-    soundText: phoneme,
-    answer: letter,
-  })
+  ([letter, phoneme]) => {
+    const audioKey = `../sounds/phonics/${letter.toLowerCase()}-phonics.mp3`;
+
+    return {
+      letter,
+      phoneme,
+      audioSrc: phonicsAudio[audioKey],
+      soundText: null,
+      answer: letter,
+    };
+  }
 );
