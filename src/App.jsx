@@ -8,6 +8,7 @@ import { phonicsQuestions } from "./data/phonicsQuestions";
 import { readingQuestions } from "./data/readingQuestions";
 import { sentenceQuestions } from "./data/sentenceQuestions";
 import { missingLettersQuestions } from "./data/missingLettersQuestions";
+import { speak } from "./utils/speech";
 
 import { generateOptions } from "./utils/generateOptions";
 import { generateReadingOptions } from "./utils/generateReadingOptions";
@@ -251,6 +252,8 @@ const savedAssessmentResults = () => {
     return null;
   }
 };
+
+
 
 function shuffleArray(items) {
   const shuffled = [...items];
@@ -650,6 +653,29 @@ function App() {
       );
     }
   }, [assessmentResults]);
+
+  // Reading Mission 1: speak only the current action.
+  useEffect(() => {
+    if (
+      !soundOn ||
+      screen !== "mission" ||
+      planet.id !== 1 ||
+      !question?.target
+    ) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      speak(`Find ${question.target}.`);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [
+    screen,
+    planet.id,
+    question?.target,
+    soundOn,
+  ]);
 
   const playSound = (sound) => {
     if (!soundOn) return;
