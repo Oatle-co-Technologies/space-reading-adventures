@@ -6,7 +6,7 @@ const SENTENCES = [
   { id: "name", build: ({ name }) => name ? `My name is ${name}.` : "My name is Oatlile." },
   { id: "age", build: ({ age }) => age ? `I am ${age} years old.` : "I am 5 years old." },
   { id: "like", text: "I like to play." },
-  { id: "colour", text: "My favourite colour is blue." },
+  { id: "colour", text: "I like the colour blue." },
   { id: "family", text: "I have two brothers." },
   { id: "school", text: "I love to learn." },
 ];
