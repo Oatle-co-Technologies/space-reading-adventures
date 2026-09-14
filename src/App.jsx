@@ -343,8 +343,9 @@ function getSpeechText(planetId, question) {
 
     case 4:
       // Mars — phonics
+      // Speak only the phonics sound. The child finds the letter.
       return question.soundText
-        ? `Which letter makes the ${question.soundText} sound?`
+        ? question.soundText
         : null;
 
     case 5:
@@ -395,8 +396,9 @@ function getSpeechText(planetId, question) {
           return "Match the lowercase letter to its uppercase letter.";
 
         case "phonics":
+          // Speak only the phonics sound.
           return question.soundText
-            ? `Which letter makes the ${question.soundText} sound?`
+            ? question.soundText
             : null;
 
         case "missing":
