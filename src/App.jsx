@@ -2298,7 +2298,7 @@ function App() {
     content = (
       <main className="page results-page">
         <p className="eyebrow">
-          ATLI SPACE GAME
+          Oatle kids Reading Adventures
         </p>
 
         <h1>
@@ -2307,7 +2307,7 @@ function App() {
 
         <p className="page-intro">
           Results from the final Pluto
-          assessment in Atli Space Game.
+          assessment in Reading Adventures.
         </p>
 
         <div className="result-summary">
