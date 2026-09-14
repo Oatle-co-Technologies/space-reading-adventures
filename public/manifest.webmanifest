@@ -1,0 +1,35 @@
+{
+  "name": "Oatle Kids — Space Learning Adventures",
+  "short_name": "Oatle Kids",
+  "description": "A playful space adventure where kids learn reading, writing, phonics, math, and more.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#080d28",
+  "theme_color": "#080d28",
+  "lang": "en",
+  "categories": [
+    "education",
+    "kids",
+    "games"
+  ],
+  "icons": [
+    {
+      "src": "/icons/oatle-kids-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/oatle-kids-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/oatle-kids-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
