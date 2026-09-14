@@ -302,6 +302,41 @@ const savedWritingProgress = () => {
   }
 };
 
+const writingPlanets = [
+  {
+    id: 1,
+    name: "Mercury",
+    image: mercuryImage,
+    color: "#FFBD59",
+    description: "Trace the alphabet",
+    mission: "writingMission1",
+  },
+  {
+    id: 2,
+    name: "Venus",
+    image: venusImage,
+    color: "#FF8D70",
+    description: "Trace the numbers",
+    mission: "writingMission2",
+  },
+  {
+    id: 3,
+    name: "Earth",
+    image: earthImage,
+    color: "#55C6FF",
+    description: "Trace the shapes",
+    mission: "writingMission3",
+  },
+  {
+    id: 4,
+    name: "Mars",
+    image: marsImage,
+    color: "#EF5B5B",
+    description: "Write simple sentences",
+    mission: "writingMission4",
+  },
+];
+
 /*
  * Accessibility speech for reading missions.
  *
@@ -594,6 +629,8 @@ function AppNav({
         activeScreen === "math" ||
         activeScreen === "writing" ||
         activeScreen === "writingMap" ||
+        activeScreen === "writingPlanet" ||
+        activeScreen === "writingCelebration" ||
         activeScreen === "scribbler" ||
         activeScreen === "writingMission1" ||
         activeScreen === "writingMission2" ||
@@ -665,6 +702,12 @@ function App() {
 
   const [writingProgress, setWritingProgress] =
     useState(savedWritingProgress);
+
+  const [writingActivePlanet, setWritingActivePlanet] =
+    useState(1);
+
+  const [writingCelebrationMission, setWritingCelebrationMission] =
+    useState(null);
 
   const [screen, setScreen] = useState("home");
 
@@ -1136,17 +1179,56 @@ function App() {
   const completeWritingMission = (
     missionId
   ) => {
-    const nextMission = missionId + 1;
+    setWritingCelebrationMission(missionId);
+    playSound(victorySound);
+    setScreen("writingCelebration");
+  };
+
+  const startWritingPlanet = (planetId) => {
+    const selectedPlanet = writingPlanets.find(
+      (item) => item.id === planetId
+    );
+
+    if (!selectedPlanet || planetId > writingProgress.unlocked) {
+      return;
+    }
+
+    playSound(blastoffSound);
+    setWritingActivePlanet(planetId);
+    setScreen(selectedPlanet.mission);
+  };
+
+  const unlockNextWritingPlanet = () => {
+    const completedId =
+      writingCelebrationMission || writingActivePlanet;
+
+    const nextPlanetId = completedId + 1;
+
+    if (nextPlanetId > writingPlanets.length) {
+      setWritingCelebrationMission(null);
+      setScreen("writingMap");
+      return;
+    }
+
+    const nextPlanet = writingPlanets.find(
+      (item) => item.id === nextPlanetId
+    );
 
     setWritingProgress((current) => ({
       ...current,
       unlocked: Math.max(
         current.unlocked,
-        nextMission
+        nextPlanetId
       ),
     }));
 
-    setScreen("writingMap");
+    setWritingActivePlanet(nextPlanetId);
+    setWritingCelebrationMission(null);
+
+    playSound(blastoffSound);
+    setScreen(
+      nextPlanet ? "writingPlanet" : "writingMap"
+    );
   };
 
   const unlockNext = () => {
@@ -1196,6 +1278,9 @@ function App() {
     setWritingProgress({
       unlocked: 1,
     });
+
+    setWritingActivePlanet(1);
+    setWritingCelebrationMission(null);
 
     setScreen("home");
   };
@@ -1294,21 +1379,61 @@ function App() {
         </p>
 
         <h1>
-          Writing Map
+          Writing Planet Map
         </h1>
 
         <p className="page-intro">
-          Choose a writing adventure
-          and explore at your own pace.
+          Complete each planet to unlock the next writing adventure.
         </p>
 
         <div className="planet-map writing-map">
+          {writingPlanets.map((item) => {
+            const locked =
+              item.id > writingProgress.unlocked;
+
+            return (
+              <button
+                key={item.id}
+                className={`planet-card ${
+                  locked ? "locked" : ""
+                }`}
+                style={{
+                  "--planet": item.color,
+                }}
+                disabled={locked}
+                onClick={() =>
+                  startWritingPlanet(item.id)
+                }
+                type="button"
+              >
+                {locked ? (
+                  <span className="writing-map-lock">
+                    🔒
+                  </span>
+                ) : (
+                  <PlanetVisual
+                    planet={item}
+                    className="planet-art"
+                  />
+                )}
+
+                <strong>
+                  {item.name}
+                </strong>
+
+                <small>
+                  {locked
+                    ? "Complete the previous planet"
+                    : item.description}
+                </small>
+              </button>
+            );
+          })}
+
           <button
             className="planet-card writing-map-free"
             type="button"
-            onClick={() =>
-              setScreen("scribbler")
-            }
+            onClick={() => setScreen("scribbler")}
           >
             <span className="writing-map-icon">
               ✏️
@@ -1319,146 +1444,93 @@ function App() {
             </strong>
 
             <small>
-              Write, draw and explore
-              freely.
-            </small>
-          </button>
-
-          <button
-            className={`planet-card ${
-              writingProgress.unlocked >= 1
-                ? "writing-map-active"
-                : "writing-map-locked"
-            }`}
-            type="button"
-            onClick={() =>
-              setScreen("writingMission1")
-            }
-            disabled={
-              writingProgress.unlocked < 1
-            }
-          >
-            <span className="writing-map-icon">
-              🔤
-            </span>
-
-            <strong>
-              Trace the Alphabet
-            </strong>
-
-            <small>
-              Trace A to Z.
-            </small>
-          </button>
-
-          <button
-            className={`planet-card ${
-              writingProgress.unlocked >= 2
-                ? "writing-map-active"
-                : "writing-map-locked"
-            }`}
-            type="button"
-            onClick={() =>
-              setScreen("writingMission2")
-            }
-            disabled={
-              writingProgress.unlocked < 2
-            }
-          >
-            {writingProgress.unlocked >= 2 ? (
-              <span className="writing-map-icon">
-                123
-              </span>
-            ) : (
-              <span className="writing-map-lock">
-                🔒
-              </span>
-            )}
-
-            <strong>
-              Trace the Numbers
-            </strong>
-
-            <small>
-              {writingProgress.unlocked >=
-              2
-                ? "Trace 0 to 20."
-                : "Complete the previous mission."}
-            </small>
-          </button>
-
-          <button
-            className={`planet-card ${
-              writingProgress.unlocked >= 3
-                ? "writing-map-active"
-                : "writing-map-locked"
-            }`}
-            type="button"
-            onClick={() =>
-              setScreen("writingMission3")
-            }
-            disabled={
-              writingProgress.unlocked < 3
-            }
-          >
-            {writingProgress.unlocked >= 3 ? (
-              <span className="writing-map-icon">
-                △
-              </span>
-            ) : (
-              <span className="writing-map-lock">
-                🔒
-              </span>
-            )}
-
-            <strong>
-              Trace the Shapes
-            </strong>
-
-            <small>
-              {writingProgress.unlocked >=
-              3
-                ? "Trace simple shapes."
-                : "Complete the previous mission."}
-            </small>
-          </button>
-
-          <button
-            className={`planet-card ${
-              writingProgress.unlocked >= 4
-                ? "writing-map-active"
-                : "writing-map-locked"
-            }`}
-            type="button"
-            onClick={() =>
-              setScreen("writingMission4")
-            }
-            disabled={
-              writingProgress.unlocked < 4
-            }
-          >
-            {writingProgress.unlocked >= 4 ? (
-              <span className="writing-map-icon">
-                ✍️
-              </span>
-            ) : (
-              <span className="writing-map-lock">
-                🔒
-              </span>
-            )}
-
-            <strong>
-              Write Sentences
-            </strong>
-
-            <small>
-              {writingProgress.unlocked >=
-              4
-                ? "Write your own sentences."
-                : "Complete the previous mission."}
+              Write, draw and explore freely.
             </small>
           </button>
         </div>
+      </main>
+    );
+  } else if (
+    screen === "writingPlanet"
+  ) {
+    const selectedWritingPlanet =
+      writingPlanets.find(
+        (item) => item.id === writingActivePlanet
+      ) || writingPlanets[0];
+
+    content = (
+      <main className="planet-overview writing-planet-overview">
+        <PlanetVisual
+          planet={selectedWritingPlanet}
+          className="planet-icon planet-art"
+        />
+
+        <p className="eyebrow">
+          PLANET {selectedWritingPlanet.id}
+        </p>
+
+        <h1>
+          Welcome to Planet {selectedWritingPlanet.name}
+        </h1>
+
+        <p>
+          {selectedWritingPlanet.description}. Get ready for your writing mission.
+        </p>
+
+        {action(
+          "Start mission",
+          () => {
+            playSound(blastoffSound);
+            setScreen(selectedWritingPlanet.mission);
+          }
+        )}
+      </main>
+    );
+  } else if (
+    screen === "writingCelebration"
+  ) {
+    const completedWritingPlanet =
+      writingPlanets.find(
+        (item) => item.id === writingCelebrationMission
+      ) || writingPlanets[0];
+
+    const hasNextWritingPlanet =
+      completedWritingPlanet.id < writingPlanets.length;
+
+    content = (
+      <main className="celebration-panel">
+        <span>🎉</span>
+
+        <p className="eyebrow">
+          MISSION COMPLETE
+        </p>
+
+        <h1>
+          You did it, Captain!
+        </h1>
+
+        <p>
+          You completed your writing mission on{" "}
+          {completedWritingPlanet.name}.
+        </p>
+
+        <PlanetVisual
+          planet={completedWritingPlanet}
+          className="celebration-planet planet-art"
+        />
+
+        {hasNextWritingPlanet
+          ? action(
+              "Unlock next planet",
+              unlockNextWritingPlanet
+            )
+          : action(
+              "Return to writing map",
+              () => {
+                setWritingCelebrationMission(null);
+                setScreen("writingMap");
+              }
+            )}
       </main>
     );
   } else if (
@@ -1477,7 +1549,7 @@ function App() {
     content = (
       <AlphabetTracingMission
         onBack={() =>
-          setScreen("writingMap")
+          setScreen("writingPlanet")
         }
         onComplete={() =>
           completeWritingMission(1)
@@ -1490,7 +1562,7 @@ function App() {
     content = (
       <NumberTracingMission
         onBack={() =>
-          setScreen("writingMap")
+          setScreen("writingPlanet")
         }
         onComplete={() =>
           completeWritingMission(2)
@@ -1503,7 +1575,7 @@ function App() {
     content = (
       <ShapeTracingMission
         onBack={() =>
-          setScreen("writingMap")
+          setScreen("writingPlanet")
         }
         onComplete={() =>
           completeWritingMission(3)
@@ -1516,7 +1588,7 @@ function App() {
     content = (
       <SentenceWritingMission
         onBack={() =>
-          setScreen("writingMap")
+          setScreen("writingPlanet")
         }
         onComplete={() =>
           completeWritingMission(4)
