@@ -778,40 +778,52 @@ function App() {
       return;
     }
 
-    const isPhonics =
-      planet.id === 4 ||
-      (planet.id === 9 &&
-        question.skill === "phonics");
+    // Phonics missions always use the recorded phonics audio.
+    const isMarsPhonics = planet.id === 4;
+    const isPlutoPhonics =
+      planet.id === 9 &&
+      question.skill === "phonics";
 
-    if (isPhonics) {
+    if (isMarsPhonics || isPlutoPhonics) {
       const timer = setTimeout(() => {
-        playPhonicsSound(
-          question.audioSrc
-        );
-      }, 200);
+        playPhonicsSound(question.audioSrc);
+      }, 250);
 
       return () => clearTimeout(timer);
     }
 
+    // Neptune is always silent because the child reads the story.
+    const isNeptune = planet.id === 8;
+
+    // Pluto reading is also always silent; the child reads the word.
+    const isPlutoReading =
+      planet.id === 9 &&
+      (question.skill === "reading" ||
+        question.type === "reading");
+
+    if (isNeptune || isPlutoReading) {
+      return;
+    }
+
+    // Every other mission question always receives TTS.
     const speechText = getSpeechText(
       planet.id,
       question
     );
 
-    // Neptune and Pluto reading questions return null.
     if (!speechText) {
       return;
     }
 
     const timer = setTimeout(() => {
       speak(speechText);
-    }, 200);
+    }, 250);
 
     return () => clearTimeout(timer);
   }, [
     screen,
     planet.id,
-    question,
+    progress.question,
     soundOn,
   ]);
 
