@@ -37,7 +37,6 @@ import plutoImage from "./assets/images/planets/pluto.png";
 import correctSound from "./sounds/correct.mp3";
 import wrongSound from "./sounds/wrong.mp3";
 import victorySound from "./sounds/victory.mp3";
-import blastoffSound from "./sounds/blastoff.mp3";
 
 import neptunePage1 from "./assets/images/story/neptune-page1.png";
 import neptunePage2 from "./assets/images/story/neptune-page2.png";
@@ -702,6 +701,7 @@ function App() {
     useState(null);
 
   const [screen, setScreen] = useState("home");
+  const [launchAdventure, setLaunchAdventure] = useState("reading");
 
   const [assessmentResults, setAssessmentResults] =
     useState(savedAssessmentResults);
@@ -902,7 +902,6 @@ function App() {
   };
 
   const goToPlanet = (id) => {
-    playSound(blastoffSound);
 
     setProgress((current) => ({
       ...current,
@@ -1206,8 +1205,6 @@ function App() {
     ) {
       return;
     }
-
-    playSound(blastoffSound);
     setWritingActivePlanet(planetId);
     setScreen(selectedPlanet.mission);
   };
@@ -1249,8 +1246,6 @@ function App() {
     setWritingCelebrationMission(
       null
     );
-
-    playSound(blastoffSound);
     setScreen(
       nextPlanet
         ? "writingPlanet"
@@ -1275,8 +1270,6 @@ function App() {
       setScreen("map");
       return;
     }
-
-    playSound(blastoffSound);
 
     setProgress((current) => ({
       ...current,
@@ -1383,7 +1376,7 @@ function App() {
           <button
             className="adventure-card"
             onClick={() => {
-              playSound(blastoffSound);
+              setLaunchAdventure("reading");
               setScreen("launch");
             }}
             type="button"
@@ -1399,9 +1392,10 @@ function App() {
 
           <button
             className="adventure-card"
-            onClick={() =>
-              setScreen("math")
-            }
+            onClick={() => {
+              setLaunchAdventure("counting");
+              setScreen("launch");
+            }}
             type="button"
           >
             <span className="adventure-card-icon">
@@ -1415,9 +1409,10 @@ function App() {
 
           <button
             className="adventure-card"
-            onClick={() =>
-              setScreen("writingMap")
-            }
+            onClick={() => {
+              setLaunchAdventure("writing");
+              setScreen("launch");
+            }}
             type="button"
           >
             <span className="adventure-card-icon">
@@ -1551,7 +1546,6 @@ function App() {
         {action(
           "Start mission",
           () => {
-            playSound(blastoffSound);
             setScreen(
               selectedWritingPlanet.mission
             );
@@ -1736,9 +1730,42 @@ function App() {
   } else if (
     screen === "launch"
   ) {
+    const launchContent = {
+      reading: {
+        eyebrow: "READING MISSION",
+        title: "Ready to explore the planets?",
+        description:
+          "Travel across the solar system and build your reading skills one star at a time.",
+        button: "View planet map",
+        nextScreen: "map",
+      },
+      counting: {
+        eyebrow: "COUNTING MISSION",
+        title: "Ready to count among the stars?",
+        description:
+          "Practice numbers, counting, and early maths skills in a playful space adventure.",
+        button: "Start counting",
+        nextScreen: "math",
+      },
+      writing: {
+        eyebrow: "WRITING MISSION",
+        title: "Ready to write among the stars?",
+        description:
+          "Trace letters, numbers, shapes, and simple sentences across your writing planets.",
+        button: "View writing map",
+        nextScreen: "writingMap",
+      },
+    }[launchAdventure] || {
+      eyebrow: "MISSION CONTROL",
+      title: "Your mission is ready!",
+      description: "Choose an adventure and begin exploring.",
+      button: "Explore",
+      nextScreen: "explore",
+    };
+
     content = (
-      <main className="launch-panel">
-        <div className="countdown-orbit">
+      <main className={`launch-panel launch-${launchAdventure}`}>
+        <div className="countdown-orbit" aria-hidden="true">
           <span>3</span>
           <span>2</span>
           <span>1</span>
@@ -1746,22 +1773,20 @@ function App() {
         </div>
 
         <p className="eyebrow">
-          MISSION CONTROL
+          {launchContent.eyebrow}
         </p>
 
         <h1>
-          Launch sequence ready!
+          {launchContent.title}
         </h1>
 
         <p>
-          Choose a planet to begin
-          your next learning mission.
+          {launchContent.description}
         </p>
 
         {action(
-          "View planet map",
-          () =>
-            setScreen("map")
+          launchContent.button,
+          () => setScreen(launchContent.nextScreen)
         )}
       </main>
     );
@@ -1867,9 +1892,6 @@ function App() {
               ? "Start assessment"
               : "Start mission",
           () => {
-            playSound(
-              blastoffSound
-            );
 
             if (planet.id === 9) {
               startPlutoAssessment();
