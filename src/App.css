@@ -1289,3 +1289,17 @@ button {
     font-size: 0.7rem;
   }
 }
+
+.hero-logo {
+  display: block;
+  width: min(320px, 70vw);
+  height: auto;
+  margin: 0 auto 24px;
+}
+
+@media (max-width: 600px) {
+  .hero-logo {
+    width: min(240px, 68vw);
+    margin-bottom: 18px;
+  }
+}
