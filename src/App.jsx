@@ -9,6 +9,8 @@ import { readingQuestions } from "./data/readingQuestions";
 import { sentenceQuestions } from "./data/sentenceQuestions";
 import { missingLettersQuestions } from "./data/missingLettersQuestions";
 import { speak } from "./utils/speech";
+import LoginPage from "./components/LoginPage";
+import { supabase } from "./lib/supabase";
 
 import { generateOptions } from "./utils/generateOptions";
 import { generateReadingOptions } from "./utils/generateReadingOptions";
@@ -354,19 +356,16 @@ function getSpeechText(planetId, question) {
 
   switch (planetId) {
     case 1:
-      // Mercury — capital letters
       return question.target
         ? `Find ${question.target}.`
         : null;
 
     case 2:
-      // Venus — lowercase letters
       return question.target
         ? `Find ${question.target}.`
         : null;
 
     case 3:
-      // Earth — uppercase/lowercase matching
       if (
         question.target &&
         question.target === question.target.toUpperCase()
@@ -377,29 +376,21 @@ function getSpeechText(planetId, question) {
       return "Match the lowercase letter to its uppercase letter.";
 
     case 4:
-      // Mars — phonics uses real recorded phonics audio.
-      // Do not send phonemes through TTS.
       return null;
 
     case 5:
-      // Jupiter — reading
-      // Never speak the answer. The child must read the choices.
       return "What is this?";
 
     case 6:
-      // Saturn — missing letters
       return "Find the missing letter.";
 
     case 7:
-      // Uranus — sentence building
       return "Build the sentence.";
 
     case 8:
-      // Neptune — independent reading
       return null;
 
     case 9:
-      // Pluto — final assessment
       if (
         question.skill === "reading" ||
         question.type === "reading"
@@ -429,7 +420,6 @@ function getSpeechText(planetId, question) {
           return "Match the lowercase letter to its uppercase letter.";
 
         case "phonics":
-          // Pluto phonics uses the recorded phonics audio.
           return null;
 
         case "missing":
@@ -468,7 +458,6 @@ function HomeIcon() {
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
-        strokeLinecap="round"
         strokeLinejoin="round"
       />
     </svg>
@@ -520,7 +509,7 @@ function SettingsIcon() {
       />
 
       <path
-        d="m19.4 15.2 1.2 1-.2 1.2-1.8 1.8-1.2.2-1-1.2-1.6.7-.2 1.5-1 .8h-2.6l-1-.8-.2-1.5-1.6-.7-1 1.2-1 1.2-1.2-.2-1.8-1.8-.2-1.2 1.2-1-.7-1.6-1.5-.2-.8-1V9.8l.8-1 1.5-.2.7-1.6-1.2-1 .2-1.2L6 3l1.2-.2 1 1.2 1.6-.7.2-1.5 1-.8h2.6l1 .8.2 1.5 1.6.7 1-1.2L19 3l1.8 1.8.2 1.2-1.2 1 .7 1.6 1.5.2.8 1v2.6l-.8 1-1.5.2-.7 1.6Z"
+        d="m19.4 15.2 1.2 1-.2 1.2-1.8 1.8-1.2.2-1-1.2-1.6.7-.2 1.5-1 .8h-2.6l-1-.8-.2-1.5-1.6-.7-1 1.2-1-.2-1.8-1.8-.2-1.2 1.2-1-.7-1.6-1.5-.2-.8-1V9.8l.8-1 1.5-.2.7-1.6-1.2-1 .2-1.2L6 3l1.2-.2 1 1.2 1.6-.7.2-1.5 1-.8h2.6l1 .8.2 1.5 1.6.7 1-1.2L19 3l1.8 1.8.2 1.2-1.2 1 .7 1.6 1.5.2.8 1v2.6l-.8 1-1.5.2-.7 1.6Z"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.5"
@@ -698,6 +687,9 @@ function PlanetVisual({
 }
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
   const [progress, setProgress] = useState(savedGame);
 
   const [writingProgress, setWritingProgress] =
@@ -727,6 +719,33 @@ function App() {
     useState("");
 
   const advanceTimer = useRef(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+
+      setUser(data.session?.user ?? null);
+      setAuthLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (!mounted) return;
+
+        setUser(session?.user ?? null);
+        setAuthLoading(false);
+      }
+    );
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const planet =
     planets.find(
@@ -821,7 +840,6 @@ function App() {
       return;
     }
 
-    // Phonics missions always use the recorded phonics audio.
     const isMarsPhonics = planet.id === 4;
     const isPlutoPhonics =
       planet.id === 9 &&
@@ -835,10 +853,8 @@ function App() {
       return () => clearTimeout(timer);
     }
 
-    // Neptune is always silent because the child reads the story.
     const isNeptune = planet.id === 8;
 
-    // Pluto reading is also always silent; the child reads the word.
     const isPlutoReading =
       planet.id === 9 &&
       (question.skill === "reading" ||
@@ -848,7 +864,6 @@ function App() {
       return;
     }
 
-    // Every other mission question always receives TTS.
     const speechText = getSpeechText(
       planet.id,
       question
@@ -1155,7 +1170,8 @@ function App() {
     ) {
       setProgress((current) => ({
         ...current,
-        question: current.question + 1,
+        question:
+          current.question + 1,
       }));
 
       return;
@@ -1171,11 +1187,6 @@ function App() {
     }
   };
 
-  // Writing missions:
-  // 1 = Alphabet
-  // 2 = Numbers
-  // 3 = Shapes
-  // 4 = Sentences
   const completeWritingMission = (
     missionId
   ) => {
@@ -1189,7 +1200,10 @@ function App() {
       (item) => item.id === planetId
     );
 
-    if (!selectedPlanet || planetId > writingProgress.unlocked) {
+    if (
+      !selectedPlanet ||
+      planetId > writingProgress.unlocked
+    ) {
       return;
     }
 
@@ -1200,19 +1214,26 @@ function App() {
 
   const unlockNextWritingPlanet = () => {
     const completedId =
-      writingCelebrationMission || writingActivePlanet;
+      writingCelebrationMission ||
+      writingActivePlanet;
 
-    const nextPlanetId = completedId + 1;
+    const nextPlanetId =
+      completedId + 1;
 
-    if (nextPlanetId > writingPlanets.length) {
+    if (
+      nextPlanetId >
+      writingPlanets.length
+    ) {
       setWritingCelebrationMission(null);
       setScreen("writingMap");
       return;
     }
 
-    const nextPlanet = writingPlanets.find(
-      (item) => item.id === nextPlanetId
-    );
+    const nextPlanet =
+      writingPlanets.find(
+        (item) =>
+          item.id === nextPlanetId
+      );
 
     setWritingProgress((current) => ({
       ...current,
@@ -1222,12 +1243,18 @@ function App() {
       ),
     }));
 
-    setWritingActivePlanet(nextPlanetId);
-    setWritingCelebrationMission(null);
+    setWritingActivePlanet(
+      nextPlanetId
+    );
+    setWritingCelebrationMission(
+      null
+    );
 
     playSound(blastoffSound);
     setScreen(
-      nextPlanet ? "writingPlanet" : "writingMap"
+      nextPlanet
+        ? "writingPlanet"
+        : "writingMap"
     );
   };
 
@@ -1301,7 +1328,42 @@ function App() {
 
   let content;
 
-  if (screen === "explore") {
+  if (authLoading) {
+    content = (
+      <main className="login-page">
+        <div className="login-card">
+          <div className="login-logo">
+            <div className="login-logo-mark">
+              O
+            </div>
+          </div>
+
+          <p className="eyebrow">
+            OATLE KIDS
+          </p>
+
+          <h1>
+            Launching...
+          </h1>
+
+          <p className="login-intro">
+            Getting your space adventure ready.
+          </p>
+        </div>
+      </main>
+    );
+  } else if (!user) {
+    content = (
+      <LoginPage
+        onLogin={(loggedInUser) => {
+          setUser(loggedInUser);
+          setScreen("home");
+        }}
+      />
+    );
+  } else if (
+    screen === "explore"
+  ) {
     content = (
       <main className="page adventure-hub">
         <p className="eyebrow">
@@ -1389,7 +1451,8 @@ function App() {
         <div className="planet-map writing-map">
           {writingPlanets.map((item) => {
             const locked =
-              item.id > writingProgress.unlocked;
+              item.id >
+              writingProgress.unlocked;
 
             return (
               <button
@@ -1398,11 +1461,14 @@ function App() {
                   locked ? "locked" : ""
                 }`}
                 style={{
-                  "--planet": item.color,
+                  "--planet":
+                    item.color,
                 }}
                 disabled={locked}
                 onClick={() =>
-                  startWritingPlanet(item.id)
+                  startWritingPlanet(
+                    item.id
+                  )
                 }
                 type="button"
               >
@@ -1433,7 +1499,9 @@ function App() {
           <button
             className="planet-card writing-map-free"
             type="button"
-            onClick={() => setScreen("scribbler")}
+            onClick={() =>
+              setScreen("scribbler")
+            }
           >
             <span className="writing-map-icon">
               ✏️
@@ -1455,7 +1523,8 @@ function App() {
   ) {
     const selectedWritingPlanet =
       writingPlanets.find(
-        (item) => item.id === writingActivePlanet
+        (item) =>
+          item.id === writingActivePlanet
       ) || writingPlanets[0];
 
     content = (
@@ -1466,11 +1535,13 @@ function App() {
         />
 
         <p className="eyebrow">
-          PLANET {selectedWritingPlanet.id}
+          PLANET{" "}
+          {selectedWritingPlanet.id}
         </p>
 
         <h1>
-          Welcome to Planet {selectedWritingPlanet.name}
+          Welcome to Planet{" "}
+          {selectedWritingPlanet.name}
         </h1>
 
         <p>
@@ -1481,7 +1552,9 @@ function App() {
           "Start mission",
           () => {
             playSound(blastoffSound);
-            setScreen(selectedWritingPlanet.mission);
+            setScreen(
+              selectedWritingPlanet.mission
+            );
           }
         )}
       </main>
@@ -1491,15 +1564,20 @@ function App() {
   ) {
     const completedWritingPlanet =
       writingPlanets.find(
-        (item) => item.id === writingCelebrationMission
+        (item) =>
+          item.id ===
+          writingCelebrationMission
       ) || writingPlanets[0];
 
     const hasNextWritingPlanet =
-      completedWritingPlanet.id < writingPlanets.length;
+      completedWritingPlanet.id <
+      writingPlanets.length;
 
     content = (
       <main className="celebration-panel">
-        <span>🎉</span>
+        <span>
+          🎉
+        </span>
 
         <p className="eyebrow">
           MISSION COMPLETE
@@ -1527,8 +1605,12 @@ function App() {
           : action(
               "Return to writing map",
               () => {
-                setWritingCelebrationMission(null);
-                setScreen("writingMap");
+                setWritingCelebrationMission(
+                  null
+                );
+                setScreen(
+                  "writingMap"
+                );
               }
             )}
       </main>
@@ -2185,7 +2267,9 @@ function App() {
   ) {
     content = (
       <main className="celebration-panel">
-        <span>🎉</span>
+        <span>
+          🎉
+        </span>
 
         <p className="eyebrow">
           MISSION COMPLETE
@@ -2456,21 +2540,21 @@ function App() {
     <div className="app">
       {content}
 
-      {screen !==
-        "scribbler" && (
-        <AppNav
-          onHome={() =>
-            setScreen("home")
-          }
-          onExplore={() =>
-            setScreen("explore")
-          }
-          onSettings={() =>
-            setScreen("settings")
-          }
-          activeScreen={screen}
-        />
-      )}
+      {user &&
+        screen !== "scribbler" && (
+          <AppNav
+            onHome={() =>
+              setScreen("home")
+            }
+            onExplore={() =>
+              setScreen("explore")
+            }
+            onSettings={() =>
+              setScreen("settings")
+            }
+            activeScreen={screen}
+          />
+        )}
     </div>
   );
 }
