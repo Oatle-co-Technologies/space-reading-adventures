@@ -1682,9 +1682,11 @@ function App() {
   ) {
     content = (
       <main className="hero-panel">
-        <span className="hero-rocket">
-          🚀
-        </span>
+        <img
+          src="/oatle-kids-wordmark.png"
+          alt="Oatle Kids"
+          className="hero-logo"
+        />
 
         <p className="eyebrow">
           WELCOME, CAPTAIN
