@@ -1569,21 +1569,16 @@ function App() {
 
     content = (
       <main className="celebration-panel">
-        <span>
-          🎉
-        </span>
-
         <p className="eyebrow">
           MISSION COMPLETE
         </p>
 
         <h1>
-          You did it, Captain!
+          Mission accomplished!
         </h1>
 
-        <p>
-          You completed your writing mission on{" "}
-          {completedWritingPlanet.name}.
+        <p className="celebration-message">
+          You completed your writing mission on {completedWritingPlanet.name}.
         </p>
 
         <PlanetVisual
@@ -1591,22 +1586,29 @@ function App() {
           className="celebration-planet planet-art"
         />
 
-        {hasNextWritingPlanet
-          ? action(
-              "Unlock next planet",
-              unlockNextWritingPlanet
-            )
-          : action(
-              "Return to writing map",
-              () => {
-                setWritingCelebrationMission(
-                  null
-                );
-                setScreen(
-                  "writingMap"
-                );
-              }
-            )}
+        <p className="celebration-subject">
+          WRITING
+        </p>
+
+        <p className="celebration-description">
+          {completedWritingPlanet.description}
+        </p>
+
+        <div className="celebration-actions">
+          {hasNextWritingPlanet
+            ? action(
+                "Unlock next planet →",
+                unlockNextWritingPlanet
+              )
+            : action(
+                "Back to writing map",
+                () => {
+                  setWritingCelebrationMission(null);
+                  setScreen("writingMap");
+                },
+                "secondary-button"
+              )}
+        </div>
       </main>
     );
   } else if (
@@ -2289,47 +2291,64 @@ function App() {
   } else if (
     screen === "celebration"
   ) {
+    const celebrationDescription =
+      planet.id === 8
+        ? "You finished Atli and the Lost Map!"
+        : planet.id === 9
+          ? "You finished the final Pluto assessment!"
+          : `You completed your reading mission on ${planet.name}.`;
+
+    const celebrationSubject =
+      planet.id === 8
+        ? "READING"
+        : planet.id === 9
+          ? "FINAL ASSESSMENT"
+          : "READING";
+
     content = (
       <main className="celebration-panel">
-        <span>
-          🎉
-        </span>
-
         <p className="eyebrow">
           MISSION COMPLETE
         </p>
 
         <h1>
-          You did it, Captain!
+          Mission accomplished!
         </h1>
 
-        <p>
-          {planet.id === 8
-            ? "You finished Atli and the Lost Map!"
-            : planet.id === 9
-              ? "You finished the final Pluto assessment!"
-              : `You collected every star on ${planet.name}.`}
+        <p className="celebration-message">
+          {celebrationDescription}
         </p>
 
-        {planet.id === 9
-          ? action(
-              "See Parent Results",
-              () =>
-                setScreen(
-                  "results"
-                )
-            )
-          : planet.id <
-              planets.length
+        <PlanetVisual
+          planet={planet}
+          className="celebration-planet planet-art"
+        />
+
+        <p className="celebration-subject">
+          {celebrationSubject}
+        </p>
+
+        <p className="celebration-description">
+          {planet.description}
+        </p>
+
+        <div className="celebration-actions">
+          {planet.id === 9
             ? action(
-                "Unlock next planet",
-                unlockNext
+                "See Parent Results →",
+                () => setScreen("results")
               )
-            : action(
-                "Return to planet map",
-                () =>
-                  setScreen("map")
-              )}
+            : planet.id < planets.length
+              ? action(
+                  "Unlock next planet →",
+                  unlockNext
+                )
+              : action(
+                  "Back to planet map",
+                  () => setScreen("map"),
+                  "secondary-button"
+                )}
+        </div>
       </main>
     );
   } else if (

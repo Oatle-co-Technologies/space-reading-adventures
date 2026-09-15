@@ -3039,39 +3039,46 @@ export default function MathSection({
 
   if (screen === "complete") {
     return (
-      <main className="math-center-panel">
-        <span className="math-celebration">
-          ⭐
-        </span>
-
-        <p className="math-eyebrow">
+      <main className="celebration-panel">
+        <p className="eyebrow">
           MISSION COMPLETE
         </p>
 
         <h1>
-          {mission.title}{" "}
-          complete!
+          Mission accomplished!
         </h1>
 
-        <p>
-          You collected every
-          star in this maths
-          mission.
+        <p className="celebration-message">
+          You completed your maths mission on {mission.title}.
         </p>
 
-        <div className="math-action-row">
+        <img
+          className="celebration-planet math-celebration-planet"
+          src={mission.image}
+          alt={mission.title}
+        />
+
+        <p className="celebration-subject">
+          MATHS
+        </p>
+
+        <p className="celebration-description">
+          {mission.description}
+        </p>
+
+        <div className="celebration-actions">
           <button
             className="primary-button"
-            onClick={() =>
-              setScreen("map")
-            }
+            onClick={() => setScreen("map")}
+            type="button"
           >
-            Next mission
+            Next mission →
           </button>
 
           <button
             className="secondary-button"
             onClick={onHome}
+            type="button"
           >
             Back to home
           </button>
@@ -3085,106 +3092,54 @@ export default function MathSection({
     "assessment-results"
   ) {
     return (
-      <main className="math-center-panel math-assessment-results">
-        <span className="math-celebration">
-          🚀
-        </span>
-
-        <p className="math-eyebrow">
-          MATHS ASSESSMENT COMPLETE
+      <main className="celebration-panel math-assessment-results">
+        <p className="eyebrow">
+          MISSION COMPLETE
         </p>
 
         <h1>
-          Wonderful space
-          work!
+          Mission accomplished!
         </h1>
 
-        <p>
-          You answered{" "}
-          {assessmentSummary.correct}{" "}
-          of{" "}
-          {assessmentSummary.total}{" "}
-          questions correctly.
+        <p className="celebration-message">
+          You completed your final maths assessment.
         </p>
 
-        <div
-          className="math-assessment-skill-results"
-          style={{
-            width: "100%",
-            maxWidth: "680px",
-            margin: "24px auto 0",
-            display: "grid",
-            gap: "12px",
-          }}
-        >
-          {assessmentSkillResults.map(
-            (skill) => (
-              <div
-                key={skill.id}
-                className="math-assessment-skill-row"
-                style={{
-                  display: "grid",
-                  gridTemplateColumns:
-                    "minmax(0, 1fr) auto",
-                  gap: "12px",
-                  alignItems: "center",
-                  padding: "14px 16px",
-                  border:
-                    "2px solid #8fe7ff33",
-                  borderRadius: "16px",
-                  background:
-                    "#ffffff08",
-                  textAlign: "left",
-                }}
-              >
-                <div>
-                  <strong
-                    style={{
-                      display: "block",
-                      marginBottom: "4px",
-                    }}
-                  >
-                    {skill.name}
-                  </strong>
+        <div className="math-assessment-score">
+          <strong>
+            {assessmentSummary.correct}/{assessmentSummary.total}
+          </strong>
 
-                  <span
-                    style={{
-                      fontSize: "0.85rem",
-                      color: "#c7d2f6",
-                      fontWeight: 700,
-                    }}
-                  >
-                    {skill.correct} of{" "}
-                    {skill.total} correct ·{" "}
-                    {skill.status}
-                  </span>
-                </div>
-
-                <strong
-                  style={{
-                    fontSize: "1.2rem",
-                  }}
-                >
-                  {skill.percentage}%
-                </strong>
-              </div>
-            )
-          )}
+          <span>
+            {assessmentSummary.total > 0
+              ? Math.round(
+                  (assessmentSummary.correct /
+                    assessmentSummary.total) *
+                    100
+                )
+              : 0}%
+          </span>
         </div>
 
-        <div className="math-action-row">
+        <p className="celebration-subject">
+          MATHS ASSESSMENT
+        </p>
+
+        {skills}
+
+        <div className="celebration-actions">
           <button
             className="primary-button"
-            onClick={() =>
-              setScreen("map")
-            }
+            onClick={() => setScreen("map")}
+            type="button"
           >
-            View missions
+            View missions →
           </button>
 
           <button
             className="secondary-button"
             onClick={onHome}
+            type="button"
           >
             Back to home
           </button>
