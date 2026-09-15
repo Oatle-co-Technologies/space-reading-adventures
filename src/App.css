@@ -1295,11 +1295,29 @@ button {
   width: min(320px, 70vw);
   height: auto;
   margin: 0 auto 24px;
+  animation: heroLogoFloat 4s ease-in-out infinite;
+}
+
+@keyframes heroLogoFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
 }
 
 @media (max-width: 600px) {
   .hero-logo {
     width: min(240px, 68vw);
     margin-bottom: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-logo {
+    animation: none;
   }
 }
