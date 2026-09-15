@@ -61,10 +61,13 @@ function LoginPage({ onLogin }) {
   return (
     <main className="login-page">
       <div className="login-card">
-        <div className="login-logo">
-          <div className="login-logo-mark">O</div>
-        </div>
-
+          <div className="login-logo">
+  <img
+    src="/icons/oatle-kids-512.png"
+    alt="Oatle Kids"
+    className="login-logo-image"
+  />
+</div>
         <p className="eyebrow">
           {isSignUp ? "JOIN THE ADVENTURE" : "WELCOME, CAPTAIN"}
         </p>
