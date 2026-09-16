@@ -690,6 +690,7 @@ function App() {
   const [authLoading, setAuthLoading] = useState(true);
 
   // PayFast test state
+  // Deployment trigger check
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState("");
 
