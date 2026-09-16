@@ -689,6 +689,9 @@ function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
+  const [paymentLoading, setPaymentLoading] = useState(false);
+  const [paymentError, setPaymentError] = useState("");
+
   const [progress, setProgress] = useState(savedGame);
 
   const [writingProgress, setWritingProgress] =
@@ -1305,6 +1308,61 @@ function App() {
     setScreen("home");
   };
 
+  const startPayfastCheckout = async () => {
+    setPaymentLoading(true);
+    setPaymentError("");
+
+    try {
+      const { data, error } =
+        await supabase.functions.invoke(
+          "quick-service",
+          { body: {} }
+        );
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data?.checkout_url || !data?.fields) {
+        throw new Error(
+          "PayFast checkout response was incomplete."
+        );
+      }
+
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = data.checkout_url;
+      form.style.display = "none";
+
+      Object.entries(data.fields).forEach(
+        ([name, value]) => {
+          const input =
+            document.createElement("input");
+
+          input.type = "hidden";
+          input.name = name;
+          input.value = String(value ?? "");
+
+          form.appendChild(input);
+        }
+      );
+
+      document.body.appendChild(form);
+      form.submit();
+    } catch (error) {
+      console.error(
+        "PayFast checkout error:",
+        error
+      );
+
+      setPaymentError(
+        "We couldn't open the payment page. Please try again."
+      );
+
+      setPaymentLoading(false);
+    }
+  };
+
   const action = (
     label,
     handler,
@@ -1715,7 +1773,23 @@ function App() {
                 setScreen("results"),
               "secondary-button"
             )}
+
+          {action(
+            paymentLoading
+              ? "Opening payment..."
+              : "Subscribe — R79/month",
+            startPayfastCheckout
+          )}
         </div>
+
+        {paymentError && (
+          <p
+            className="payment-error"
+            role="alert"
+          >
+            {paymentError}
+          </p>
+        )}
       </main>
     );
   } else if (
