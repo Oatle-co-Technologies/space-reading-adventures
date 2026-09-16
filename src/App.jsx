@@ -1316,10 +1316,25 @@ function App() {
     setPaymentError("");
 
     try {
+      // Get the currently logged-in user's session.
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        throw new Error("No authenticated session found.");
+      }
+
+      // Explicitly send the user's JWT to the Edge Function.
       const { data, error } =
         await supabase.functions.invoke(
           "quick-service",
-          { body: {} }
+          {
+            body: {},
+            headers: {
+              Authorization: `Bearer ${session.access_token}`,
+            },
+          }
         );
 
       if (error) throw error;
