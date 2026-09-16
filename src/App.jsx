@@ -689,6 +689,10 @@ function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
+  // Authentication and product access are separate.
+  const [accessLoading, setAccessLoading] = useState(true);
+  const [hasAccess, setHasAccess] = useState(false);
+
   // PayFast test state
   // Deployment trigger check
   const [paymentLoading, setPaymentLoading] = useState(false);
@@ -751,6 +755,51 @@ function App() {
       subscription.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const checkAccess = async () => {
+      if (!user) {
+        if (mounted) {
+          setHasAccess(false);
+          setAccessLoading(false);
+        }
+        return;
+      }
+
+      setAccessLoading(true);
+
+      const { data, error } = await supabase
+        .from("entitlements")
+        .select("status, expires_at")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (!mounted) return;
+
+      if (error) {
+        console.error("Access check failed:", error);
+        setHasAccess(false);
+        setAccessLoading(false);
+        return;
+      }
+
+      const active =
+        data?.status === "active" &&
+        (!data.expires_at ||
+          new Date(data.expires_at) > new Date());
+
+      setHasAccess(active);
+      setAccessLoading(false);
+    };
+
+    checkAccess();
+
+    return () => {
+      mounted = false;
+    };
+  }, [user]);
 
   const planet =
     planets.find(
@@ -1427,6 +1476,44 @@ function App() {
           setScreen("home");
         }}
       />
+    );
+  } else if (accessLoading) {
+    content = (
+      <main className="login-page">
+        <div className="login-card">
+          <p className="eyebrow">OATLE KIDS</p>
+          <h1>Checking access...</h1>
+          <p className="login-intro">
+            Getting your space adventure ready.
+          </p>
+        </div>
+      </main>
+    );
+  } else if (!hasAccess) {
+    content = (
+      <main className="login-page">
+        <div className="login-card">
+          <p className="eyebrow">OATLE KIDS</p>
+          <h1>Access required</h1>
+          <p className="login-intro">
+            Your account is ready, but it does not have access to Oatle Kids yet.
+          </p>
+          <p className="login-intro">
+            A valid promo code or subscription will grant access.
+          </p>
+          <button
+            className="secondary-button"
+            onClick={async () => {
+              await supabase.auth.signOut();
+              setUser(null);
+              setHasAccess(false);
+            }}
+            type="button"
+          >
+            Return to login
+          </button>
+        </div>
+      </main>
     );
   } else if (
     screen === "explore"
@@ -2675,6 +2762,7 @@ function App() {
       {content}
 
       {user &&
+        hasAccess &&
         screen !== "scribbler" && (
           <AppNav
             onHome={() =>
