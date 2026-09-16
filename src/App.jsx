@@ -689,6 +689,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
+  // PayFast test state
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState("");
 
@@ -1308,6 +1309,7 @@ function App() {
     setScreen("home");
   };
 
+  // PayFast test checkout
   const startPayfastCheckout = async () => {
     setPaymentLoading(true);
     setPaymentError("");
@@ -1319,9 +1321,7 @@ function App() {
           { body: {} }
         );
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       if (!data?.checkout_url || !data?.fields) {
         throw new Error(
@@ -1766,6 +1766,14 @@ function App() {
               setScreen("explore")
           )}
 
+          {action(
+            paymentLoading
+              ? "Opening payment..."
+              : "Test PayFast — R79/month",
+            startPayfastCheckout,
+            "secondary-button"
+          )}
+
           {assessmentResults &&
             action(
               "Parent Results",
@@ -1773,13 +1781,6 @@ function App() {
                 setScreen("results"),
               "secondary-button"
             )}
-
-          {action(
-            paymentLoading
-              ? "Opening payment..."
-              : "Subscribe — R79/month",
-            startPayfastCheckout
-          )}
         </div>
 
         {paymentError && (
