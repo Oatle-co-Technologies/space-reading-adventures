@@ -1592,7 +1592,31 @@ function App() {
             Your account is ready, but it does not have access to Oatle Kids yet.
           </p>
           <p className="login-intro">
-            Enter a promo code or subscribe to get access.
+            Subscribe for R79/month, or enter a promo code to get access.
+          </p>
+
+          <button
+            className="primary-button"
+            onClick={startPayfastCheckout}
+            disabled={paymentLoading}
+            type="button"
+          >
+            {paymentLoading
+              ? "Opening payment..."
+              : "Subscribe — R79/month"}
+          </button>
+
+          {paymentError && (
+            <p
+              className="payment-error"
+              role="alert"
+            >
+              {paymentError}
+            </p>
+          )}
+
+          <p className="login-intro" style={{ marginTop: "20px" }}>
+            Have a promo code?
           </p>
 
           <form
@@ -2855,40 +2879,6 @@ function App() {
         <h1>
           Settings
         </h1>
-
-        <section className="settings-section">
-          <p className="eyebrow">
-            PARENT ACCOUNT
-          </p>
-
-          <h2>
-            Subscription
-          </h2>
-
-          <p>
-            Manage your Oatle Kids access.
-          </p>
-
-          <button
-            className="primary-button"
-            onClick={startPayfastCheckout}
-            disabled={paymentLoading}
-            type="button"
-          >
-            {paymentLoading
-              ? "Opening payment..."
-              : "Subscribe — R79/month"}
-          </button>
-
-          {paymentError && (
-            <p
-              className="payment-error"
-              role="alert"
-            >
-              {paymentError}
-            </p>
-          )}
-        </section>
 
         <label className="setting-row">
           Sound effects and spoken
