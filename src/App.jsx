@@ -2071,6 +2071,7 @@ function App() {
       counting: {
         eyebrow: "COUNTING MISSION",
         title: "Ready to count among the stars?",
+        description:
           "Practice numbers, counting, and early maths skills in a playful space adventure.",
         button: "Start counting",
         nextScreen: "math",
