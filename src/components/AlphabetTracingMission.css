@@ -85,7 +85,7 @@ body {
 
 .alphabet-mission-content {
   width: min(1100px, 100%);
-  margin: 48px auto 0;
+  margin: 68px auto 0;
 }
 
 .alphabet-paper-area {
@@ -365,7 +365,7 @@ body {
 
   .alphabet-mission-content {
     width: 100%;
-    margin: 48px auto 0;
+    margin: 68px auto 0;
     padding-bottom: 8px;
   }
 
