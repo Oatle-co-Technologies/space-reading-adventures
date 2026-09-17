@@ -2018,14 +2018,6 @@ function App() {
               setScreen("explore")
           )}
 
-          {action(
-            paymentLoading
-              ? "Opening payment..."
-              : "Test PayFast — R79/month",
-            startPayfastCheckout,
-            "secondary-button"
-          )}
-
           {assessmentResults &&
             action(
               "Parent Results",
@@ -2034,15 +2026,6 @@ function App() {
               "secondary-button"
             )}
         </div>
-
-        {paymentError && (
-          <p
-            className="payment-error"
-            role="alert"
-          >
-            {paymentError}
-          </p>
-        )}
       </main>
     );
   } else if (
@@ -2873,6 +2856,40 @@ function App() {
           Settings
         </h1>
 
+        <section className="settings-section">
+          <p className="eyebrow">
+            PARENT ACCOUNT
+          </p>
+
+          <h2>
+            Subscription
+          </h2>
+
+          <p>
+            Manage your Oatle Kids access.
+          </p>
+
+          <button
+            className="primary-button"
+            onClick={startPayfastCheckout}
+            disabled={paymentLoading}
+            type="button"
+          >
+            {paymentLoading
+              ? "Opening payment..."
+              : "Subscribe — R79/month"}
+          </button>
+
+          {paymentError && (
+            <p
+              className="payment-error"
+              role="alert"
+            >
+              {paymentError}
+            </p>
+          )}
+        </section>
+
         <label className="setting-row">
           Sound effects and spoken
           prompts
@@ -2901,6 +2918,19 @@ function App() {
           type="button"
         >
           Reset game progress
+        </button>
+
+        <button
+          className="secondary-button"
+          onClick={async () => {
+            await supabase.auth.signOut();
+            setUser(null);
+            setHasAccess(false);
+            setScreen("home");
+          }}
+          type="button"
+        >
+          Log out
         </button>
       </main>
     );
