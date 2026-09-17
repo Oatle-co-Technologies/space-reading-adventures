@@ -213,9 +213,9 @@ body {
 .alphabet-tool-bar {
   width: max-content;
   margin: 12px auto 0;
-  display: grid;
-  grid-template-columns: repeat(2, 42px);
-  grid-template-rows: repeat(2, 42px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 6px;
   position: relative;
   z-index: 10;
@@ -435,9 +435,9 @@ body {
 
     margin: 14px auto 0;
 
-    display: grid;
-    grid-template-columns: repeat(2, 48px);
-    grid-template-rows: repeat(2, 48px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 8px;
 
     position: relative;
@@ -550,8 +550,9 @@ body {
 
   .alphabet-tool-bar {
     margin-top: 12px;
-    grid-template-columns: repeat(2, 44px);
-    grid-template-rows: repeat(2, 44px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 7px;
   }
 
