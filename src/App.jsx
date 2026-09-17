@@ -697,6 +697,9 @@ function App() {
   // Deployment trigger check
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState("");
+  const [promoCode, setPromoCode] = useState("");
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoMessage, setPromoMessage] = useState("");
 
   const [progress, setProgress] = useState(savedGame);
 
@@ -1428,6 +1431,96 @@ function App() {
     }
   };
 
+  const redeemPromoCode = async () => {
+    const code = promoCode.trim();
+
+    if (!code) {
+      setPromoMessage("Please enter a promo code.");
+      return;
+    }
+
+    setPromoLoading(true);
+    setPromoMessage("");
+
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        throw new Error("No authenticated session found.");
+      }
+
+      const { data, error } =
+        await supabase.functions.invoke(
+          "redeem-promo",
+          {
+            body: {
+              code,
+            },
+            headers: {
+              Authorization: `Bearer ${session.access_token}`,
+            },
+          }
+        );
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data?.success) {
+        throw new Error(
+          data?.error || "Promo code could not be redeemed."
+        );
+      }
+
+      setPromoMessage(
+        data.message || "Promo code redeemed successfully."
+      );
+
+      // Refresh access after the entitlement is created.
+      setAccessLoading(true);
+
+      const { data: entitlement, error: accessError } =
+        await supabase
+          .from("entitlements")
+          .select("status, expires_at")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+      if (accessError) {
+        console.error(
+          "Access refresh failed:",
+          accessError
+        );
+        setHasAccess(false);
+      } else {
+        const active =
+          entitlement?.status === "active" &&
+          (!entitlement.expires_at ||
+            new Date(entitlement.expires_at) > new Date());
+
+        setHasAccess(active);
+      }
+
+      setAccessLoading(false);
+    } catch (error) {
+      console.error(
+        "Promo redemption error:",
+        error
+      );
+
+      setPromoMessage(
+        error?.message ||
+          "We couldn't redeem that promo code. Please try again."
+      );
+
+      setAccessLoading(false);
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+
   const action = (
     label,
     handler,
@@ -1499,8 +1592,64 @@ function App() {
             Your account is ready, but it does not have access to Oatle Kids yet.
           </p>
           <p className="login-intro">
-            A valid promo code or subscription will grant access.
+            Enter a promo code or subscribe to get access.
           </p>
+
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              redeemPromoCode();
+            }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+              marginTop: "20px",
+            }}
+          >
+            <input
+              type="text"
+              value={promoCode}
+              onChange={(event) => {
+                setPromoCode(event.target.value);
+                setPromoMessage("");
+              }}
+              placeholder="Enter promo code"
+              aria-label="Promo code"
+              autoComplete="off"
+              style={{
+                width: "100%",
+                boxSizing: "border-box",
+                padding: "12px 14px",
+                borderRadius: "10px",
+                border: "1px solid rgba(255,255,255,0.2)",
+                background: "rgba(255,255,255,0.06)",
+                color: "inherit",
+                font: "inherit",
+              }}
+            />
+
+            <button
+              className="primary-button"
+              type="submit"
+              disabled={promoLoading}
+            >
+              {promoLoading
+                ? "Redeeming..."
+                : "Redeem promo code"}
+            </button>
+
+            {promoMessage && (
+              <p
+                className="login-intro"
+                role="status"
+                aria-live="polite"
+              >
+                {promoMessage}
+              </p>
+            )}
+          </form>
+
           <button
             className="secondary-button"
             onClick={async () => {
