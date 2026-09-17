@@ -58,6 +58,7 @@ body {
 }
 
 .alphabet-mission-title {
+  display: none;
   min-width: 0;
 }
 
