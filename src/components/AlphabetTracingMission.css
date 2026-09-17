@@ -58,7 +58,6 @@ body {
 }
 
 .alphabet-mission-title {
-  display: none;
   min-width: 0;
 }
 
@@ -341,27 +340,28 @@ body {
     overscroll-behavior-y: contain;
   }
 
+  /* Keep only the back button. The mission title/progress are hidden. */
   .alphabet-mission-header {
-    gap: 9px;
+    position: static;
+    display: block;
+  }
+
+  .alphabet-mission-title,
+  .alphabet-mission-progress {
+    display: none;
   }
 
   .alphabet-back-button {
+    position: fixed;
+    top: 32px;
+    left: 16px;
     width: 38px;
     height: 38px;
+    margin: 0;
     border-radius: 10px;
     font-size: 1.1rem;
-  }
-
-  .alphabet-mission-kicker {
-    font-size: 0.72rem;
-  }
-
-  .alphabet-mission-title h1 {
-    font-size: 1.25rem;
-  }
-
-  .alphabet-mission-progress {
-    font-size: 0.9rem;
+    z-index: 9999;
+    pointer-events: auto;
   }
 
   .alphabet-mission-content {
@@ -601,8 +601,3 @@ body {
   overflow: visible;
 }
 
-.alphabet-back-button {
-  position: relative;
-  z-index: 100;
-  pointer-events: auto;
-}
