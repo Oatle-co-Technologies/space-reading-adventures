@@ -318,6 +318,13 @@ body {
    MOBILE PORTRAIT
    ========================= */
 
+/* =========================
+   MOBILE HEADER OVERRIDE
+   Keep the paper/layout untouched.
+   The header is visually reduced to a
+   clickable back button only.
+   ========================= */
+
 @media (max-width: 700px) and (orientation: portrait) {
 
   .alphabet-tracing-mission {
@@ -340,10 +347,16 @@ body {
     overscroll-behavior-y: contain;
   }
 
-  /* Keep only the back button. The mission title/progress are hidden. */
+  /* Mobile triplet header: back button only. */
   .alphabet-mission-header {
-    position: static;
-    display: block;
+    position: absolute;
+    top: 78px;
+    left: 12px;
+    right: 12px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
   }
 
   .alphabet-mission-title,
@@ -352,16 +365,14 @@ body {
   }
 
   .alphabet-back-button {
-    position: fixed;
-    top: 32px;
-    left: 16px;
+    position: relative;
+    z-index: 101;
     width: 38px;
     height: 38px;
-    margin: 0;
     border-radius: 10px;
     font-size: 1.1rem;
-    z-index: 9999;
     pointer-events: auto;
+    touch-action: manipulation;
   }
 
   .alphabet-mission-content {
