@@ -5,6 +5,7 @@ import { questions } from "./data/questions";
 import { lowercaseQuestions } from "./data/lowercaseQuestions";
 import { matchingQuestions } from "./data/matchingQuestions";
 import { phonicsQuestions } from "./data/phonicsQuestions";
+import { wordOrderQuestions } from "./data/wordOrderQuestions";
 import { readingQuestions } from "./data/readingQuestions";
 import { sentenceQuestions } from "./data/sentenceQuestions";
 import { missingLettersQuestions } from "./data/missingLettersQuestions";
@@ -132,8 +133,8 @@ const planets = [
     name: "Mars",
     image: marsImage,
     color: "#EF5B5B",
-    description: "Listen for letter sounds",
-    questions: phonicsQuestions,
+    description: "Listen to the word and put it in the right order",
+    questions: wordOrderQuestions,
   },
   {
     id: 5,
@@ -725,6 +726,8 @@ function App() {
   const [feedback, setFeedback] = useState("");
   const [builtSentence, setBuiltSentence] =
     useState([]);
+  const [builtWord, setBuiltWord] =
+    useState([]);
   const [isProcessing, setIsProcessing] =
     useState(false);
   const [revealedAnswer, setRevealedAnswer] =
@@ -858,6 +861,32 @@ function App() {
     return generateOptions(question.answer);
   }, [question, planet.id]);
 
+  const wordOrderOptions = useMemo(() => {
+    if (!question || planet.id !== 4) {
+      return [];
+    }
+
+    const items = question.letters.map(
+      (letter, index) => ({ letter, index })
+    );
+
+    let shuffled = shuffleArray(items);
+    let attempts = 0;
+
+    while (
+      items.length > 1 &&
+      shuffled.every(
+        (item, index) => item.index === index
+      ) &&
+      attempts < 10
+    ) {
+      shuffled = shuffleArray(items);
+      attempts += 1;
+    }
+
+    return shuffled;
+  }, [question, planet.id]);
+
   useEffect(() => {
     localStorage.setItem(
       "atli-space-progress",
@@ -881,10 +910,19 @@ function App() {
     }
   }, [assessmentResults]);
 
+  const playPhonicsSound = (audioSrc) => {
+    if (!soundOn || !audioSrc) return;
+
+    const phonicsAudio = new Audio(audioSrc);
+    phonicsAudio.volume = 1;
+    phonicsAudio.play().catch(() => {});
+  };
+
   /*
    * Central reading speech.
    *
-   * Mars and Pluto phonics use real recorded phonics audio.
+   * Mars uses whole-word TTS.
+   * Pluto phonics uses real recorded phonics audio.
    * Everything else that needs spoken accessibility prompts
    * continues to use the existing TTS voice.
    */
@@ -897,12 +935,20 @@ function App() {
       return;
     }
 
-    const isMarsPhonics = planet.id === 4;
+    const isMarsWordOrder = planet.id === 4;
     const isPlutoPhonics =
       planet.id === 9 &&
       question.skill === "phonics";
 
-    if (isMarsPhonics || isPlutoPhonics) {
+    if (isMarsWordOrder) {
+      const timer = setTimeout(() => {
+        speak(question.word);
+      }, 250);
+
+      return () => clearTimeout(timer);
+    }
+
+    if (isPlutoPhonics) {
       const timer = setTimeout(() => {
         playPhonicsSound(question.audioSrc);
       }, 250);
@@ -950,14 +996,6 @@ function App() {
     effect.play().catch(() => {});
   };
 
-  const playPhonicsSound = (audioSrc) => {
-    if (!soundOn || !audioSrc) return;
-
-    const phonicsAudio = new Audio(audioSrc);
-    phonicsAudio.volume = 1;
-    phonicsAudio.play().catch(() => {});
-  };
-
   const goToPlanet = (id) => {
 
     setProgress((current) => ({
@@ -968,6 +1006,7 @@ function App() {
 
     setFeedback("");
     setBuiltSentence([]);
+    setBuiltWord([]);
     setIsProcessing(false);
     setRevealedAnswer("");
 
@@ -995,6 +1034,7 @@ function App() {
     );
 
     setBuiltSentence([]);
+    setBuiltWord([]);
     setFeedback("");
     setIsProcessing(false);
     setRevealedAnswer("");
@@ -1145,6 +1185,75 @@ function App() {
         playSound(victorySound);
         setScreen("celebration");
       }
+
+      setIsProcessing(false);
+    }, 3000);
+  };
+
+  const selectWordOrderLetter = (letterIndex) => {
+    if (isProcessing) {
+      return;
+    }
+
+    if (
+      builtWord.some(
+        (item) => item.index === letterIndex
+      )
+    ) {
+      return;
+    }
+
+    const selectedLetter =
+      question.letters[letterIndex];
+    const expectedLetter =
+      question.answer[builtWord.length];
+
+    if (selectedLetter !== expectedLetter) {
+      playSound(wrongSound);
+      setFeedback("Almost! Try another star.");
+      return;
+    }
+
+    playSound(correctSound);
+    setFeedback("");
+
+    const nextWord = [
+      ...builtWord,
+      {
+        letter: selectedLetter,
+        index: letterIndex,
+      },
+    ];
+
+    setBuiltWord(nextWord);
+
+    if (
+      nextWord.length !==
+      question.letters.length
+    ) {
+      return;
+    }
+
+    setIsProcessing(true);
+
+    advanceTimer.current = setTimeout(() => {
+      if (
+        progress.question <
+        missionQuestions.length - 1
+      ) {
+        setProgress((current) => ({
+          ...current,
+          question: current.question + 1,
+        }));
+
+        setBuiltWord([]);
+        setFeedback("");
+        setIsProcessing(false);
+        return;
+      }
+
+      playSound(victorySound);
+      setScreen("celebration");
 
       setIsProcessing(false);
     }, 3000);
@@ -2233,6 +2342,7 @@ function App() {
               startPlutoAssessment();
             } else {
               setBuiltSentence([]);
+              setBuiltWord([]);
               setFeedback("");
               setIsProcessing(false);
               setRevealedAnswer("");
@@ -2558,19 +2668,76 @@ function App() {
               )}
             </div>
           </>
+        ) : planet.id === 4 ? (
+          <>
+            <p className="eyebrow">
+              LISTEN TO THE WORD AND PUT IT IN THE RIGHT ORDER
+            </p>
+
+            <button
+              className="sound-target"
+              type="button"
+              onClick={() => speak(question.word)}
+              disabled={!soundOn}
+            >
+              🔊 Hear the word
+            </button>
+
+            <div
+              className="sentence-target"
+              aria-live="polite"
+            >
+              {builtWord.length > 0 ? (
+                builtWord.map((item, index) => (
+                  <span
+                    key={`${item.index}-${index}`}
+                    className="sentence-word"
+                  >
+                    {item.letter}
+                  </span>
+                ))
+              ) : (
+                <span className="sentence-placeholder">
+                  Tap the letters in the right order
+                </span>
+              )}
+            </div>
+
+            <div className="answer-grid">
+              {wordOrderOptions.map(
+                (item) => (
+                  <button
+                    key={item.index}
+                    className="letter-button"
+                    onClick={() =>
+                      selectWordOrderLetter(item.index)
+                    }
+                    disabled={
+                      isProcessing ||
+                      builtWord.some(
+                        (selected) =>
+                          selected.index === item.index
+                      )
+                    }
+                    type="button"
+                  >
+                    {item.letter}
+                  </button>
+                )
+              )}
+            </div>
+          </>
         ) : (
           <>
             <p className="eyebrow">
-              {planet.id === 4 ||
-              (planet.id === 9 &&
-                question.skill === "phonics")
+              {planet.id === 9 &&
+              question.skill === "phonics"
                 ? "LISTEN AND CHOOSE"
                 : "FIND THE LETTER"}
             </p>
 
-            {planet.id === 4 ||
-            (planet.id === 9 &&
-              question.skill === "phonics") ? (
+            {planet.id === 9 &&
+            question.skill === "phonics" ? (
               <button
                 className="sound-target"
                 type="button"
