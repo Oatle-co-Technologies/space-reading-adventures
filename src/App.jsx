@@ -1453,7 +1453,7 @@ function App() {
 
       const { data, error } =
         await supabase.functions.invoke(
-          "redeem-promo",
+          "hyper-action",
           {
             body: {
               code,
