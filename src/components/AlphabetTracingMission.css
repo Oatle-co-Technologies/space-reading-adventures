@@ -601,3 +601,8 @@ body {
   overflow: visible;
 }
 
+.alphabet-back-button {
+  position: relative;
+  z-index: 100;
+  pointer-events: auto;
+}
