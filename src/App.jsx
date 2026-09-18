@@ -763,6 +763,7 @@ function App() {
     useState("");
 
   const advanceTimer = useRef(null);
+  const welcomeAudioRef = useRef(null);
 
   useEffect(() => {
     let mounted = true;
@@ -1025,18 +1026,94 @@ function App() {
   ]);
 
   const playWelcomeSound = () => {
-    if (!soundOn) return;
+    if (!soundOn || welcomeAudioRef.current) {
+      return;
+    }
 
     const effect = new Audio(welcomeSound);
     effect.volume = 1;
-    effect.play().catch(() => {});
+    welcomeAudioRef.current = effect;
+
+    effect.addEventListener(
+      "ended",
+      () => {
+        if (welcomeAudioRef.current === effect) {
+          welcomeAudioRef.current = null;
+        }
+      },
+      { once: true }
+    );
+
+    effect.play().catch(() => {
+      if (welcomeAudioRef.current === effect) {
+        welcomeAudioRef.current = null;
+      }
+    });
   };
 
   useEffect(() => {
-    if (screen === "home" && soundOn) {
-      playWelcomeSound();
+    if (screen !== "home" || !soundOn) {
+      return;
     }
+
+    playWelcomeSound();
+
+    const handleHomeInteraction = () => {
+      playWelcomeSound();
+    };
+
+    window.addEventListener(
+      "pointerdown",
+      handleHomeInteraction,
+      { once: true }
+    );
+
+    window.addEventListener(
+      "touchstart",
+      handleHomeInteraction,
+      { once: true, passive: true }
+    );
+
+    const handleVisibility = () => {
+      if (
+        document.visibilityState === "visible"
+      ) {
+        playWelcomeSound();
+      }
+    };
+
+    document.addEventListener(
+      "visibilitychange",
+      handleVisibility
+    );
+
+    return () => {
+      window.removeEventListener(
+        "pointerdown",
+        handleHomeInteraction
+      );
+
+      window.removeEventListener(
+        "touchstart",
+        handleHomeInteraction
+      );
+
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibility
+      );
+    };
   }, [screen, soundOn]);
+
+  useEffect(() => {
+    return () => {
+      if (welcomeAudioRef.current) {
+        welcomeAudioRef.current.pause();
+        welcomeAudioRef.current.currentTime = 0;
+        welcomeAudioRef.current = null;
+      }
+    };
+  }, []);
 
   const playSound = (sound) => {
     if (!soundOn) return;
