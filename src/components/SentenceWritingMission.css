@@ -448,3 +448,29 @@
 .sentence-target-canvas {
   pointer-events: none;
 }
+
+/* Mission 4: keep Next as a dedicated control at the very top
+   of the vertical toolbar, above the pencil/brush/pen/eraser grid. */
+.sentence-writing-toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: visible;
+}
+
+.sentence-writing-toolbar > .sentence-next-button {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  top: auto;
+  flex: 0 0 52px;
+  margin: 10px auto 8px;
+  z-index: 20;
+}
+
+.sentence-writing-toolbar > .scribbler-tool-tools {
+  flex: 0 0 auto;
+  width: 100%;
+}

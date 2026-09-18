@@ -567,21 +567,21 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
         className="scribbler-toolbar sentence-writing-toolbar"
         aria-label="Writing tools"
       >
-        <div className="scribbler-tool-tools">
-          <button
-            type="button"
-            className="sentence-next-button"
-            onClick={handleNext}
-            disabled={!hasDrawingRef.current}
-            aria-label={
-              sentenceIndex === SENTENCES.length - 1
-                ? "Complete writing mission"
-                : "Next sentence"
-            }
-          >
-            →
-          </button>
+        <button
+          type="button"
+          className="sentence-next-button"
+          onClick={handleNext}
+          disabled={!hasDrawingRef.current}
+          aria-label={
+            sentenceIndex === SENTENCES.length - 1
+              ? "Complete writing mission"
+              : "Next sentence"
+          }
+        >
+          →
+        </button>
 
+        <div className="scribbler-tool-tools">
           {["pencil", "brush", "pen"].map((toolName) => (
             <button
               key={toolName}
