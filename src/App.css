@@ -2178,3 +2178,18 @@ button {
   }
 }
 
+
+/* =========================================================
+   GLOBAL MISSION NAVIGATION
+   Reading + Maths
+   Remove the duplicate mission back/status row.
+   Keep the rocket journey UI.
+   ========================================================= */
+
+.mission-status {
+  display: none !important;
+}
+
+.mission-status .text-button {
+  display: none !important;
+}
