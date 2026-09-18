@@ -174,7 +174,7 @@ export default function AlphabetTracingMission({
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      speak(letter);
+      speak(`Trace the uppercase and lowercase ${letter}`);
     }, 250);
 
     return () => {
