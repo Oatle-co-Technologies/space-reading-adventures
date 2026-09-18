@@ -10,21 +10,21 @@
   width: 100%;
   height: 100dvh;
   min-height: 100dvh;
-  padding: 54px 5vw 18px;
+  padding: 0 5vw 18px;
   box-sizing: border-box;
   display: grid;
   grid-template-columns: minmax(0, 1fr) clamp(62px, 8vw, 84px);
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr);
   gap: 10px;
   align-items: stretch;
   overflow: hidden;
 }
 
 .sentence-writing-header {
+  display: none;
   grid-column: 1 / -1;
   width: min(1100px, 100%);
   margin: 0 auto;
-  display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: end;
   gap: 20px;
@@ -60,7 +60,7 @@
 
 .sentence-writing-paper {
   grid-column: 1;
-  grid-row: 2;
+  grid-row: 1;
   position: relative;
   width: 100%;
   min-width: 0;
@@ -228,7 +228,7 @@
 
 .sentence-writing-toolbar {
   grid-column: 2;
-  grid-row: 2;
+  grid-row: 1;
   width: 100%;
   height: 100%;
   min-width: 0;
@@ -236,6 +236,7 @@
 }
 
 .sentence-writing-hint {
+  display: none;
   grid-column: 1 / -1;
   margin: 0;
   color: #fff;
@@ -322,7 +323,7 @@
     min-height: 100dvh;
     overflow-x: hidden;
     overflow-y: auto;
-    padding: 34px 3vw 10px;
+    padding: 0 3vw 10px;
     gap: 7px;
     grid-template-columns: minmax(0, 1fr) 62px;
   }
@@ -344,8 +345,8 @@
   }
 
   .sentence-writing-paper {
-    min-height: calc(100dvh - 20px);
-    height: auto;
+    min-height: 0;
+    height: 100%;
   }
 
   .sentence-writing-content {
