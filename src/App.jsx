@@ -38,6 +38,7 @@ import plutoImage from "./assets/images/planets/pluto.png";
 import correctSound from "./sounds/correct.mp3";
 import wrongSound from "./sounds/wrong.mp3";
 import victorySound from "./sounds/victory.mp3";
+import welcomeSound from "./sounds/welcome-sound.mp3";
 
 import neptunePage1 from "./assets/images/story/neptune-page1.png";
 import neptunePage2 from "./assets/images/story/neptune-page2.png";
@@ -762,6 +763,7 @@ function App() {
     useState("");
 
   const advanceTimer = useRef(null);
+  const welcomeAudioRef = useRef(null);
 
   useEffect(() => {
     let mounted = true;
@@ -1022,6 +1024,51 @@ function App() {
     progress.question,
     soundOn,
   ]);
+
+  useEffect(() => {
+    if (screen !== "explore" && welcomeAudioRef.current) {
+      welcomeAudioRef.current.pause();
+      welcomeAudioRef.current.currentTime = 0;
+      welcomeAudioRef.current = null;
+    }
+
+    return () => {
+      if (welcomeAudioRef.current) {
+        welcomeAudioRef.current.pause();
+        welcomeAudioRef.current.currentTime = 0;
+        welcomeAudioRef.current = null;
+      }
+    };
+  }, [screen]);
+
+  const playWelcomeSound = () => {
+    if (!soundOn) return;
+
+    if (welcomeAudioRef.current) {
+      welcomeAudioRef.current.pause();
+      welcomeAudioRef.current.currentTime = 0;
+    }
+
+    const welcomeAudio = new Audio(welcomeSound);
+    welcomeAudio.volume = 1;
+    welcomeAudioRef.current = welcomeAudio;
+
+    welcomeAudio.addEventListener(
+      "ended",
+      () => {
+        if (welcomeAudioRef.current === welcomeAudio) {
+          welcomeAudioRef.current = null;
+        }
+      },
+      { once: true }
+    );
+
+    welcomeAudio.play().catch(() => {
+      if (welcomeAudioRef.current === welcomeAudio) {
+        welcomeAudioRef.current = null;
+      }
+    });
+  };
 
   const playSound = (sound) => {
     if (!soundOn) return;
@@ -2290,10 +2337,10 @@ function App() {
         <div className="button-row">
           {action(
             "Explore",
-            () =>
-              setScreen(
-                "explore"
-              )
+            () => {
+              playWelcomeSound();
+              setScreen("explore");
+            }
           )}
 
           {assessmentResults &&
