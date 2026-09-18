@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./AlphabetTracingMission.css";
+import { speak } from "../utils/speech";
 
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
@@ -166,6 +167,20 @@ export default function AlphabetTracingMission({
   const [tool, setTool] = useState("pencil");
 
   const letter = LETTERS[letterIndex];
+
+  /* =========================
+     TEXT TO SPEECH
+     ========================= */
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      speak(letter);
+    }, 250);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [letter]);
 
   /* =========================
      CANVAS SETUP
