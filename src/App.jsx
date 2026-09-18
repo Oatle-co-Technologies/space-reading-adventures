@@ -1033,10 +1033,7 @@ function App() {
   };
 
   useEffect(() => {
-    if (
-      (screen === "home" || screen === "explore") &&
-      soundOn
-    ) {
+    if (screen === "home" && soundOn) {
       playWelcomeSound();
     }
   }, [screen, soundOn]);
