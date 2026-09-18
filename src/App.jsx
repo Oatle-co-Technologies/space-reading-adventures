@@ -133,7 +133,8 @@ const planets = [
     name: "Mars",
     image: marsImage,
     color: "#EF5B5B",
-    description: "Listen to the word and put it in the right order",
+    description:
+      "Listen to the word and put it in the right order",
     questions: wordOrderQuestions,
   },
   {
@@ -300,6 +301,28 @@ const savedWritingProgress = () => {
   } catch {
     return {
       unlocked: 1,
+    };
+  }
+};
+
+const savedChildProfile = () => {
+  try {
+    return (
+      JSON.parse(
+        localStorage.getItem("oatle-child-profile")
+      ) || {
+        name: "",
+        age: "",
+        favouriteColour: "",
+        siblings: "",
+      }
+    );
+  } catch {
+    return {
+      name: "",
+      age: "",
+      favouriteColour: "",
+      siblings: "",
     };
   }
 };
@@ -556,7 +579,7 @@ function BookIcon() {
       />
 
       <path
-        d="M20 5.5c-2.8-.8-5.5-.2-8 1.5v12c-2.5-1.7-5.2-2.3-8-1.5z"
+        d="M20 5.5c-2.8-.8-5.5-.2-8 1.5v12c2.5-1.7 5.2-2.3 8-1.5z"
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
@@ -714,7 +737,8 @@ function App() {
     useState(null);
 
   const [screen, setScreen] = useState("home");
-  const [launchAdventure, setLaunchAdventure] = useState("reading");
+  const [launchAdventure, setLaunchAdventure] =
+    useState("reading");
 
   const [assessmentResults, setAssessmentResults] =
     useState(savedAssessmentResults);
@@ -723,6 +747,10 @@ function App() {
     useState(emptyPlutoResults);
 
   const [soundOn, setSoundOn] = useState(true);
+
+  const [childProfile, setChildProfile] =
+    useState(savedChildProfile);
+
   const [feedback, setFeedback] = useState("");
   const [builtSentence, setBuiltSentence] =
     useState([]);
@@ -902,6 +930,13 @@ function App() {
   }, [writingProgress]);
 
   useEffect(() => {
+    localStorage.setItem(
+      "oatle-child-profile",
+      JSON.stringify(childProfile)
+    );
+  }, [childProfile]);
+
+  useEffect(() => {
     if (assessmentResults) {
       localStorage.setItem(
         "atli-space-assessment-results",
@@ -997,7 +1032,6 @@ function App() {
   };
 
   const goToPlanet = (id) => {
-
     setProgress((current) => ({
       ...current,
       activePlanet: id,
@@ -1205,12 +1239,18 @@ function App() {
 
     const selectedLetter =
       question.letters[letterIndex];
+
     const expectedLetter =
       question.answer[builtWord.length];
 
-    if (selectedLetter !== expectedLetter) {
+    if (
+      selectedLetter !==
+      expectedLetter
+    ) {
       playSound(wrongSound);
-      setFeedback("Almost! Try another star.");
+      setFeedback(
+        "Almost! Try another star."
+      );
       return;
     }
 
@@ -1361,9 +1401,10 @@ function App() {
   };
 
   const startWritingPlanet = (planetId) => {
-    const selectedPlanet = writingPlanets.find(
-      (item) => item.id === planetId
-    );
+    const selectedPlanet =
+      writingPlanets.find(
+        (item) => item.id === planetId
+      );
 
     if (
       !selectedPlanet ||
@@ -1371,8 +1412,14 @@ function App() {
     ) {
       return;
     }
-    setWritingActivePlanet(planetId);
-    setScreen(selectedPlanet.mission);
+
+    setWritingActivePlanet(
+      planetId
+    );
+
+    setScreen(
+      selectedPlanet.mission
+    );
   };
 
   const unlockNextWritingPlanet = () => {
@@ -1387,7 +1434,10 @@ function App() {
       nextPlanetId >
       writingPlanets.length
     ) {
-      setWritingCelebrationMission(null);
+      setWritingCelebrationMission(
+        null
+      );
+
       setScreen("writingMap");
       return;
     }
@@ -1409,9 +1459,11 @@ function App() {
     setWritingActivePlanet(
       nextPlanetId
     );
+
     setWritingCelebrationMission(
       null
     );
+
     setScreen(
       nextPlanet
         ? "writingPlanet"
@@ -1483,7 +1535,9 @@ function App() {
       } = await supabase.auth.getSession();
 
       if (!session?.access_token) {
-        throw new Error("No authenticated session found.");
+        throw new Error(
+          "No authenticated session found."
+        );
       }
 
       // Explicitly send the user's JWT to the Edge Function.
@@ -1500,13 +1554,18 @@ function App() {
 
       if (error) throw error;
 
-      if (!data?.checkout_url || !data?.fields) {
+      if (
+        !data?.checkout_url ||
+        !data?.fields
+      ) {
         throw new Error(
           "PayFast checkout response was incomplete."
         );
       }
 
-      const form = document.createElement("form");
+      const form =
+        document.createElement("form");
+
       form.method = "POST";
       form.action = data.checkout_url;
       form.style.display = "none";
@@ -1514,11 +1573,15 @@ function App() {
       Object.entries(data.fields).forEach(
         ([name, value]) => {
           const input =
-            document.createElement("input");
+            document.createElement(
+              "input"
+            );
 
           input.type = "hidden";
           input.name = name;
-          input.value = String(value ?? "");
+          input.value = String(
+            value ?? ""
+          );
 
           form.appendChild(input);
         }
@@ -1541,10 +1604,13 @@ function App() {
   };
 
   const redeemPromoCode = async () => {
-    const code = promoCode.trim();
+    const code =
+      promoCode.trim();
 
     if (!code) {
-      setPromoMessage("Please enter a promo code.");
+      setPromoMessage(
+        "Please enter a promo code."
+      );
       return;
     }
 
@@ -1554,10 +1620,13 @@ function App() {
     try {
       const {
         data: { session },
-      } = await supabase.auth.getSession();
+      } =
+        await supabase.auth.getSession();
 
       if (!session?.access_token) {
-        throw new Error("No authenticated session found.");
+        throw new Error(
+          "No authenticated session found."
+        );
       }
 
       const { data, error } =
@@ -1579,35 +1648,43 @@ function App() {
 
       if (!data?.success) {
         throw new Error(
-          data?.error || "Promo code could not be redeemed."
+          data?.error ||
+            "Promo code could not be redeemed."
         );
       }
 
       setPromoMessage(
-        data.message || "Promo code redeemed successfully."
+        data.message ||
+          "Promo code redeemed successfully."
       );
 
       // Refresh access after the entitlement is created.
       setAccessLoading(true);
 
-      const { data: entitlement, error: accessError } =
-        await supabase
-          .from("entitlements")
-          .select("status, expires_at")
-          .eq("user_id", user.id)
-          .maybeSingle();
+      const {
+        data: entitlement,
+        error: accessError,
+      } = await supabase
+        .from("entitlements")
+        .select("status, expires_at")
+        .eq("user_id", user.id)
+        .maybeSingle();
 
       if (accessError) {
         console.error(
           "Access refresh failed:",
           accessError
         );
+
         setHasAccess(false);
       } else {
         const active =
-          entitlement?.status === "active" &&
+          entitlement?.status ===
+            "active" &&
           (!entitlement.expires_at ||
-            new Date(entitlement.expires_at) > new Date());
+            new Date(
+              entitlement.expires_at
+            ) > new Date());
 
         setHasAccess(active);
       }
@@ -1683,8 +1760,14 @@ function App() {
     content = (
       <main className="login-page">
         <div className="login-card">
-          <p className="eyebrow">OATLE KIDS</p>
-          <h1>Checking access...</h1>
+          <p className="eyebrow">
+            OATLE KIDS
+          </p>
+
+          <h1>
+            Checking access...
+          </h1>
+
           <p className="login-intro">
             Getting your space adventure ready.
           </p>
@@ -1695,18 +1778,27 @@ function App() {
     content = (
       <main className="login-page">
         <div className="login-card">
-          <p className="eyebrow">OATLE KIDS</p>
-          <h1>Access required</h1>
+          <p className="eyebrow">
+            OATLE KIDS
+          </p>
+
+          <h1>
+            Access required
+          </h1>
+
           <p className="login-intro">
             Your account is ready, but it does not have access to Oatle Kids yet.
           </p>
+
           <p className="login-intro">
             Subscribe for R79/month, or enter a promo code to get access.
           </p>
 
           <button
             className="primary-button"
-            onClick={startPayfastCheckout}
+            onClick={
+              startPayfastCheckout
+            }
             disabled={paymentLoading}
             type="button"
           >
@@ -1724,7 +1816,12 @@ function App() {
             </p>
           )}
 
-          <p className="login-intro" style={{ marginTop: "20px" }}>
+          <p
+            className="login-intro"
+            style={{
+              marginTop: "20px",
+            }}
+          >
             Have a promo code?
           </p>
 
@@ -1744,7 +1841,9 @@ function App() {
               type="text"
               value={promoCode}
               onChange={(event) => {
-                setPromoCode(event.target.value);
+                setPromoCode(
+                  event.target.value
+                );
                 setPromoMessage("");
               }}
               placeholder="Enter promo code"
@@ -1755,8 +1854,10 @@ function App() {
                 boxSizing: "border-box",
                 padding: "12px 14px",
                 borderRadius: "10px",
-                border: "1px solid rgba(255,255,255,0.2)",
-                background: "rgba(255,255,255,0.06)",
+                border:
+                  "1px solid rgba(255,255,255,0.2)",
+                background:
+                  "rgba(255,255,255,0.06)",
                 color: "inherit",
                 font: "inherit",
               }}
@@ -1819,7 +1920,9 @@ function App() {
           <button
             className="adventure-card"
             onClick={() => {
-              setLaunchAdventure("reading");
+              setLaunchAdventure(
+                "reading"
+              );
               setScreen("launch");
             }}
             type="button"
@@ -1836,7 +1939,9 @@ function App() {
           <button
             className="adventure-card"
             onClick={() => {
-              setLaunchAdventure("counting");
+              setLaunchAdventure(
+                "counting"
+              );
               setScreen("launch");
             }}
             type="button"
@@ -1853,7 +1958,9 @@ function App() {
           <button
             className="adventure-card"
             onClick={() => {
-              setLaunchAdventure("writing");
+              setLaunchAdventure(
+                "writing"
+              );
               setScreen("launch");
             }}
             type="button"
@@ -1887,52 +1994,56 @@ function App() {
         </p>
 
         <div className="planet-map writing-map">
-          {writingPlanets.map((item) => {
-            const locked =
-              item.id >
-              writingProgress.unlocked;
+          {writingPlanets.map(
+            (item) => {
+              const locked =
+                item.id >
+                writingProgress.unlocked;
 
-            return (
-              <button
-                key={item.id}
-                className={`planet-card ${
-                  locked ? "locked" : ""
-                }`}
-                style={{
-                  "--planet":
-                    item.color,
-                }}
-                disabled={locked}
-                onClick={() =>
-                  startWritingPlanet(
-                    item.id
-                  )
-                }
-                type="button"
-              >
-                {locked ? (
-                  <span className="writing-map-lock">
-                    🔒
-                  </span>
-                ) : (
-                  <PlanetVisual
-                    planet={item}
-                    className="planet-art"
-                  />
-                )}
+              return (
+                <button
+                  key={item.id}
+                  className={`planet-card ${
+                    locked
+                      ? "locked"
+                      : ""
+                  }`}
+                  style={{
+                    "--planet":
+                      item.color,
+                  }}
+                  disabled={locked}
+                  onClick={() =>
+                    startWritingPlanet(
+                      item.id
+                    )
+                  }
+                  type="button"
+                >
+                  {locked ? (
+                    <span className="writing-map-lock">
+                      🔒
+                    </span>
+                  ) : (
+                    <PlanetVisual
+                      planet={item}
+                      className="planet-art"
+                    />
+                  )}
 
-                <strong>
-                  {item.name}
-                </strong>
+                  <strong>
+                    {item.name}
+                  </strong>
 
-                <small>
-                  {locked
-                    ? "Complete the previous planet"
-                    : item.description}
-                </small>
-              </button>
-            );
-          })}
+                  <small>
+                    {locked
+                      ? "Complete the previous planet"
+                      : item.description}
+                  </small>
+                </button>
+              );
+            }
+          )}
 
           <button
             className="planet-card writing-map-free"
@@ -1962,28 +2073,38 @@ function App() {
     const selectedWritingPlanet =
       writingPlanets.find(
         (item) =>
-          item.id === writingActivePlanet
-      ) || writingPlanets[0];
+          item.id ===
+          writingActivePlanet
+      ) ||
+      writingPlanets[0];
 
     content = (
       <main className="planet-overview writing-planet-overview">
         <PlanetVisual
-          planet={selectedWritingPlanet}
+          planet={
+            selectedWritingPlanet
+          }
           className="planet-icon planet-art"
         />
 
         <p className="eyebrow">
           PLANET{" "}
-          {selectedWritingPlanet.id}
+          {
+            selectedWritingPlanet.id
+          }
         </p>
 
         <h1>
           Welcome to Planet{" "}
-          {selectedWritingPlanet.name}
+          {
+            selectedWritingPlanet.name
+          }
         </h1>
 
         <p>
-          {selectedWritingPlanet.description}. Get ready for your writing mission.
+          {
+            selectedWritingPlanet.description
+          }. Get ready for your writing mission.
         </p>
 
         {action(
@@ -2004,7 +2125,8 @@ function App() {
         (item) =>
           item.id ===
           writingCelebrationMission
-      ) || writingPlanets[0];
+      ) ||
+      writingPlanets[0];
 
     const hasNextWritingPlanet =
       completedWritingPlanet.id <
@@ -2021,11 +2143,16 @@ function App() {
         </h1>
 
         <p className="celebration-message">
-          You completed your writing mission on {completedWritingPlanet.name}.
+          You completed your writing mission on{" "}
+          {
+            completedWritingPlanet.name
+          }.
         </p>
 
         <PlanetVisual
-          planet={completedWritingPlanet}
+          planet={
+            completedWritingPlanet
+          }
           className="celebration-planet planet-art"
         />
 
@@ -2034,7 +2161,9 @@ function App() {
         </p>
 
         <p className="celebration-description">
-          {completedWritingPlanet.description}
+          {
+            completedWritingPlanet.description
+          }
         </p>
 
         <div className="celebration-actions">
@@ -2046,8 +2175,13 @@ function App() {
             : action(
                 "Back to writing map",
                 () => {
-                  setWritingCelebrationMission(null);
-                  setScreen("writingMap");
+                  setWritingCelebrationMission(
+                    null
+                  );
+
+                  setScreen(
+                    "writingMap"
+                  );
                 },
                 "secondary-button"
               )}
@@ -2070,7 +2204,9 @@ function App() {
     content = (
       <AlphabetTracingMission
         onBack={() =>
-          setScreen("writingPlanet")
+          setScreen(
+            "writingPlanet"
+          )
         }
         onComplete={() =>
           completeWritingMission(1)
@@ -2083,7 +2219,9 @@ function App() {
     content = (
       <NumberTracingMission
         onBack={() =>
-          setScreen("writingPlanet")
+          setScreen(
+            "writingPlanet"
+          )
         }
         onComplete={() =>
           completeWritingMission(2)
@@ -2096,7 +2234,9 @@ function App() {
     content = (
       <ShapeTracingMission
         onBack={() =>
-          setScreen("writingPlanet")
+          setScreen(
+            "writingPlanet"
+          )
         }
         onComplete={() =>
           completeWritingMission(3)
@@ -2109,11 +2249,14 @@ function App() {
     content = (
       <SentenceWritingMission
         onBack={() =>
-          setScreen("writingPlanet")
+          setScreen(
+            "writingPlanet"
+          )
         }
         onComplete={() =>
           completeWritingMission(4)
         }
+        childProfile={childProfile}
       />
     );
   } else if (
@@ -2148,14 +2291,18 @@ function App() {
           {action(
             "Explore",
             () =>
-              setScreen("explore")
+              setScreen(
+                "explore"
+              )
           )}
 
           {assessmentResults &&
             action(
               "Parent Results",
               () =>
-                setScreen("results"),
+                setScreen(
+                  "results"
+                ),
               "secondary-button"
             )}
         </div>
@@ -2177,40 +2324,60 @@ function App() {
   ) {
     const launchContent = {
       reading: {
-        eyebrow: "READING MISSION",
-        title: "Ready to explore the planets?",
+        eyebrow:
+          "READING MISSION",
+        title:
+          "Ready to explore the planets?",
         description:
           "Travel across the solar system and build your reading skills one star at a time.",
-        button: "View planet map",
+        button:
+          "View planet map",
         nextScreen: "map",
       },
+
       counting: {
-        eyebrow: "COUNTING MISSION",
-        title: "Ready to count among the stars?",
+        eyebrow:
+          "COUNTING MISSION",
+        title:
+          "Ready to count among the stars?",
         description:
           "Practice numbers, counting, and early maths skills in a playful space adventure.",
-        button: "Start counting",
+        button:
+          "Start counting",
         nextScreen: "math",
       },
+
       writing: {
-        eyebrow: "WRITING MISSION",
-        title: "Ready to write among the stars?",
+        eyebrow:
+          "WRITING MISSION",
+        title:
+          "Ready to write among the stars?",
         description:
           "Trace letters, numbers, shapes, and simple sentences across your writing planets.",
-        button: "View writing map",
-        nextScreen: "writingMap",
+        button:
+          "View writing map",
+        nextScreen:
+          "writingMap",
       },
     }[launchAdventure] || {
-      eyebrow: "MISSION CONTROL",
-      title: "Your mission is ready!",
-      description: "Choose an adventure and begin exploring.",
+      eyebrow:
+        "MISSION CONTROL",
+      title:
+        "Your mission is ready!",
+      description:
+        "Choose an adventure and begin exploring.",
       button: "Explore",
       nextScreen: "explore",
     };
 
     content = (
-      <main className={`launch-panel launch-${launchAdventure}`}>
-        <div className="countdown-orbit" aria-hidden="true">
+      <main
+        className={`launch-panel launch-${launchAdventure}`}
+      >
+        <div
+          className="countdown-orbit"
+          aria-hidden="true"
+        >
           <span>3</span>
           <span>2</span>
           <span>1</span>
@@ -2218,20 +2385,29 @@ function App() {
         </div>
 
         <p className="eyebrow">
-          {launchContent.eyebrow}
+          {
+            launchContent.eyebrow
+          }
         </p>
 
         <h1>
-          {launchContent.title}
+          {
+            launchContent.title
+          }
         </h1>
 
         <p>
-          {launchContent.description}
+          {
+            launchContent.description
+          }
         </p>
 
         {action(
           launchContent.button,
-          () => setScreen(launchContent.nextScreen)
+          () =>
+            setScreen(
+              launchContent.nextScreen
+            )
         )}
       </main>
     );
@@ -2254,54 +2430,56 @@ function App() {
         </p>
 
         <div className="planet-map">
-          {planets.map((item) => {
-            const locked =
-              item.id >
-              progress.unlocked;
+          {planets.map(
+            (item) => {
+              const locked =
+                item.id >
+                progress.unlocked;
 
-            return (
-              <button
-                key={item.id}
-                className={`planet-card ${
-                  locked
-                    ? "locked"
-                    : ""
-                }`}
-                style={{
-                  "--planet":
-                    item.color,
-                }}
-                disabled={locked}
-                onClick={() =>
-                  goToPlanet(
-                    item.id
-                  )
-                }
-                type="button"
-              >
-                {locked ? (
-                  <span>
-                    🔒
-                  </span>
-                ) : (
-                  <PlanetVisual
-                    planet={item}
-                    className="planet-art"
-                  />
-                )}
+              return (
+                <button
+                  key={item.id}
+                  className={`planet-card ${
+                    locked
+                      ? "locked"
+                      : ""
+                  }`}
+                  style={{
+                    "--planet":
+                      item.color,
+                  }}
+                  disabled={locked}
+                  onClick={() =>
+                    goToPlanet(
+                      item.id
+                    )
+                  }
+                  type="button"
+                >
+                  {locked ? (
+                    <span>
+                      🔒
+                    </span>
+                  ) : (
+                    <PlanetVisual
+                      planet={item}
+                      className="planet-art"
+                    />
+                  )}
 
-                <strong>
-                  {item.name}
-                </strong>
+                  <strong>
+                    {item.name}
+                  </strong>
 
-                <small>
-                  {locked
-                    ? "Complete the previous planet"
-                    : item.description}
-                </small>
-              </button>
-            );
-          })}
+                  <small>
+                    {locked
+                      ? "Complete the previous planet"
+                      : item.description}
+                  </small>
+                </button>
+              );
+            }
+          )}
         </div>
       </main>
     );
@@ -2337,16 +2515,30 @@ function App() {
               ? "Start assessment"
               : "Start mission",
           () => {
-
             if (planet.id === 9) {
               startPlutoAssessment();
             } else {
-              setBuiltSentence([]);
+              setBuiltSentence(
+                []
+              );
+
               setBuiltWord([]);
-              setFeedback("");
-              setIsProcessing(false);
-              setRevealedAnswer("");
-              setScreen("mission");
+
+              setFeedback(
+                ""
+              );
+
+              setIsProcessing(
+                false
+              );
+
+              setRevealedAnswer(
+                ""
+              );
+
+              setScreen(
+                "mission"
+              );
             }
           }
         )}
@@ -2418,7 +2610,8 @@ function App() {
               <div
                 className="story-page"
                 style={{
-                  minHeight: "540px",
+                  minHeight:
+                    "540px",
                   display: "flex",
                   flexDirection:
                     "column",
@@ -2464,7 +2657,8 @@ function App() {
                 <div
                   className="story-text"
                   style={{
-                    minHeight: "85px",
+                    minHeight:
+                      "85px",
                     display: "flex",
                     flexDirection:
                       "column",
@@ -2677,7 +2871,9 @@ function App() {
             <button
               className="sound-target"
               type="button"
-              onClick={() => speak(question.word)}
+              onClick={() =>
+                speak(question.word)
+              }
               disabled={!soundOn}
             >
               🔊 Hear the word
@@ -2687,15 +2883,23 @@ function App() {
               className="sentence-target"
               aria-live="polite"
             >
-              {builtWord.length > 0 ? (
-                builtWord.map((item, index) => (
-                  <span
-                    key={`${item.index}-${index}`}
-                    className="sentence-word"
-                  >
-                    {item.letter}
-                  </span>
-                ))
+              {builtWord.length >
+              0 ? (
+                builtWord.map(
+                  (
+                    item,
+                    index
+                  ) => (
+                    <span
+                      key={`${item.index}-${index}`}
+                      className="sentence-word"
+                    >
+                      {
+                        item.letter
+                      }
+                    </span>
+                  )
+                )
               ) : (
                 <span className="sentence-placeholder">
                   Tap the letters in the right order
@@ -2710,13 +2914,18 @@ function App() {
                     key={item.index}
                     className="letter-button"
                     onClick={() =>
-                      selectWordOrderLetter(item.index)
+                      selectWordOrderLetter(
+                        item.index
+                      )
                     }
                     disabled={
                       isProcessing ||
                       builtWord.some(
-                        (selected) =>
-                          selected.index === item.index
+                        (
+                          selected
+                        ) =>
+                          selected.index ===
+                          item.index
                       )
                     }
                     type="button"
@@ -2817,7 +3026,9 @@ function App() {
         </h1>
 
         <p className="celebration-message">
-          {celebrationDescription}
+          {
+            celebrationDescription
+          }
         </p>
 
         <PlanetVisual
@@ -2837,16 +3048,23 @@ function App() {
           {planet.id === 9
             ? action(
                 "See Parent Results →",
-                () => setScreen("results")
+                () =>
+                  setScreen(
+                    "results"
+                  )
               )
-            : planet.id < planets.length
+            : planet.id <
+                planets.length
               ? action(
                   "Unlock next planet →",
                   unlockNext
                 )
               : action(
                   "Back to planet map",
-                  () => setScreen("map"),
+                  () =>
+                    setScreen(
+                      "map"
+                    ),
                   "secondary-button"
                 )}
         </div>
@@ -3046,6 +3264,113 @@ function App() {
         <h1>
           Settings
         </h1>
+
+        <section
+          className="child-profile-settings"
+          aria-labelledby="child-profile-title"
+        >
+          <h2 id="child-profile-title">
+            Child Profile
+          </h2>
+
+          <p className="page-intro">
+            Add a few details about the child. These are used to personalize writing adventures.
+          </p>
+
+          <label className="profile-field">
+            <span>
+              What is your name?
+            </span>
+
+            <input
+              type="text"
+              value={
+                childProfile.name
+              }
+              onChange={(event) =>
+                setChildProfile(
+                  (current) => ({
+                    ...current,
+                    name: event.target.value,
+                  })
+                )
+              }
+              autoComplete="off"
+            />
+          </label>
+
+          <label className="profile-field">
+            <span>
+              How old are you?
+            </span>
+
+            <input
+              type="number"
+              min="0"
+              max="18"
+              inputMode="numeric"
+              value={
+                childProfile.age
+              }
+              onChange={(event) =>
+                setChildProfile(
+                  (current) => ({
+                    ...current,
+                    age: event.target.value,
+                  })
+                )
+              }
+            />
+          </label>
+
+          <label className="profile-field">
+            <span>
+              What is your favourite colour?
+            </span>
+
+            <input
+              type="text"
+              value={
+                childProfile.favouriteColour
+              }
+              onChange={(event) =>
+                setChildProfile(
+                  (current) => ({
+                    ...current,
+                    favouriteColour:
+                      event.target.value,
+                  })
+                )
+              }
+              autoComplete="off"
+            />
+          </label>
+
+          <label className="profile-field">
+            <span>
+              How many siblings do you have?
+            </span>
+
+            <input
+              type="number"
+              min="0"
+              max="20"
+              inputMode="numeric"
+              value={
+                childProfile.siblings
+              }
+              onChange={(event) =>
+                setChildProfile(
+                  (current) => ({
+                    ...current,
+                    siblings:
+                      event.target.value,
+                  })
+                )
+              }
+            />
+          </label>
+        </section>
 
         <label className="setting-row">
           Sound effects and spoken

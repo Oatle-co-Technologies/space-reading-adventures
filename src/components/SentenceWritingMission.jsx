@@ -4,12 +4,38 @@ import "./SentenceWritingMission.css";
 import { speak } from "../utils/speech";
 
 const SENTENCES = [
-  { id: "name", build: ({ name }) => name ? `My name is ${name}.` : "My name is Oatlile." },
-  { id: "age", build: ({ age }) => age ? `I am ${age} years old.` : "I am 5 years old." },
-  { id: "like", text: "I like to play." },
-  { id: "colour", text: "I like the colour blue." },
-  { id: "family", text: "I have two brothers." },
-  { id: "school", text: "I love to learn." },
+  {
+    id: "name",
+    build: ({ name }) =>
+      name ? `My name is ${name}.` : "My name is ___.",
+  },
+  {
+    id: "age",
+    build: ({ age }) =>
+      age ? `I am ${age} years old.` : "I am ___ years old.",
+  },
+  {
+    id: "colour",
+    build: ({ favouriteColour }) =>
+      favouriteColour
+        ? `I like ${favouriteColour}.`
+        : "I like ___.",
+  },
+  {
+    id: "siblings",
+    build: ({ siblings }) => {
+      if (siblings === "" || siblings == null) {
+        return "I have ___ siblings.";
+      }
+
+      const count = Number(siblings);
+
+      if (count === 0) return "I have no siblings.";
+      if (count === 1) return "I have 1 sibling.";
+
+      return `I have ${count} siblings.`;
+    },
+  },
 ];
 
 const TOOLS = {
@@ -92,7 +118,11 @@ function ToolIcon({ type }) {
   return <EraserIcon />;
 }
 
-export default function SentenceWritingMission({ onBack, onComplete }) {
+export default function SentenceWritingMission({
+  onBack,
+  onComplete,
+  childProfile,
+}) {
   const canvasRef = useRef(null);
   const targetCanvasRef = useRef(null);
   const guideDisplayRef = useRef(null);
@@ -106,20 +136,9 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
   const [tool, setTool] = useState("pencil");
   const [progress, setProgress] = useState(0);
 
-  const getProfile = () => {
-    try {
-      const raw = localStorage.getItem("oatle-child-profile");
-      return raw ? JSON.parse(raw) : {};
-    } catch {
-      return {};
-    }
-  };
-
-  const profile = getProfile();
+  const profile = childProfile || {};
   const current = SENTENCES[sentenceIndex];
-  const sentence =
-    current.text ||
-    current.build(profile);
+  const sentence = current.build(profile);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
