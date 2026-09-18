@@ -1032,6 +1032,15 @@ function App() {
     effect.play().catch(() => {});
   };
 
+  useEffect(() => {
+    if (
+      (screen === "home" || screen === "explore") &&
+      soundOn
+    ) {
+      playWelcomeSound();
+    }
+  }, [screen, soundOn]);
+
   const playSound = (sound) => {
     if (!soundOn) return;
 
@@ -1762,7 +1771,6 @@ function App() {
         onLogin={(loggedInUser) => {
           setUser(loggedInUser);
           setScreen("home");
-          playWelcomeSound();
         }}
       />
     );
