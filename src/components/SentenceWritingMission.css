@@ -257,6 +257,13 @@
    ========================================= */
 
 @media (orientation: portrait) {
+  /* Mission 4 uses its own portrait message.
+     Disable the generic Scribbler portrait pseudo-element. */
+  .sentence-writing-page::before {
+    content: none !important;
+    display: none !important;
+  }
+
   .sentence-writing-page {
     display: block;
     min-height: 100dvh;
