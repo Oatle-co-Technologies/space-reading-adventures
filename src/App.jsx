@@ -3471,6 +3471,21 @@ function App() {
           </label>
         </section>
 
+        <button
+          className="setting-row beta-feedback-setting"
+          onClick={() => setScreen("betaFeedback")}
+          type="button"
+        >
+          <span>
+            <strong>Today's Feedback</strong>
+            <small>
+              Share your experience with today's activities
+            </small>
+          </span>
+
+          <span aria-hidden="true">→</span>
+        </button>
+
         <label className="setting-row">
           Sound effects and spoken
           prompts
