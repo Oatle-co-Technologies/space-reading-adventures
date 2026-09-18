@@ -568,6 +568,20 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
         aria-label="Writing tools"
       >
         <div className="scribbler-tool-tools">
+          <button
+            type="button"
+            className="sentence-next-button"
+            onClick={handleNext}
+            disabled={!hasDrawingRef.current}
+            aria-label={
+              sentenceIndex === SENTENCES.length - 1
+                ? "Complete writing mission"
+                : "Next sentence"
+            }
+          >
+            →
+          </button>
+
           {["pencil", "brush", "pen"].map((toolName) => (
             <button
               key={toolName}
@@ -593,19 +607,6 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
             <EraserIcon />
           </button>
 
-          <button
-            type="button"
-            className="sentence-next-button"
-            onClick={handleNext}
-            disabled={!hasDrawingRef.current}
-            aria-label={
-              sentenceIndex === SENTENCES.length - 1
-                ? "Complete writing mission"
-                : "Next sentence"
-            }
-          >
-            →
-          </button>
         </div>
       </aside>
 
