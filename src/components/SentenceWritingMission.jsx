@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./Scribbler.css";
 import "./SentenceWritingMission.css";
+import { speak } from "../utils/speech";
 
 const SENTENCES = [
   { id: "name", build: ({ name }) => name ? `My name is ${name}.` : "My name is Oatlile." },
@@ -119,6 +120,16 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
   const sentence =
     current.text ||
     current.build(profile);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      speak("Trace the sentence");
+    }, 250);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [sentence]);
 
   const getCanvasPoint = (event, canvas) => {
     const rect = canvas.getBoundingClientRect();
