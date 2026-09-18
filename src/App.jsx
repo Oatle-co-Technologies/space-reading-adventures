@@ -1803,6 +1803,7 @@ function App() {
         onLogin={(loggedInUser) => {
           setUser(loggedInUser);
           setScreen("home");
+          startWelcomeSound();
         }}
       />
     );
@@ -2313,11 +2314,7 @@ function App() {
     screen === "home"
   ) {
     content = (
-      <main
-        className="hero-panel"
-        onClick={startWelcomeSound}
-        onTouchStart={startWelcomeSound}
-      >
+      <main className="hero-panel">
         <img
           src="/oatle-kids-wordmark.png"
           alt="Oatle Kids"
