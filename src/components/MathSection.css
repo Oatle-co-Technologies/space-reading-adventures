@@ -1059,3 +1059,11 @@
     height: 60px;
   }
 }
+
+.math-back-button {
+  display: none !important;
+}
+
+.math-status-row {
+  display: none !important;
+}
