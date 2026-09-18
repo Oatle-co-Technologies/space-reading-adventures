@@ -763,7 +763,6 @@ function App() {
     useState("");
 
   const advanceTimer = useRef(null);
-  const welcomeAudioRef = useRef(null);
 
   useEffect(() => {
     let mounted = true;
@@ -1025,52 +1024,12 @@ function App() {
     soundOn,
   ]);
 
-  useEffect(() => {
-    if (
-      screen !== "home" &&
-      screen !== "explore" &&
-      welcomeAudioRef.current
-    ) {
-      welcomeAudioRef.current.pause();
-      welcomeAudioRef.current.currentTime = 0;
-      welcomeAudioRef.current = null;
-    }
-  }, [screen]);
+  const playWelcomeSound = () => {
+    if (!soundOn) return;
 
-  useEffect(() => {
-    return () => {
-      if (welcomeAudioRef.current) {
-        welcomeAudioRef.current.pause();
-        welcomeAudioRef.current.currentTime = 0;
-        welcomeAudioRef.current = null;
-      }
-    };
-  }, []);
-
-  const startWelcomeSound = () => {
-    if (!soundOn || welcomeAudioRef.current) {
-      return;
-    }
-
-    const welcomeAudio = new Audio(welcomeSound);
-    welcomeAudio.volume = 1;
-    welcomeAudioRef.current = welcomeAudio;
-
-    welcomeAudio.addEventListener(
-      "ended",
-      () => {
-        if (welcomeAudioRef.current === welcomeAudio) {
-          welcomeAudioRef.current = null;
-        }
-      },
-      { once: true }
-    );
-
-    welcomeAudio.play().catch(() => {
-      if (welcomeAudioRef.current === welcomeAudio) {
-        welcomeAudioRef.current = null;
-      }
-    });
+    const effect = new Audio(welcomeSound);
+    effect.volume = 1;
+    effect.play().catch(() => {});
   };
 
   const playSound = (sound) => {
@@ -1803,7 +1762,7 @@ function App() {
         onLogin={(loggedInUser) => {
           setUser(loggedInUser);
           setScreen("home");
-          startWelcomeSound();
+          playWelcomeSound();
         }}
       />
     );
