@@ -1031,7 +1031,9 @@ function App() {
       welcomeAudioRef.current.currentTime = 0;
       welcomeAudioRef.current = null;
     }
+  }, [screen]);
 
+  useEffect(() => {
     return () => {
       if (welcomeAudioRef.current) {
         welcomeAudioRef.current.pause();
@@ -1039,7 +1041,7 @@ function App() {
         welcomeAudioRef.current = null;
       }
     };
-  }, [screen]);
+  }, []);
 
   const playWelcomeSound = () => {
     if (!soundOn) return;
