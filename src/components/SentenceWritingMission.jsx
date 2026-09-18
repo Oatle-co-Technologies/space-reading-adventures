@@ -525,6 +525,20 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
       </header>
 
       <section className="scribbler-paper sentence-writing-paper">
+        <button
+          type="button"
+          className="sentence-next-button"
+          onClick={handleNext}
+          disabled={!hasDrawingRef.current}
+          aria-label={
+            sentenceIndex === SENTENCES.length - 1
+              ? "Complete writing mission"
+              : "Next sentence"
+          }
+        >
+          →
+        </button>
+
         <div className="sentence-writing-content">
           <div className="sentence-writing-area">
             <div className="sentence-workbook-lines" aria-hidden="true">
@@ -561,19 +575,6 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
           </div>
         </div>
 
-        <button
-          type="button"
-          className="sentence-next-button"
-          onClick={handleNext}
-          disabled={!hasDrawingRef.current}
-          aria-label={
-            sentenceIndex === SENTENCES.length - 1
-              ? "Complete writing mission"
-              : "Next sentence"
-          }
-        >
-          →
-        </button>
       </section>
 
       <aside
