@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
+
 import "./AlphabetTracingMission.css";
+import { speak } from "../utils/speech";
 
 const SHAPES = [
   { id: "circle", name: "Circle" },
@@ -87,51 +89,39 @@ function ShapeSvg({ shape }) {
     circle: (
       <circle cx="50" cy="50" r="42" />
     ),
-
     square: (
       <rect x="9" y="9" width="82" height="82" rx="5" />
     ),
-
     triangle: (
       <polygon points="50,7 94,91 6,91" />
     ),
-
     rectangle: (
       <rect x="5" y="22" width="90" height="56" rx="5" />
     ),
-
     oval: (
       <ellipse cx="50" cy="50" rx="40" ry="28" />
     ),
-
     diamond: (
       <polygon points="50,5 94,50 50,95 6,50" />
     ),
-
     star: (
       <polygon points="50,5 61,37 95,37 68,57 78,91 50,71 22,91 32,57 5,37 39,37" />
     ),
-
     heart: (
       <path d="M50 88 13 51C-7 31 7 7 29 8c10 0 17 5 21 13 4-8 11-13 21-13 22-1 36 23 16 43Z" />
     ),
-
     pentagon: (
       <polygon points="50,6 95,39 78,92 22,92 5,39" />
     ),
-
     hexagon: (
       <polygon points="25,7 75,7 94,50 75,93 25,93 6,50" />
     ),
-
     octagon: (
       <polygon points="29,6 71,6 94,29 94,71 71,94 29,94 6,71 6,29" />
     ),
-
     crescent: (
       <path d="M72 9C51 17 39 34 39 54c0 20 12 37 33 45-7 3-14 4-22 2C25 97 8 77 8 53 8 28 25 8 48 4c8-1 16 1 24 5Z" />
     ),
-
     semicircle: (
       <path d="M10 50 C10 27.9 27.9 10 50 10 C72.1 10 90 27.9 90 50 L10 50 Z" />
     ),
@@ -159,22 +149,41 @@ export default function ShapeTracingMission({ onBack, onComplete }) {
   const currentShape = SHAPES[shapeIndex];
 
   useEffect(() => {
+    const timer = window.setTimeout(() => {
+      speak(`Trace the ${currentShape.name.toLowerCase()}`);
+    }, 250);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [currentShape]);
+
+  useEffect(() => {
     const canvas = canvasRef.current;
+
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
+
     const dpr = window.devicePixelRatio || 1;
 
     canvas.width = Math.max(1, Math.round(rect.width * dpr));
     canvas.height = Math.max(1, Math.round(rect.height * dpr));
 
     const ctx = canvas.getContext("2d");
+
+    if (!ctx) return;
+
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
     ctx.clearRect(0, 0, rect.width, rect.height);
   }, [shapeIndex]);
 
   const getPoint = (event) => {
     const canvas = canvasRef.current;
+
+    if (!canvas) return { x: 0, y: 0 };
+
     const rect = canvas.getBoundingClientRect();
 
     return {
@@ -185,21 +194,33 @@ export default function ShapeTracingMission({ onBack, onComplete }) {
 
   const startDrawing = (event) => {
     event.preventDefault();
+
     const canvas = canvasRef.current;
+
     if (!canvas) return;
 
     drawingRef.current = true;
+
     lastPointRef.current = getPoint(event);
+
     canvas.setPointerCapture?.(event.pointerId);
   };
 
   const draw = (event) => {
     if (!drawingRef.current) return;
+
     event.preventDefault();
 
     const canvas = canvasRef.current;
+
+    if (!canvas) return;
+
     const ctx = canvas.getContext("2d");
+
+    if (!ctx) return;
+
     const point = getPoint(event);
+
     const lastPoint = lastPointRef.current;
 
     if (!lastPoint) {
@@ -210,9 +231,13 @@ export default function ShapeTracingMission({ onBack, onComplete }) {
     const settings = TOOLS[tool];
 
     ctx.save();
+
     ctx.globalAlpha = settings.opacity;
+
     ctx.lineWidth = settings.size;
+
     ctx.lineCap = "round";
+
     ctx.lineJoin = "round";
 
     if (tool === "eraser") {
@@ -223,9 +248,13 @@ export default function ShapeTracingMission({ onBack, onComplete }) {
     }
 
     ctx.beginPath();
+
     ctx.moveTo(lastPoint.x, lastPoint.y);
+
     ctx.lineTo(point.x, point.y);
+
     ctx.stroke();
+
     ctx.restore();
 
     lastPointRef.current = point;
@@ -233,9 +262,11 @@ export default function ShapeTracingMission({ onBack, onComplete }) {
 
   const stopDrawing = (event) => {
     drawingRef.current = false;
+
     lastPointRef.current = null;
 
     const canvas = canvasRef.current;
+
     if (canvas && event?.pointerId != null) {
       canvas.releasePointerCapture?.(event.pointerId);
     }
@@ -252,14 +283,19 @@ export default function ShapeTracingMission({ onBack, onComplete }) {
 
   return (
     <div className="alphabet-tracing-mission shape-tracing-mission">
+
       <div className="alphabet-portrait-message">
-        <div className="alphabet-portrait-title">Turn your device upright</div>
+        <div className="alphabet-portrait-title">
+          Turn your device upright
+        </div>
+
         <div className="alphabet-portrait-subtitle">
           This writing adventure works in portrait mode.
         </div>
       </div>
 
       <header className="alphabet-mission-header">
+
         <button
           type="button"
           className="alphabet-back-button"
@@ -270,18 +306,27 @@ export default function ShapeTracingMission({ onBack, onComplete }) {
         </button>
 
         <div className="alphabet-mission-title">
-          <div className="alphabet-mission-kicker">Writing Mission 3</div>
+
+          <div className="alphabet-mission-kicker">
+            Writing Mission 3
+          </div>
+
           <h1>Trace Shapes</h1>
+
         </div>
 
         <div className="alphabet-mission-progress">
           {shapeIndex + 1} / {SHAPES.length}
         </div>
+
       </header>
 
       <main className="alphabet-mission-content">
+
         <div className="alphabet-paper-area">
+
           <div className="alphabet-paper">
+
             <div className="shape-target-display" aria-hidden="true">
               <ShapeSvg shape={currentShape.id} />
             </div>
@@ -297,8 +342,6 @@ export default function ShapeTracingMission({ onBack, onComplete }) {
               onContextMenu={(event) => event.preventDefault()}
             />
 
-
-
             <button
               type="button"
               className="alphabet-next-button"
@@ -311,29 +354,36 @@ export default function ShapeTracingMission({ onBack, onComplete }) {
             >
               →
             </button>
+
           </div>
 
-            <aside className="alphabet-tool-bar" aria-label="Writing tools">
-              {["pencil", "brush", "pen", "eraser"].map((toolName) => (
-                <button
-                  key={toolName}
-                  type="button"
-                  className={`alphabet-tool ${
-                    tool === toolName ? "selected" : ""
-                  }`}
-                  onClick={() => setTool(toolName)}
-                  aria-label={toolName}
-                >
-                  <ToolIcon type={toolName} />
-                </button>
-              ))}
-            </aside>
+          <aside
+            className="alphabet-tool-bar"
+            aria-label="Writing tools"
+          >
+            {["pencil", "brush", "pen", "eraser"].map((toolName) => (
+              <button
+                key={toolName}
+                type="button"
+                className={`alphabet-tool ${
+                  tool === toolName ? "selected" : ""
+                }`}
+                onClick={() => setTool(toolName)}
+                aria-label={toolName}
+              >
+                <ToolIcon type={toolName} />
+              </button>
+            ))}
+          </aside>
 
           <div className="alphabet-mission-hint">
             Trace the {currentShape.name.toLowerCase()}.
           </div>
+
         </div>
+
       </main>
+
     </div>
   );
 }
