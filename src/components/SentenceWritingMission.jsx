@@ -488,6 +488,11 @@ export default function SentenceWritingMission({ onBack, onComplete }) {
 
   return (
     <main className="scribbler-page sentence-writing-page">
+      <div className="sentence-portrait-message" aria-live="polite">
+        <strong>Turn your screen around</strong>
+        <span>This writing adventure works in landscape mode.</span>
+      </div>
+
       <header className="sentence-writing-header">
         <button
           className="scribbler-back"
