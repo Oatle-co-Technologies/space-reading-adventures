@@ -1026,7 +1026,41 @@ function App() {
   ]);
 
   useEffect(() => {
-    if (screen !== "explore" && welcomeAudioRef.current) {
+    if (
+      screen === "home" &&
+      soundOn &&
+      !welcomeAudioRef.current
+    ) {
+      const welcomeAudio = new Audio(welcomeSound);
+      welcomeAudio.volume = 1;
+      welcomeAudioRef.current = welcomeAudio;
+
+      welcomeAudio.addEventListener(
+        "ended",
+        () => {
+          if (welcomeAudioRef.current === welcomeAudio) {
+            welcomeAudioRef.current = null;
+          }
+        },
+        { once: true }
+      );
+
+      welcomeAudio.play().catch(() => {
+        // Browsers may block autoplay. The Explore tap below
+        // provides a user-gesture fallback.
+        if (welcomeAudioRef.current === welcomeAudio) {
+          welcomeAudioRef.current = null;
+        }
+      });
+    }
+  }, [screen, soundOn]);
+
+  useEffect(() => {
+    if (
+      screen !== "home" &&
+      screen !== "explore" &&
+      welcomeAudioRef.current
+    ) {
       welcomeAudioRef.current.pause();
       welcomeAudioRef.current.currentTime = 0;
       welcomeAudioRef.current = null;
@@ -1046,9 +1080,10 @@ function App() {
   const playWelcomeSound = () => {
     if (!soundOn) return;
 
+    // If the intro is already playing on the landing page,
+    // let it continue naturally into Explore.
     if (welcomeAudioRef.current) {
-      welcomeAudioRef.current.pause();
-      welcomeAudioRef.current.currentTime = 0;
+      return;
     }
 
     const welcomeAudio = new Audio(welcomeSound);
