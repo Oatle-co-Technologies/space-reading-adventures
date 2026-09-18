@@ -1027,36 +1027,6 @@ function App() {
 
   useEffect(() => {
     if (
-      screen === "home" &&
-      soundOn &&
-      !welcomeAudioRef.current
-    ) {
-      const welcomeAudio = new Audio(welcomeSound);
-      welcomeAudio.volume = 1;
-      welcomeAudioRef.current = welcomeAudio;
-
-      welcomeAudio.addEventListener(
-        "ended",
-        () => {
-          if (welcomeAudioRef.current === welcomeAudio) {
-            welcomeAudioRef.current = null;
-          }
-        },
-        { once: true }
-      );
-
-      welcomeAudio.play().catch(() => {
-        // Browsers may block autoplay. The Explore tap below
-        // provides a user-gesture fallback.
-        if (welcomeAudioRef.current === welcomeAudio) {
-          welcomeAudioRef.current = null;
-        }
-      });
-    }
-  }, [screen, soundOn]);
-
-  useEffect(() => {
-    if (
       screen !== "home" &&
       screen !== "explore" &&
       welcomeAudioRef.current
@@ -1077,12 +1047,8 @@ function App() {
     };
   }, []);
 
-  const playWelcomeSound = () => {
-    if (!soundOn) return;
-
-    // If the intro is already playing on the landing page,
-    // let it continue naturally into Explore.
-    if (welcomeAudioRef.current) {
+  const startWelcomeSound = () => {
+    if (!soundOn || welcomeAudioRef.current) {
       return;
     }
 
@@ -2347,7 +2313,11 @@ function App() {
     screen === "home"
   ) {
     content = (
-      <main className="hero-panel">
+      <main
+        className="hero-panel"
+        onClick={startWelcomeSound}
+        onTouchStart={startWelcomeSound}
+      >
         <img
           src="/oatle-kids-wordmark.png"
           alt="Oatle Kids"
@@ -2375,7 +2345,6 @@ function App() {
           {action(
             "Explore",
             () => {
-              playWelcomeSound();
               setScreen("explore");
             }
           )}
