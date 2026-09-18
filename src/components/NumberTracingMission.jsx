@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
+
 import "./AlphabetTracingMission.css";
+import { speak } from "../utils/speech";
 
 const NUMBERS = Array.from({ length: 21 }, (_, index) => index);
 
@@ -125,6 +127,7 @@ function ToolIcon({ type }) {
 
 export default function NumberTracingMission({ onBack, onComplete }) {
   const canvasRef = useRef(null);
+
   const drawingRef = useRef(false);
   const lastPointRef = useRef(null);
 
@@ -133,23 +136,46 @@ export default function NumberTracingMission({ onBack, onComplete }) {
 
   const currentNumber = NUMBERS[numberIndex];
 
+  /* =========================
+     TEXT TO SPEECH
+     ========================= */
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      speak(`Trace the number ${currentNumber}`);
+    }, 250);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [currentNumber]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
+
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
+
     const dpr = window.devicePixelRatio || 1;
 
     canvas.width = Math.max(1, Math.round(rect.width * dpr));
     canvas.height = Math.max(1, Math.round(rect.height * dpr));
 
     const ctx = canvas.getContext("2d");
+
+    if (!ctx) return;
+
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
     ctx.clearRect(0, 0, rect.width, rect.height);
   }, [currentNumber]);
 
   const getPoint = (event) => {
     const canvas = canvasRef.current;
+
+    if (!canvas) return { x: 0, y: 0 };
+
     const rect = canvas.getBoundingClientRect();
 
     return {
@@ -162,9 +188,11 @@ export default function NumberTracingMission({ onBack, onComplete }) {
     event.preventDefault();
 
     const canvas = canvasRef.current;
+
     if (!canvas) return;
 
     drawingRef.current = true;
+
     lastPointRef.current = getPoint(event);
 
     canvas.setPointerCapture?.(event.pointerId);
@@ -176,7 +204,13 @@ export default function NumberTracingMission({ onBack, onComplete }) {
     event.preventDefault();
 
     const canvas = canvasRef.current;
+
+    if (!canvas) return;
+
     const ctx = canvas.getContext("2d");
+
+    if (!ctx) return;
+
     const point = getPoint(event);
     const lastPoint = lastPointRef.current;
 
@@ -188,9 +222,13 @@ export default function NumberTracingMission({ onBack, onComplete }) {
     const settings = TOOLS[tool];
 
     ctx.save();
+
     ctx.globalAlpha = settings.opacity;
+
     ctx.lineWidth = settings.size;
+
     ctx.lineCap = "round";
+
     ctx.lineJoin = "round";
 
     if (tool === "eraser") {
@@ -201,9 +239,13 @@ export default function NumberTracingMission({ onBack, onComplete }) {
     }
 
     ctx.beginPath();
+
     ctx.moveTo(lastPoint.x, lastPoint.y);
+
     ctx.lineTo(point.x, point.y);
+
     ctx.stroke();
+
     ctx.restore();
 
     lastPointRef.current = point;
@@ -211,9 +253,11 @@ export default function NumberTracingMission({ onBack, onComplete }) {
 
   const stopDrawing = (event) => {
     drawingRef.current = false;
+
     lastPointRef.current = null;
 
     const canvas = canvasRef.current;
+
     if (canvas && event?.pointerId != null) {
       canvas.releasePointerCapture?.(event.pointerId);
     }
@@ -230,14 +274,19 @@ export default function NumberTracingMission({ onBack, onComplete }) {
 
   return (
     <div className="alphabet-tracing-mission number-tracing-mission">
+
       <div className="alphabet-portrait-message">
-        <div className="alphabet-portrait-title">Turn your device upright</div>
+        <div className="alphabet-portrait-title">
+          Turn your device upright
+        </div>
+
         <div className="alphabet-portrait-subtitle">
           This writing adventure works in portrait mode.
         </div>
       </div>
 
       <header className="alphabet-mission-header">
+
         <button
           type="button"
           className="alphabet-back-button"
@@ -248,20 +297,29 @@ export default function NumberTracingMission({ onBack, onComplete }) {
         </button>
 
         <div className="alphabet-mission-title">
+
           <span>Writing Mission 2</span>
+
           <strong>Trace Numbers</strong>
+
         </div>
 
         <div className="alphabet-mission-progress">
           {currentNumber} / 20
         </div>
+
       </header>
 
       <main className="alphabet-mission-content">
+
         <div className="alphabet-paper-area">
+
           <div className="alphabet-paper">
+
             <div className="alphabet-target-display">
-              <div className="alphabet-uppercase">{currentNumber}</div>
+              <div className="alphabet-uppercase">
+                {currentNumber}
+              </div>
             </div>
 
             <canvas
@@ -286,9 +344,13 @@ export default function NumberTracingMission({ onBack, onComplete }) {
             >
               →
             </button>
+
           </div>
 
-                    <aside className="alphabet-tool-bar" aria-label="Writing tools">
+          <aside
+            className="alphabet-tool-bar"
+            aria-label="Writing tools"
+          >
             {["pencil", "brush", "pen", "eraser"].map((toolName) => (
               <button
                 key={toolName}
@@ -304,9 +366,14 @@ export default function NumberTracingMission({ onBack, onComplete }) {
             ))}
           </aside>
 
-                    <div className="alphabet-mission-hint">Trace the number.</div>
+          <div className="alphabet-mission-hint">
+            Trace the number.
+          </div>
+
         </div>
+
       </main>
+
     </div>
   );
 }
