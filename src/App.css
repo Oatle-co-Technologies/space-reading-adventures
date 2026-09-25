@@ -2328,3 +2328,8 @@ button {
     padding: 12px;
   }
 }
+
+.app {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
